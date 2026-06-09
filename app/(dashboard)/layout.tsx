@@ -8,6 +8,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Updated: businesses → stores table query
+ *   - Added BottomNav import and wrapper layout with pb-16 content padding
  *
  * WHERE IT FITS:
  *   Wraps all pages under (dashboard)/*. The single point of auth
@@ -19,6 +20,7 @@
 
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { BottomNav } from "@/components/shared/BottomNav";
 
 export default async function DashboardLayout({
   children,
@@ -44,5 +46,10 @@ export default async function DashboardLayout({
     redirect("/onboarding");
   }
 
-  return <>{children}</>;
+  return (
+    <div className="flex flex-col min-h-screen">
+      <main className="flex-1 pb-16">{children}</main>
+      <BottomNav />
+    </div>
+  );
 }
