@@ -7,6 +7,9 @@
  * CHANGES THIS SESSION:
  *   - Complete rewrite: replaced Business/Industry/RevenueRange/TeamSize
  *     with Store, StoreType, Product, Customer, and Transaction types
+ *   - Added Phase 2 types: ConfidenceLevel, DocumentType, StockMovementType,
+ *     ExtractionStatus, ExtractionItem, ExtractionResult, DocumentUpload,
+ *     QuickEntryItem, QuickEntryPayload, FullEntryItem, FullEntryPayload
  *
  * WHERE IT FITS:
  *   Shared types imported across components, API routes, and hooks.
@@ -182,4 +185,82 @@ export interface Transaction {
 export interface ApiError {
   error: string;
   code?: string;
+}
+
+// ─── Phase 2: Bill Scanning ───────────────────────────────────────────────
+
+export type ConfidenceLevel = "high" | "medium" | "low";
+export type DocumentType = "single_bill" | "ledger_page";
+export type StockMovementType = "purchase" | "sale" | "adjustment" | "waste";
+export type ExtractionStatus =
+  | "pending"
+  | "extracted"
+  | "confirmed"
+  | "failed";
+
+export interface ExtractionItem {
+  productNameRaw: string;
+  matchedProductId?: string;
+  matchedProductName?: string;
+  needsCatalogAdd: boolean;
+  quantity: number;
+  unitPrice: number;
+  totalPrice: number;
+  taxRate?: number;
+  fieldConfidence: Record<
+    "quantity" | "unitPrice" | "totalPrice",
+    ConfidenceLevel
+  >;
+}
+
+export interface ExtractionResult {
+  documentType: DocumentType;
+  vendorName?: string;
+  date?: string;
+  totalAmount?: number;
+  confidence: ConfidenceLevel;
+  items: ExtractionItem[];
+}
+
+export interface DocumentUpload {
+  id: string;
+  storeId: string;
+  userId: string;
+  storagePath: string;
+  fileType: string;
+  documentType: DocumentType;
+  extractionStatus: ExtractionStatus;
+  rawExtractionJson?: ExtractionResult;
+  confidence?: ConfidenceLevel;
+  createdAt: string;
+}
+
+// ─── Phase 2: Manual Entry ────────────────────────────────────────────────
+
+export interface QuickEntryItem {
+  productId: string;
+  quantity: number;
+}
+
+export interface QuickEntryPayload {
+  type: TransactionType;
+  paymentMethod: PaymentMethod;
+  customerId?: string;
+  items: QuickEntryItem[];
+}
+
+export interface FullEntryItem {
+  productId: string;
+  quantity: number;
+  unitPrice: number;
+}
+
+export interface FullEntryPayload {
+  date: string;
+  type: TransactionType;
+  paymentMethod: PaymentMethod;
+  customerId?: string;
+  vendorName?: string;
+  notes?: string;
+  items: FullEntryItem[];
 }
