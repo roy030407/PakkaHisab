@@ -1,0 +1,283 @@
+// FILE: prisma/schema.prisma
+// WHAT THIS DOES: Full database schema for PakkaHisab — all 14 tables covering
+//   all phases. store_id is the primary tenant key on all data tables.
+// CHANGES THIS SESSION:
+//   - Complete rewrite from old Business/businesses schema to new 14-table schema
+//   - stores replaces businesses; products, inventory, customers, etc. added
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── CORE TENANT ────────────────────────────────────────────────────────────
+
+model Store {
+  id                String   @id @default(uuid())
+  ownerId           String   @map("owner_id")
+  name              String
+  type              String   // kirana | medical | hardware | restaurant | clothing | pharmacy | electronics | other
+  ownerName         String   @map("owner_name")
+  city              String
+  gstNumber         String?  @map("gst_number")
+  preferredLanguage String   @default("en") @map("preferred_language")
+  isInterstate      Boolean  @default(false) @map("is_interstate")
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  products             Product[]
+  inventory            Inventory[]
+  stockMovements       StockMovement[]
+  customers            Customer[]
+  fixedCosts           FixedCost[]
+  transactions         Transaction[]
+  documentUploads      DocumentUpload[]
+  extractionCorrections ExtractionCorrection[]
+  aiConversations      AiConversation[]
+  periodicReports      PeriodicReport[]
+
+  @@map("stores")
+}
+
+// ─── PRODUCTS ────────────────────────────────────────────────────────────────
+
+model Product {
+  id              String   @id @default(uuid())
+  storeId         String   @map("store_id")
+  itemNumber      Int      @map("item_number")
+  parentProductId String?  @map("parent_product_id")
+  name            String
+  brand           String?
+  category        String?
+  subcategory     String?
+  unit            String   @default("piece") // kg | litre | piece | box | dozen | other
+  purchasePrice   Decimal  @default(0) @map("purchase_price") @db.Decimal(12, 2)
+  sellingPrice    Decimal  @default(0) @map("selling_price") @db.Decimal(12, 2)
+  taxRate         Decimal  @default(0) @map("tax_rate") @db.Decimal(5, 2)
+  shelfLifeDays   Int?     @map("shelf_life_days")
+  isActive        Boolean  @default(true) @map("is_active")
+  isPinned        Boolean  @default(false) @map("is_pinned")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  store          Store           @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  parentProduct  Product?        @relation("ProductVariants", fields: [parentProductId], references: [id])
+  variants       Product[]       @relation("ProductVariants")
+  inventory      Inventory[]
+  stockMovements StockMovement[]
+  transactionItems TransactionItem[]
+
+  @@unique([storeId, itemNumber])
+  @@map("products")
+}
+
+// ─── INVENTORY ───────────────────────────────────────────────────────────────
+
+model Inventory {
+  id              String    @id @default(uuid())
+  storeId         String    @map("store_id")
+  productId       String    @map("product_id")
+  currentStock    Decimal   @default(0) @map("current_stock") @db.Decimal(12, 3)
+  reorderPoint    Decimal   @default(0) @map("reorder_point") @db.Decimal(12, 3)
+  lastRestockedAt DateTime? @map("last_restocked_at")
+  expiryDate      DateTime? @map("expiry_date") @db.Date
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  store   Store   @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([storeId, productId])
+  @@map("inventory")
+}
+
+// ─── STOCK MOVEMENTS ─────────────────────────────────────────────────────────
+
+model StockMovement {
+  id            String   @id @default(uuid())
+  storeId       String   @map("store_id")
+  productId     String   @map("product_id")
+  movementType  String   @map("movement_type") // purchase | sale | adjustment | waste
+  quantity      Decimal  @db.Decimal(12, 3)
+  unitPrice     Decimal? @map("unit_price") @db.Decimal(12, 2)
+  transactionId String?  @map("transaction_id")
+  reason        String?
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  store       Store        @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  product     Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  transaction Transaction? @relation(fields: [transactionId], references: [id])
+
+  @@map("stock_movements")
+}
+
+// ─── CUSTOMERS ───────────────────────────────────────────────────────────────
+
+model Customer {
+  id             String   @id @default(uuid())
+  storeId        String   @map("store_id")
+  name           String
+  phone          String?
+  type           String   @default("walk_in") // walk_in | regular | wholesale
+  creditLimit    Decimal  @default(0) @map("credit_limit") @db.Decimal(12, 2)
+  currentBalance Decimal  @default(0) @map("current_balance") @db.Decimal(12, 2)
+  notes          String?
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  store        Store         @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  @@map("customers")
+}
+
+// ─── FIXED COSTS ─────────────────────────────────────────────────────────────
+
+model FixedCost {
+  id        String   @id @default(uuid())
+  storeId   String   @map("store_id")
+  name      String
+  amount    Decimal  @db.Decimal(12, 2)
+  frequency String   // daily | weekly | monthly | yearly
+  category  String   // rent | salaries | electricity | transport | other
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@map("fixed_costs")
+}
+
+// ─── TRANSACTIONS ─────────────────────────────────────────────────────────────
+
+model Transaction {
+  id               String   @id @default(uuid())
+  storeId          String   @map("store_id")
+  userId           String   @map("user_id")
+  date             DateTime @db.Date
+  type             String   // sale | purchase | expense | income
+  totalAmount      Decimal  @map("total_amount") @db.Decimal(12, 2)
+  paymentMethod    String?  @map("payment_method") // cash | upi | credit
+  customerId       String?  @map("customer_id")
+  vendorName       String?  @map("vendor_name")
+  source           String   // manual_quick | manual_full | bill_scan | csv_import | excel_import
+  sourceDocumentId String?  @map("source_document_id")
+  taxAmount        Decimal  @default(0) @map("tax_amount") @db.Decimal(12, 2)
+  taxType          String?  @map("tax_type") // cgst_sgst | igst
+  notes            String?
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  store          Store            @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  customer       Customer?        @relation(fields: [customerId], references: [id])
+  sourceDocument DocumentUpload?  @relation(fields: [sourceDocumentId], references: [id])
+  items          TransactionItem[]
+  stockMovements StockMovement[]
+
+  @@map("transactions")
+}
+
+// ─── TRANSACTION ITEMS ────────────────────────────────────────────────────────
+
+model TransactionItem {
+  id             String   @id @default(uuid())
+  transactionId  String   @map("transaction_id")
+  productId      String?  @map("product_id")
+  productNameRaw String   @map("product_name_raw")
+  quantity       Decimal  @db.Decimal(12, 3)
+  unitPrice      Decimal  @map("unit_price") @db.Decimal(12, 2)
+  totalPrice     Decimal  @map("total_price") @db.Decimal(12, 2)
+  taxRate        Decimal  @default(0) @map("tax_rate") @db.Decimal(5, 2)
+  isConfirmed    Boolean  @default(true) @map("is_confirmed")
+
+  transaction Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  product     Product?    @relation(fields: [productId], references: [id])
+
+  @@map("transaction_items")
+}
+
+// ─── DOCUMENT UPLOADS ─────────────────────────────────────────────────────────
+
+model DocumentUpload {
+  id               String   @id @default(uuid())
+  storeId          String   @map("store_id")
+  userId           String   @map("user_id")
+  storagePath      String   @map("storage_path")
+  fileType         String   @map("file_type")
+  documentType     String   @map("document_type") // single_bill | ledger_page | bank_statement | excel | csv
+  extractionStatus String   @default("pending") @map("extraction_status")
+  rawExtractionJson Json?   @map("raw_extraction_json")
+  confidence       String?
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  store                 Store                  @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  transactions          Transaction[]
+  extractionCorrections ExtractionCorrection[]
+
+  @@map("document_uploads")
+}
+
+// ─── EXTRACTION CORRECTIONS ───────────────────────────────────────────────────
+
+model ExtractionCorrection {
+  id               String   @id @default(uuid())
+  storeId          String   @map("store_id")
+  documentUploadId String?  @map("document_upload_id")
+  fieldName        String   @map("field_name")
+  originalValue    String   @map("original_value")
+  correctedValue   String   @map("corrected_value")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  store          Store           @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  documentUpload DocumentUpload? @relation(fields: [documentUploadId], references: [id])
+
+  @@map("extraction_corrections")
+}
+
+// ─── AI CONVERSATIONS ─────────────────────────────────────────────────────────
+
+model AiConversation {
+  id        String   @id @default(uuid())
+  storeId   String   @map("store_id")
+  messages  Json     @default("[]")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@map("ai_conversations")
+}
+
+// ─── PERIODIC REPORTS ─────────────────────────────────────────────────────────
+
+model PeriodicReport {
+  id          String   @id @default(uuid())
+  storeId     String   @map("store_id")
+  reportType  String   @map("report_type") // daily | weekly | monthly | yearly
+  periodStart DateTime @map("period_start") @db.Date
+  periodEnd   DateTime @map("period_end") @db.Date
+  summaryText String?  @map("summary_text")
+  reportJson  Json?    @map("report_json")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@map("periodic_reports")
+}
+
+// ─── KAGGLE PRODUCTS (seed / reference, no RLS) ───────────────────────────────
+
+model KaggleProduct {
+  id                String  @id @default(uuid())
+  storeType         String  @map("store_type")
+  name              String
+  brand             String?
+  category          String?
+  subcategory       String?
+  unit              String  @default("piece")
+  typicalPriceRange String? @map("typical_price_range")
+  commonGstRate     Decimal @default(0) @map("common_gst_rate") @db.Decimal(5, 2)
+
+  @@map("kaggle_products")
+}
