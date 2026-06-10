@@ -7,6 +7,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation
+ *   - Quality fixes: delta validation, transaction error handling, updateStock error handling
  *
  * WHERE IT FITS:
  *   Primary data source for the /inventory page.
@@ -104,7 +105,7 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
   }
 
-  if (!body.productId || body.delta === 0 || !body.reason) {
+  if (!body.productId || !body.delta || !body.reason) {
     return NextResponse.json({ error: 'productId, delta (non-zero), and reason are required' }, { status: 400 })
   }
 
@@ -118,7 +119,7 @@ export async function PATCH(request: Request) {
   if (!product) return NextResponse.json({ error: 'Product not found' }, { status: 404 })
 
   // Write a placeholder transaction for the adjustment
-  const { data: tx } = await supabase
+  const { data: tx, error: txError } = await supabase
     .from('transactions')
     .insert({
       store_id: store.id,
@@ -134,17 +135,21 @@ export async function PATCH(request: Request) {
     .select('id')
     .single()
 
-  if (!tx) return NextResponse.json({ error: 'Failed to record adjustment' }, { status: 500 })
+  if (txError || !tx) return NextResponse.json({ error: 'Failed to record adjustment' }, { status: 500 })
 
-  await updateStock(supabase, {
-    storeId: store.id,
-    productId: body.productId,
-    delta: body.delta,
-    transactionId: tx.id,
-    movementType: 'adjustment',
-    unitPrice: 0,
-    reason: body.reason,
-  })
+  try {
+    await updateStock(supabase, {
+      storeId: store.id,
+      productId: body.productId,
+      delta: body.delta,
+      transactionId: tx.id,
+      movementType: 'adjustment',
+      unitPrice: 0,
+      reason: body.reason,
+    })
+  } catch {
+    return NextResponse.json({ error: 'Failed to update stock' }, { status: 500 })
+  }
 
   return NextResponse.json({ success: true })
 }
