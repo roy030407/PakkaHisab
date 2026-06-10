@@ -13,6 +13,8 @@
  *   - Added Phase 3 types: StockStatus, AdjustmentReason, SuggestionType,
  *     ConsumptionData, StockItemWithConsumption, OrderSuggestion,
  *     InventorySuggestionsResult, StockAdjustmentPayload
+ *   - Added Phase 4 types: ReportPeriod, DashboardSnapshot, PeriodReport,
+ *     TaxSummary, TopProduct, PaymentBreakdown, CashFlowPoint
  *
  * WHERE IT FITS:
  *   Shared types imported across components, API routes, and hooks.
@@ -319,4 +321,59 @@ export interface StockAdjustmentPayload {
   delta: number         // positive = add, negative = remove
   reason: AdjustmentReason
   notes?: string
+}
+
+// ─── Phase 4: Reporting ───────────────────────────────────────────────────
+
+export type ReportPeriod = 'daily' | 'weekly' | 'monthly' | 'yearly'
+
+export interface DashboardSnapshot {
+  todaySales: number
+  todayPurchases: number
+  todayNetProfit: number
+  outstandingReceivables: number
+  lowStockCount: number
+  expiryAlertCount: number
+  storeName: string
+  ownerName: string
+}
+
+export interface TaxSummary {
+  collected: number   // GST collected on sales
+  paid: number        // GST paid on purchases
+  payable: number     // net GST payable (collected - paid)
+}
+
+export interface TopProduct {
+  productId: string
+  productName: string
+  revenue: number
+  quantity: number
+}
+
+export interface PaymentBreakdown {
+  cash: number
+  upi: number
+  credit: number
+}
+
+export interface CashFlowPoint {
+  date: string        // YYYY-MM-DD label
+  sales: number
+  purchases: number
+}
+
+export interface PeriodReport {
+  period: ReportPeriod
+  periodLabel: string
+  sales: number
+  purchases: number
+  grossMargin: number
+  fixedCosts: number
+  netProfit: number
+  taxSummary: TaxSummary
+  topProducts: TopProduct[]
+  paymentBreakdown: PaymentBreakdown
+  cashFlowData: CashFlowPoint[]
+  transactionCount: number
 }
