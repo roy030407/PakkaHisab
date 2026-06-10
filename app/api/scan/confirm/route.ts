@@ -93,7 +93,7 @@ export async function POST(request: Request) {
     .map(i => i.matchedProductId)
     .filter((id): id is string => !!id)
 
-  let verifiedProductIds = new Set<string>()
+  const verifiedProductIds = new Set<string>()
   if (claimedIds.length > 0) {
     const { data: owned } = await supabase
       .from('products')

@@ -47,7 +47,7 @@ export function QuickEntry({ onSaved, onSwitchFull }: Props) {
     setQtys(prev => {
       const n = new Map(prev)
       const q = (n.get(pid) ?? 0) + d
-      q <= 0 ? n.delete(pid) : n.set(pid, q)
+      if (q <= 0) { n.delete(pid) } else { n.set(pid, q) }
       return n
     })
   }
