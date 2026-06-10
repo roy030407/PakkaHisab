@@ -9,6 +9,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation
+ *   - Quality fixes: Supabase error handling, null-safe stock coercion
  *
  * WHERE IT FITS:
  *   Called by GET /api/inventory/suggest.
@@ -38,10 +39,12 @@ export async function generateOrderingSuggestions(
   supabase: SupabaseClient,
   storeId: string
 ): Promise<InventorySuggestionsResult> {
-  const { data: inventoryRows } = await supabase
+  const { data: inventoryRows, error: invError } = await supabase
     .from('inventory')
     .select('product_id, current_stock, reorder_point, expiry_date')
     .eq('store_id', storeId)
+
+  if (invError) throw new Error(`inventory query failed: ${invError.message}`)
 
   if (!inventoryRows || inventoryRows.length === 0) {
     return { orderToday: [], reduceOrdering: [], watchExpiry: [], generatedAt: new Date().toISOString() }
@@ -49,12 +52,14 @@ export async function generateOrderingSuggestions(
 
   const productIds = inventoryRows.map((r: RawInventoryRow) => r.product_id)
 
-  const { data: products } = await supabase
+  const { data: products, error: prodError } = await supabase
     .from('products')
     .select('id, name, unit, category')
     .in('id', productIds)
     .eq('store_id', storeId)
     .eq('is_active', true)
+
+  if (prodError) throw new Error(`products query failed: ${prodError.message}`)
 
   const productMap = new Map((products as RawProduct[] ?? []).map(p => [p.id, p]))
 
@@ -66,7 +71,7 @@ export async function generateOrderingSuggestions(
     const product = productMap.get(inv.product_id)
     if (!product) continue
 
-    const currentStock = Number(inv.current_stock)
+    const currentStock = Number(inv.current_stock ?? 0)
     const reorderPoint = Number(inv.reorder_point ?? 0)
 
     // Expiry check takes priority
