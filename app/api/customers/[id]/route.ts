@@ -7,6 +7,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation
+ *   - Security: try/catch on request.json() in PATCH
  *
  * WHERE IT FITS:
  *   Called by CustomerLedger component.
@@ -58,7 +59,12 @@ export async function PATCH(
   const { data: store } = await supabase.from('stores').select('id').eq('owner_id', user.id).maybeSingle()
   if (!store) return NextResponse.json({ error: 'Store not found' }, { status: 404 })
 
-  const body = await request.json()
+  let body: Record<string, unknown>
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
+  }
   const allowed: Record<string, unknown> = {}
   if (body.name) allowed.name = body.name
   if (body.phone !== undefined) allowed.phone = body.phone

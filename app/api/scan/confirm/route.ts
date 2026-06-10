@@ -9,6 +9,8 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation
+ *   - Security: verify matchedProductId store ownership before use
+ *   - Security: try/catch on request.json()
  *
  * WHERE IT FITS:
  *   Called by ExtractionReview "Save" button after merchant confirms items.
@@ -57,7 +59,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Store not found' }, { status: 404 })
   }
 
-  const body: ConfirmPayload = await request.json()
+  let body: ConfirmPayload
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
+  }
 
   // Create transaction
   const { data: tx, error: txError } = await supabase
@@ -81,9 +88,27 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Failed to create transaction' }, { status: 500 })
   }
 
+  // Collect all claimed matched product IDs and verify they belong to this store
+  const claimedIds = body.items
+    .map(i => i.matchedProductId)
+    .filter((id): id is string => !!id)
+
+  let verifiedProductIds = new Set<string>()
+  if (claimedIds.length > 0) {
+    const { data: owned } = await supabase
+      .from('products')
+      .select('id')
+      .in('id', claimedIds)
+      .eq('store_id', store.id)
+    for (const p of owned ?? []) verifiedProductIds.add(p.id)
+  }
+
   // Process each item
   for (const item of body.items) {
-    let productId = item.matchedProductId ?? null
+    // Only use matchedProductId if it was verified as belonging to this store
+    let productId = (item.matchedProductId && verifiedProductIds.has(item.matchedProductId))
+      ? item.matchedProductId
+      : null
 
     // Create placeholder product for unrecognised items
     if (item.needsCatalogAdd || !productId) {

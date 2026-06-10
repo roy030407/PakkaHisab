@@ -8,6 +8,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation
+ *   - Security: try/catch on request.json()
  *
  * WHERE IT FITS:
  *   Called by QuickEntry component on save.
@@ -32,7 +33,12 @@ export async function POST(request: Request) {
     .maybeSingle()
   if (!store) return NextResponse.json({ error: 'Store not found' }, { status: 404 })
 
-  const body: QuickEntryPayload = await request.json()
+  let body: QuickEntryPayload
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
+  }
   if (!body.items?.length) return NextResponse.json({ error: 'No items provided' }, { status: 400 })
 
   const { data: products } = await supabase

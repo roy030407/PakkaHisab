@@ -8,6 +8,8 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation
+ *   - Security: reject items with product IDs not belonging to the store
+ *   - Security: try/catch on request.json()
  *
  * WHERE IT FITS:
  *   Called by FullEntryForm on save.
@@ -32,7 +34,12 @@ export async function POST(request: Request) {
     .maybeSingle()
   if (!store) return NextResponse.json({ error: 'Store not found' }, { status: 404 })
 
-  const body: FullEntryPayload = await request.json()
+  let body: FullEntryPayload
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
+  }
   if (!body.items?.length) return NextResponse.json({ error: 'No items provided' }, { status: 400 })
 
   const { data: products } = await supabase
@@ -43,17 +50,31 @@ export async function POST(request: Request) {
 
   const pm = new Map((products ?? []).map((p: { id: string; name: string; tax_rate: number }) => [p.id, p]))
 
-  const enriched = body.items.map(item => {
-    const p = pm.get(item.productId)
-    return {
-      productId: item.productId,
-      productName: p?.name ?? item.productId,
-      quantity: item.quantity,
-      unitPrice: item.unitPrice,
-      totalPrice: item.quantity * item.unitPrice,
-      taxRate: Number(p?.tax_rate ?? 0),
-    }
-  })
+  let enriched: Array<{
+    productId: string
+    productName: string
+    quantity: number
+    unitPrice: number
+    totalPrice: number
+    taxRate: number
+  }>
+
+  try {
+    enriched = body.items.map(item => {
+      const p = pm.get(item.productId)
+      if (!p) throw new Error('product_not_found')
+      return {
+        productId: item.productId,
+        productName: p.name,
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+        totalPrice: item.quantity * item.unitPrice,
+        taxRate: Number(p.tax_rate),
+      }
+    })
+  } catch {
+    return NextResponse.json({ error: 'One or more products not found in your store' }, { status: 400 })
+  }
 
   const totalAmount = enriched.reduce((s, i) => s + i.totalPrice, 0)
 
