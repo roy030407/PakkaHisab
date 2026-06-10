@@ -285,8 +285,8 @@ export interface StockItemWithConsumption {
   productId: string
   productName: string
   brand?: string
-  category: string
-  unit: string
+  category?: string
+  unit: ProductUnit
   currentStock: number
   reorderPoint: number
   lastRestockedAt?: string
@@ -298,7 +298,7 @@ export interface StockItemWithConsumption {
 export interface OrderSuggestion {
   productId: string
   productName: string
-  unit: string
+  unit: ProductUnit
   currentStock: number
   reorderPoint: number
   reason: string
