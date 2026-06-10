@@ -425,8 +425,6 @@ function ImportWizard() {
   const [preview, setPreview] = useState<Record<string, string>[]>([])
   const [totalRows, setTotalRows] = useState(0)
   const [fileName, setFileName] = useState("")
-  const [allRows, setAllRows] = useState<Record<string, string>[]>([])
-
   const [mapping, setMapping] = useState<ColumnMapping>({})
   const [dataType, setDataType] = useState<string>("products")
   const [mappingLoading, setMappingLoading] = useState(false)
