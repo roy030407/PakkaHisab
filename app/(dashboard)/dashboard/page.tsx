@@ -8,6 +8,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Replaced Phase 1 placeholder with real Phase 4 dashboard
+ *   - Added InsightCard for Phase 5 AI Advisor proactive insight
  *
  * WHERE IT FITS:
  *   First page a merchant sees after logging in. Uses server-side fetch
@@ -19,6 +20,7 @@
 
 import { createSupabaseServerClient } from "@/lib/supabase/server"
 import { StatCard, formatINR } from "@/components/reports/StatCard"
+import { InsightCard } from "@/components/ai/InsightCard"
 import Link from "next/link"
 import type { DashboardSnapshot } from "@/types"
 
@@ -135,6 +137,11 @@ export default async function DashboardPage() {
       <div className="mb-6">
         <h1 className="text-xl font-bold text-gray-900">{snapshot.storeName}</h1>
         <p className="text-sm text-gray-500">Today&apos;s overview</p>
+      </div>
+
+      {/* AI Insight */}
+      <div className="mb-5">
+        <InsightCard />
       </div>
 
       {/* Snapshot grid */}

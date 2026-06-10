@@ -263,6 +263,7 @@ model PeriodicReport {
 
   store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
 
+  @@unique([storeId, reportType, periodStart])
   @@map("periodic_reports")
 }
 
