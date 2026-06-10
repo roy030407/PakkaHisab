@@ -10,6 +10,9 @@
  *   - Added Phase 2 types: ConfidenceLevel, DocumentType, StockMovementType,
  *     ExtractionStatus, ExtractionItem, ExtractionResult, DocumentUpload,
  *     QuickEntryItem, QuickEntryPayload, FullEntryItem, FullEntryPayload
+ *   - Added Phase 3 types: StockStatus, AdjustmentReason, SuggestionType,
+ *     ConsumptionData, StockItemWithConsumption, OrderSuggestion,
+ *     InventorySuggestionsResult, StockAdjustmentPayload
  *
  * WHERE IT FITS:
  *   Shared types imported across components, API routes, and hooks.
@@ -263,4 +266,57 @@ export interface FullEntryPayload {
   vendorName?: string;
   notes?: string;
   items: FullEntryItem[];
+}
+
+// ─── Phase 3: Inventory ───────────────────────────────────────────────────
+
+export type StockStatus = 'ok' | 'low' | 'critical' | 'out'
+export type AdjustmentReason = 'damaged' | 'expired' | 'theft' | 'correction' | 'waste' | 'other'
+export type SuggestionType = 'order_today' | 'reduce_ordering' | 'watch_expiry'
+
+export interface ConsumptionData {
+  orderedQty: number         // total units received in last 30 days
+  daysSinceOrder: number     // days since the most recent purchase movement
+  dailyRate: number          // (orderedQty - currentStock) / daysSinceOrder; 0 if nothing consumed
+  daysUntilStockout: number  // currentStock / dailyRate; use Infinity for zero-rate products
+}
+
+export interface StockItemWithConsumption {
+  productId: string
+  productName: string
+  brand?: string
+  category: string
+  unit: string
+  currentStock: number
+  reorderPoint: number
+  lastRestockedAt?: string
+  expiryDate?: string
+  stockStatus: StockStatus
+  consumption?: ConsumptionData
+}
+
+export interface OrderSuggestion {
+  productId: string
+  productName: string
+  unit: string
+  currentStock: number
+  reorderPoint: number
+  reason: string
+  suggestionType: SuggestionType
+  expiryDate?: string
+  daysUntilExpiry?: number
+}
+
+export interface InventorySuggestionsResult {
+  orderToday: OrderSuggestion[]
+  reduceOrdering: OrderSuggestion[]
+  watchExpiry: OrderSuggestion[]
+  generatedAt: string
+}
+
+export interface StockAdjustmentPayload {
+  productId: string
+  delta: number         // positive = add, negative = remove
+  reason: AdjustmentReason
+  notes?: string
 }
