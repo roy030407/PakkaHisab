@@ -15,6 +15,8 @@
  *     InventorySuggestionsResult, StockAdjustmentPayload
  *   - Added Phase 4 types: ReportPeriod, DashboardSnapshot, PeriodReport,
  *     TaxSummary, TopProduct, PaymentBreakdown, CashFlowPoint
+ *   - Bug fix: Product interface updated to snake_case to match Supabase/PostgREST
+ *     response format (was camelCase, causing ₹NaN on every product in QuickEntry)
  *
  * WHERE IT FITS:
  *   Shared types imported across components, API routes, and hooks.
@@ -72,22 +74,22 @@ export type ProductUnit =
 
 export interface Product {
   id: string;
-  storeId: string;
-  itemNumber: number;
-  parentProductId?: string;
+  store_id: string;
+  item_number: number;
+  parent_product_id?: string | null;
   name: string;
-  brand?: string;
-  category?: string;
-  subcategory?: string;
+  brand?: string | null;
+  category?: string | null;
+  subcategory?: string | null;
   unit: ProductUnit;
-  purchasePrice: number;
-  sellingPrice: number;
-  taxRate: number;
-  shelfLifeDays?: number;
-  isActive: boolean;
-  isPinned: boolean;
-  createdAt: string;
-  updatedAt: string;
+  purchase_price: number | string;
+  selling_price: number | string;
+  tax_rate: number | string;
+  shelf_life_days?: number | null;
+  is_active: boolean;
+  is_pinned: boolean;
+  created_at: string;
+  updated_at: string;
   variants?: Product[];
 }
 

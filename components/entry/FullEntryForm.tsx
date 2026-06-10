@@ -8,6 +8,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation
+ *   - Bug fix: updated p.sellingPrice/p.purchasePrice to snake_case
  *
  * WHERE IT FITS:
  *   "Full entry" mode on /entry page.
@@ -45,7 +46,7 @@ export function FullEntryForm({ initialItems, onSaved, onSwitchQuick }: Props) {
   }, [])
 
   function addProduct(p: Product) {
-    const price = type === 'sale' ? Number(p.sellingPrice) : Number(p.purchasePrice)
+    const price = type === 'sale' ? Number(p.selling_price) : Number(p.purchase_price)
     setItems(prev => {
       const idx = prev.findIndex(i => i.productId === p.id)
       if (idx >= 0) return prev.map((i, j) => j === idx ? { ...i, quantity: i.quantity + 1 } : i)

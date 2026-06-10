@@ -8,6 +8,8 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation
+ *   - Bug fix: updated p.sellingPrice/p.purchasePrice/p.isPinned to snake_case to
+ *     match the Supabase response (was producing ₹NaN on every product)
  *
  * WHERE IT FITS:
  *   Default mode on /entry page.
@@ -40,7 +42,7 @@ export function QuickEntry({ onSaved, onSwitchFull }: Props) {
   }, [])
 
   function getPrice(p: Product) {
-    return type === 'sale' ? Number(p.sellingPrice) : Number(p.purchasePrice)
+    return type === 'sale' ? Number(p.selling_price) : Number(p.purchase_price)
   }
 
   function adj(pid: string, d: number) {
@@ -77,7 +79,7 @@ export function QuickEntry({ onSaved, onSwitchFull }: Props) {
   }
 
   const sorted = [...products].sort((a, b) =>
-    (b.isPinned ? 1 : 0) - (a.isPinned ? 1 : 0) || a.name.localeCompare(b.name)
+    (b.is_pinned ? 1 : 0) - (a.is_pinned ? 1 : 0) || a.name.localeCompare(b.name)
   )
 
   return (

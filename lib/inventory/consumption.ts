@@ -8,6 +8,7 @@
  * CHANGES THIS SESSION:
  *   - Initial creation
  *   - Quality fixes: Supabase error handling, negative stock guard, NaN-safe quantity coercion
+ *   - Added computeConsumptionFromMovements for batch/in-memory use (avoids N+1 queries)
  *
  * WHERE IT FITS:
  *   Called by /api/inventory (GET) and lib/inventory/suggestions.ts.
@@ -18,6 +19,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 import type { ConsumptionData, StockStatus } from '@/types'
 
+/** Single-product query. Use computeConsumptionFromMovements when processing many products. */
 export async function getConsumptionData(
   supabase: SupabaseClient,
   storeId: string,
@@ -36,19 +38,32 @@ export async function getConsumptionData(
     .order('created_at', { ascending: false })
 
   if (error) return null
+  return computeConsumptionFromMovements(movements ?? [], currentStock)
+}
 
-  const safeStock = Math.max(0, currentStock)
-
+/**
+ * Compute consumption from a pre-fetched movements array.
+ * Use this when you already have all movements for the store (batch fetch).
+ */
+export function computeConsumptionFromMovements(
+  movements: Array<{ quantity: number | string; created_at: string }>,
+  currentStock: number
+): ConsumptionData | null {
   if (!movements || movements.length === 0) return null
 
-  const lastPurchaseDate = new Date(movements[0].created_at)
+  const safeStock = Math.max(0, currentStock)
+  const sorted = [...movements].sort(
+    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  )
+
+  const lastPurchaseDate = new Date(sorted[0].created_at)
   const daysSinceOrder = Math.max(
     1,
     Math.floor((Date.now() - lastPurchaseDate.getTime()) / (1000 * 60 * 60 * 24))
   )
 
   const orderedQty = movements.reduce((sum, m) => {
-    const qty = parseFloat(m.quantity)
+    const qty = parseFloat(String(m.quantity))
     return sum + (isFinite(qty) ? qty : 0)
   }, 0)
   const consumed = orderedQty - safeStock
@@ -58,9 +73,8 @@ export async function getConsumptionData(
   }
 
   const dailyRate = Math.round((consumed / daysSinceOrder) * 10) / 10
-  const daysUntilStockout = dailyRate > 0
-    ? Math.round((safeStock / dailyRate) * 10) / 10
-    : Infinity
+  const daysUntilStockout =
+    dailyRate > 0 ? Math.round((safeStock / dailyRate) * 10) / 10 : Infinity
 
   return { orderedQty, daysSinceOrder, dailyRate, daysUntilStockout }
 }

@@ -215,7 +215,7 @@ async function seedStore(demo: Demo): Promise<void> {
   const productRows = demo.products.map((p, i) => ({
     id: products[i].id,
     store_id: storeId,
-    item_number: 0,
+    item_number: i + 1,
     name: p.name,
     brand: p.brand ?? null,
     category: p.category ?? null,
@@ -225,6 +225,8 @@ async function seedStore(demo: Demo): Promise<void> {
     selling_price: p.selling_price,
     tax_rate: p.tax_rate,
     shelf_life_days: p.shelf_life_days ?? null,
+    is_active: true,
+    is_pinned: false,
     updated_at: NOW_ISO,
   }));
 

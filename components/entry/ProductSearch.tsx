@@ -7,6 +7,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation
+ *   - Bug fix: updated p.itemNumber/p.sellingPrice to snake_case
  *
  * WHERE IT FITS:
  *   Used in FullEntryForm product search bar.
@@ -31,7 +32,7 @@ export function ProductSearch({ products, onSelect, placeholder = 'Search produc
     const q = query.toLowerCase()
     return p.name.toLowerCase().includes(q) ||
       (p.brand ?? '').toLowerCase().includes(q) ||
-      String(p.itemNumber).includes(q)
+      String(p.item_number).includes(q)
   })
 
   return (
@@ -45,7 +46,7 @@ export function ProductSearch({ products, onSelect, placeholder = 'Search produc
             <button key={p.id} onClick={() => { onSelect(p); setQuery('') }}
               className="w-full text-left px-3 py-2.5 hover:bg-gray-50 border-b border-gray-100 last:border-0">
               <p className="text-sm font-medium text-gray-900">{p.name}</p>
-              <p className="text-xs text-gray-400">#{p.itemNumber} &middot; &#8377;{p.sellingPrice}</p>
+              <p className="text-xs text-gray-400">#{p.item_number} &middot; &#8377;{Number(p.selling_price) || '—'}</p>
             </button>
           ))}
         </div>

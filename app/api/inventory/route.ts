@@ -8,6 +8,8 @@
  * CHANGES THIS SESSION:
  *   - Initial creation
  *   - Quality fixes: delta validation, transaction error handling, updateStock error handling
+ *   - Fixed N+1 query: replaced per-product getConsumptionData loop with a single
+ *     batch fetch of all stock_movements, then in-memory computation per product.
  *
  * WHERE IT FITS:
  *   Primary data source for the /inventory page.
@@ -17,7 +19,7 @@
  */
 import { NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
-import { getConsumptionData, computeStockStatus } from '@/lib/inventory/consumption'
+import { computeConsumptionFromMovements, computeStockStatus } from '@/lib/inventory/consumption'
 import { updateStock } from '@/lib/inventory/updateStock'
 import type { StockAdjustmentPayload } from '@/types'
 
@@ -29,31 +31,44 @@ export async function GET() {
   const { data: store } = await supabase.from('stores').select('id').eq('owner_id', user.id).maybeSingle()
   if (!store) return NextResponse.json({ error: 'Store not found' }, { status: 404 })
 
-  const { data: inventoryRows, error: invError } = await supabase
-    .from('inventory')
-    .select('id, product_id, current_stock, reorder_point, last_restocked_at, expiry_date, updated_at')
-    .eq('store_id', store.id)
+  // Fetch inventory rows, products, and ALL stock movements in 3 parallel queries
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
 
-  if (invError) return NextResponse.json({ error: 'Failed to fetch inventory' }, { status: 500 })
+  const [invResult, prodResult, movResult] = await Promise.all([
+    supabase
+      .from('inventory')
+      .select('id, product_id, current_stock, reorder_point, last_restocked_at, expiry_date')
+      .eq('store_id', store.id),
+    supabase
+      .from('products')
+      .select('id, name, brand, category, unit, is_active')
+      .eq('store_id', store.id)
+      .eq('is_active', true),
+    supabase
+      .from('stock_movements')
+      .select('product_id, quantity, created_at')
+      .eq('store_id', store.id)
+      .eq('movement_type', 'purchase')
+      .gte('created_at', thirtyDaysAgo),
+  ])
 
-  if (!inventoryRows || inventoryRows.length === 0) {
-    return NextResponse.json({ items: [] })
-  }
+  if (invResult.error) return NextResponse.json({ error: 'Failed to fetch inventory' }, { status: 500 })
+  if (prodResult.error) return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 })
 
-  const productIds = inventoryRows.map((r: { product_id: string }) => r.product_id)
-
-  const { data: products, error: prodError } = await supabase
-    .from('products')
-    .select('id, name, brand, category, unit, is_active')
-    .in('id', productIds)
-    .eq('store_id', store.id)
-    .eq('is_active', true)
-
-  if (prodError) return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 })
+  const inventoryRows = invResult.data ?? []
+  if (inventoryRows.length === 0) return NextResponse.json({ items: [] })
 
   const productMap = new Map(
-    (products ?? []).map((p: { id: string; name: string; brand?: string; category: string; unit: string; is_active: boolean }) => [p.id, p])
+    (prodResult.data ?? []).map(p => [p.id, p])
   )
+
+  // Group movements by product_id in memory (no per-product DB round-trips)
+  const movementsByProduct = new Map<string, Array<{ quantity: number | string; created_at: string }>>()
+  for (const m of (movResult.data ?? [])) {
+    const list = movementsByProduct.get(m.product_id) ?? []
+    list.push(m)
+    movementsByProduct.set(m.product_id, list)
+  }
 
   const items = []
 
@@ -63,7 +78,8 @@ export async function GET() {
 
     const currentStock = Number(inv.current_stock ?? 0)
     const reorderPoint = Number(inv.reorder_point ?? 0)
-    const consumption = await getConsumptionData(supabase, store.id, inv.product_id, currentStock)
+    const movements = movementsByProduct.get(inv.product_id) ?? []
+    const consumption = computeConsumptionFromMovements(movements, currentStock)
 
     items.push({
       productId: inv.product_id,

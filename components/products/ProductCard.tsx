@@ -7,6 +7,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation for Phase 1c
+ *   - Fixed price display: show "—" instead of "₹0.00" when price not set
  *
  * WHERE IT FITS:
  *   Used in the products page list and the variant manager.
@@ -38,6 +39,12 @@ interface ProductCardProps {
   onDelete: (id: string) => void;
 }
 
+function fmt(v: number | string | null | undefined): string {
+  const n = Number(v)
+  if (!isFinite(n) || n === 0) return "—"
+  return n.toFixed(2)
+}
+
 export function ProductCard({
   product,
   onEdit,
@@ -46,13 +53,12 @@ export function ProductCard({
 }: ProductCardProps) {
   const [confirmDelete, setConfirmDelete] = useState(false);
 
+  const sp = Number(product.selling_price)
+  const pp = Number(product.purchase_price)
+
   const margin =
-    product.selling_price > 0
-      ? Math.round(
-          ((product.selling_price - product.purchase_price) /
-            product.selling_price) *
-            100
-        )
+    isFinite(sp) && sp > 0
+      ? Math.round(((sp - pp) / sp) * 100)
       : 0;
 
   const marginColor =
@@ -89,12 +95,16 @@ export function ProductCard({
 
         <div className="shrink-0 text-right">
           <p className="text-base font-semibold text-gray-900">
-            ₹{Number(product.selling_price).toFixed(2)}
+            {fmt(product.selling_price) === "—" ? (
+              <span className="text-sm text-gray-400 italic">Price not set</span>
+            ) : (
+              <>₹{fmt(product.selling_price)}</>
+            )}
           </p>
           <p className="text-xs text-gray-400">
-            cost ₹{Number(product.purchase_price).toFixed(2)}
+            cost {fmt(product.purchase_price) === "—" ? "—" : `₹${fmt(product.purchase_price)}`}
           </p>
-          {product.selling_price > 0 && (
+          {isFinite(sp) && sp > 0 && (
             <p className={`text-xs font-medium ${marginColor}`}>
               {margin}% margin
             </p>
