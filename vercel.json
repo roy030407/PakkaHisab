@@ -1,0 +1,32 @@
+{
+  "functions": {
+    "app/api/scan/route.ts": {
+      "maxDuration": 60
+    },
+    "app/api/ai/chat/route.ts": {
+      "maxDuration": 60
+    },
+    "app/api/ai/insight/route.ts": {
+      "maxDuration": 30
+    },
+    "app/api/reports/pdf/route.ts": {
+      "maxDuration": 30
+    },
+    "app/api/cron/weekly-report/route.ts": {
+      "maxDuration": 300
+    },
+    "app/api/cron/monthly-report/route.ts": {
+      "maxDuration": 300
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/weekly-report",
+      "schedule": "30 0 * * 1"
+    },
+    {
+      "path": "/api/cron/monthly-report",
+      "schedule": "30 0 1 * *"
+    }
+  ]
+}

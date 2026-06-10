@@ -19,6 +19,7 @@
  */
 'use client'
 import { useState, useEffect } from 'react'
+import { toast } from 'sonner'
 import type { Product, TransactionType, PaymentMethod } from '@/types'
 import { CustomerSheet } from './CustomerSheet'
 
@@ -68,6 +69,7 @@ export function QuickEntry({ onSaved, onSwitchFull }: Props) {
       }),
     })
     setSaving(false)
+    toast.success(`${type.charAt(0).toUpperCase() + type.slice(1)} saved`)
     onSaved()
   }
 

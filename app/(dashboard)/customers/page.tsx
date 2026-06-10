@@ -15,9 +15,11 @@
  */
 'use client'
 import { useState, useEffect } from 'react'
+import { Users } from 'lucide-react'
 import type { Customer } from '@/types'
 import { CreditBadge } from '@/components/customers/CreditBadge'
 import { CustomerLedger } from '@/components/customers/CustomerLedger'
+import { ListPageSkeleton } from '@/components/shared/PageSkeleton'
 
 export default function CustomersPage() {
   const [customers, setCustomers] = useState<Customer[]>([])
@@ -48,13 +50,16 @@ export default function CustomersPage() {
       </div>
       <div className="flex-1 px-4 py-3">
         {loading ? (
-          <div className="flex items-center justify-center py-16">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-slate-700" />
-          </div>
+          <ListPageSkeleton rows={5} />
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
+            <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mb-3">
+              <Users size={22} className="text-gray-400" />
+            </div>
             <p className="text-sm font-medium text-gray-900">No customers yet</p>
-            <p className="text-sm text-gray-400 mt-1">Customers are added when you record a transaction</p>
+            <p className="text-xs text-gray-400 mt-1 max-w-[200px]">
+              Customers are added when you record a sale — they&apos;ll appear here.
+            </p>
           </div>
         ) : (
           <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">

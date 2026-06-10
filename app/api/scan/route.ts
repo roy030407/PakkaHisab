@@ -19,6 +19,7 @@
 import { NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 import { extractBillData } from '@/lib/anthropic/extraction'
+import { scanRateLimit } from '@/lib/ratelimit'
 import { randomUUID } from 'crypto'
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf']
@@ -31,6 +32,15 @@ export async function POST(request: Request) {
   const { data: { user }, error: authError } = await supabase.auth.getUser()
   if (authError || !user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  // Rate limit — 10 scans per minute per user
+  const rl = await scanRateLimit(user.id)
+  if (!rl.success) {
+    return NextResponse.json(
+      { error: 'Too many scan requests. Please wait a moment and try again.' },
+      { status: 429 }
+    )
   }
 
   // Get store

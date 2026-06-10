@@ -22,6 +22,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server"
 import { buildBusinessContext, buildSystemPrompt } from "@/lib/anthropic/advisor"
 import { ADVISOR_SYSTEM_PROMPT } from "@/lib/anthropic/prompts"
 import { getAnthropicClient } from "@/lib/anthropic/client"
+import { aiRateLimit } from "@/lib/ratelimit"
 
 export const runtime = "nodejs"
 
@@ -38,6 +39,15 @@ export async function POST(request: Request) {
   } = await supabase.auth.getUser()
   if (authError || !user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
+  // Rate limit — 20 AI requests per minute per user
+  const rl = await aiRateLimit(user.id)
+  if (!rl.success) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please wait a moment.' },
+      { status: 429 }
+    )
   }
 
   const { data: store } = await supabase

@@ -18,6 +18,7 @@
  */
 'use client'
 import { useState, useEffect } from 'react'
+import { toast } from 'sonner'
 import type { Product, TransactionType, PaymentMethod, FullEntryItem } from '@/types'
 import { ProductSearch } from './ProductSearch'
 import { CustomerSheet } from './CustomerSheet'
@@ -79,6 +80,7 @@ export function FullEntryForm({ initialItems, onSaved, onSwitchQuick }: Props) {
       }),
     })
     setSaving(false)
+    toast.success(`${type.charAt(0).toUpperCase() + type.slice(1)} saved`)
     onSaved()
   }
 

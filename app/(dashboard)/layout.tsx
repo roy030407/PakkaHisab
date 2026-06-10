@@ -9,6 +9,7 @@
  * CHANGES THIS SESSION:
  *   - Updated: businesses → stores table query
  *   - Added BottomNav import and wrapper layout with pb-16 content padding
+ *   - Added desktop Sidebar (md+), BottomNav hidden md+, content takes remaining width
  *
  * WHERE IT FITS:
  *   Wraps all pages under (dashboard)/*. The single point of auth
@@ -21,6 +22,7 @@
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { BottomNav } from "@/components/shared/BottomNav";
+import { Sidebar } from "@/components/shared/Sidebar";
 
 export default async function DashboardLayout({
   children,
@@ -47,9 +49,12 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <main className="flex-1 pb-16">{children}</main>
-      <BottomNav />
+    <div className="flex min-h-screen bg-gray-50">
+      <Sidebar />
+      <div className="flex flex-col flex-1 min-w-0">
+        <main className="flex-1 pb-16 md:pb-0">{children}</main>
+        <BottomNav />
+      </div>
     </div>
   );
 }

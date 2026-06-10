@@ -19,8 +19,9 @@
 import { NextResponse } from "next/server"
 import { createSupabaseServerClient } from "@/lib/supabase/server"
 import { getDailyInsight } from "@/lib/anthropic/insight"
+import { aiRateLimit } from "@/lib/ratelimit"
 
-export async function GET() {
+export async function GET(request: Request) {
   const supabase = createSupabaseServerClient()
   const {
     data: { user },
@@ -28,6 +29,14 @@ export async function GET() {
   } = await supabase.auth.getUser()
   if (authError || !user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
+  const rl = await aiRateLimit(user.id)
+  if (!rl.success) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please wait a moment.' },
+      { status: 429 }
+    )
   }
 
   const { data: store } = await supabase

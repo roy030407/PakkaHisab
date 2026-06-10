@@ -27,6 +27,7 @@ import { StockList } from '@/components/inventory/StockList'
 import { ExpiryAlert } from '@/components/inventory/ExpiryAlert'
 import { ConsumptionCard } from '@/components/inventory/ConsumptionCard'
 import { OrderSuggestionCard } from '@/components/inventory/OrderSuggestionCard'
+import { ListPageSkeleton } from '@/components/shared/PageSkeleton'
 
 interface InventoryResponse {
   items: StockItemWithConsumption[]
@@ -78,14 +79,7 @@ export default function InventoryPage() {
     .slice(0, 5)
 
   if (loading) {
-    return (
-      <div className="mx-auto max-w-lg px-4 py-8">
-        <div className="h-6 bg-muted rounded w-32 mb-6 animate-pulse" />
-        <div className="space-y-3">
-          {[1, 2, 3].map(n => <div key={n} className="h-16 bg-muted rounded-xl animate-pulse" />)}
-        </div>
-      </div>
-    )
+    return <ListPageSkeleton rows={6} />
   }
 
   return (

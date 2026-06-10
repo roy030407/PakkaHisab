@@ -45,6 +45,19 @@
   .text-balance {
     text-wrap: balance;
   }
+  /* iOS safe-area padding for fixed bottom bars */
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  /* Smooth page entry */
+  .page-enter {
+    animation: page-fade-up 0.2s ease-out both;
+  }
+}
+
+@keyframes page-fade-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 @layer base {

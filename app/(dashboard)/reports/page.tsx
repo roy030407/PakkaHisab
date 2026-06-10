@@ -19,6 +19,8 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
+import { Download, Share2 } from "lucide-react"
+import { toast } from "sonner"
 import { PeriodToggle } from "@/components/reports/PeriodToggle"
 import { StatCard, formatINR } from "@/components/reports/StatCard"
 import { ProfitCard } from "@/components/reports/ProfitCard"
@@ -26,6 +28,7 @@ import { TaxSummary } from "@/components/reports/TaxSummary"
 import { CashFlowChart } from "@/components/reports/CashFlowChart"
 import { SalesPurchasesChart } from "@/components/reports/SalesPurchasesChart"
 import { TopProductsChart } from "@/components/reports/TopProductsChart"
+import { ReportSkeleton } from "@/components/shared/PageSkeleton"
 import type { ReportPeriod, PeriodReport } from "@/types"
 
 export default function ReportsPage() {
@@ -33,6 +36,26 @@ export default function ReportsPage() {
   const [report, setReport] = useState<PeriodReport | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [sharing, setSharing] = useState(false)
+
+  async function handleShare() {
+    setSharing(true)
+    try {
+      const res = await fetch('/api/reports/share', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ period }),
+      })
+      if (!res.ok) throw new Error()
+      const { url } = await res.json()
+      await navigator.clipboard.writeText(url)
+      toast.success('Share link copied to clipboard')
+    } catch {
+      toast.error('Could not create share link')
+    } finally {
+      setSharing(false)
+    }
+  }
 
   const fetchReport = useCallback(async (p: ReportPeriod) => {
     setLoading(true)
@@ -54,12 +77,32 @@ export default function ReportsPage() {
 
   return (
     <div className="px-4 py-6 max-w-2xl mx-auto">
-      <div className="mb-5">
-        <h1 className="text-xl font-bold text-gray-900">Reports</h1>
+      <div className="mb-5 flex items-start justify-between gap-3">
+        <div>
+          <h1 className="text-xl font-bold text-gray-900">Reports</h1>
+          {report && (
+            <p className="text-sm text-gray-500 mt-0.5">
+              {report.periodLabel} · {report.transactionCount} transactions
+            </p>
+          )}
+        </div>
         {report && (
-          <p className="text-sm text-gray-500 mt-0.5">
-            {report.periodLabel} · {report.transactionCount} transactions
-          </p>
+          <div className="flex items-center gap-2 shrink-0">
+            <a
+              href={`/api/reports/pdf?period=${period}`}
+              download
+              className="flex items-center gap-1.5 text-sm font-medium text-gray-600 border border-gray-200 rounded-lg px-3 py-2 hover:bg-gray-50 bg-white">
+              <Download size={14} />
+              PDF
+            </a>
+            <button
+              onClick={handleShare}
+              disabled={sharing}
+              className="flex items-center gap-1.5 text-sm font-medium text-gray-600 border border-gray-200 rounded-lg px-3 py-2 hover:bg-gray-50 bg-white disabled:opacity-60">
+              <Share2 size={14} />
+              {sharing ? '…' : 'Share'}
+            </button>
+          </div>
         )}
       </div>
 
@@ -73,13 +116,7 @@ export default function ReportsPage() {
         </div>
       )}
 
-      {loading && (
-        <div className="space-y-3">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-24 rounded-xl bg-gray-100 animate-pulse" />
-          ))}
-        </div>
-      )}
+      {loading && <ReportSkeleton />}
 
       {!loading && report && (
         <div className="space-y-4">
