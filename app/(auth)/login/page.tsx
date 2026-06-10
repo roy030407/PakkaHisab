@@ -2,12 +2,13 @@
  * FILE: app/(auth)/login/page.tsx
  *
  * WHAT THIS DOES:
- *   Magic-link login. User enters email, Supabase sends a sign-in link,
- *   clicking it calls /api/auth/callback which creates the session.
+ *   Email + password login. Authenticates via Supabase signInWithPassword
+ *   (no emails sent, no rate limits). Includes a one-tap demo accounts
+ *   panel that fills credentials for the seeded test stores.
  *
  * CHANGES THIS SESSION:
- *   - Initial creation
- *   - Switch from OTP code entry to magic link flow; add emailRedirectTo
+ *   - Replaced magic link flow with email + password (signInWithPassword)
+ *   - Added demo accounts quick-fill panel for testing
  *
  * WHERE IT FITS:
  *   Entry point for returning users. Unauthenticated dashboard access
@@ -32,35 +33,47 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
-type Step = "email" | "sent";
+const DEMO_ACCOUNTS = [
+  { label: "Kirana store", email: "demo.kirana@pakkahisab.com" },
+  { label: "Medical shop", email: "demo.medical@pakkahisab.com" },
+  { label: "Hardware store", email: "demo.hardware@pakkahisab.com" },
+];
+const DEMO_PASSWORD = "demo1234";
 
 export default function LoginPage() {
-  const [step, setStep] = useState<Step>("email");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showDemo, setShowDemo] = useState(false);
+  const router = useRouter();
   const supabase = createSupabaseBrowserClient();
 
-  async function handleSendLink(e: React.FormEvent) {
+  async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    const { error } = await supabase.auth.signInWithOtp({
+    const { error } = await supabase.auth.signInWithPassword({
       email,
-      options: {
-        shouldCreateUser: false,
-        emailRedirectTo: `${window.location.origin}/api/auth/callback`,
-      },
+      password,
     });
 
     if (error) {
-      setError("Could not send login link. Check your email and try again.");
+      setError("Wrong email or password. Try again.");
+      setLoading(false);
     } else {
-      setStep("sent");
+      router.push("/dashboard");
+      router.refresh();
     }
-    setLoading(false);
+  }
+
+  function fillDemo(demoEmail: string) {
+    setEmail(demoEmail);
+    setPassword(DEMO_PASSWORD);
+    setError(null);
   }
 
   return (
@@ -68,53 +81,73 @@ export default function LoginPage() {
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
           <CardTitle className="text-xl">PakkaHisab</CardTitle>
-          <CardDescription>
-            {step === "email"
-              ? "Enter your email to receive a sign-in link"
-              : `Check your inbox — we sent a link to ${email}`}
-          </CardDescription>
+          <CardDescription>Log in to your store</CardDescription>
         </CardHeader>
         <CardContent>
-          {step === "email" ? (
-            <form onSubmit={handleSendLink} className="space-y-4">
-              <div className="space-y-1">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="you@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  autoComplete="email"
-                />
-              </div>
-              {error && <p className="text-sm text-red-600">{error}</p>}
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Sending..." : "Send login link"}
-              </Button>
-              <p className="text-center text-sm text-gray-500">
-                New here?{" "}
-                <Link href="/signup" className="font-medium text-slate-700 underline">
-                  Create account
-                </Link>
-              </p>
-            </form>
-          ) : (
-            <div className="space-y-4 text-center">
-              <p className="text-sm text-gray-600">
-                Click the <strong>Sign in</strong> link in the email to log in.
-                The link expires in 1 hour.
-              </p>
-              <button
-                type="button"
-                onClick={() => { setStep("email"); setError(null); }}
-                className="text-sm text-gray-500 underline"
-              >
-                Use a different email
-              </button>
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div className="space-y-1">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                autoComplete="email"
+              />
             </div>
-          )}
+            <div className="space-y-1">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="Your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                autoComplete="current-password"
+              />
+            </div>
+            {error && <p className="text-sm text-red-600">{error}</p>}
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Logging in..." : "Log in"}
+            </Button>
+            <p className="text-center text-sm text-gray-500">
+              New here?{" "}
+              <Link href="/signup" className="font-medium text-slate-700 underline">
+                Create account
+              </Link>
+            </p>
+          </form>
+
+          <div className="mt-6 border-t pt-4">
+            <button
+              type="button"
+              onClick={() => setShowDemo((v) => !v)}
+              className="w-full text-center text-xs text-gray-400 hover:text-gray-600"
+            >
+              {showDemo ? "Hide demo accounts" : "Try a demo account"}
+            </button>
+            {showDemo && (
+              <div className="mt-3 space-y-2">
+                {DEMO_ACCOUNTS.map((d) => (
+                  <button
+                    key={d.email}
+                    type="button"
+                    onClick={() => fillDemo(d.email)}
+                    className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-left text-sm hover:border-slate-400 hover:bg-slate-50"
+                  >
+                    <span className="font-medium text-gray-800">{d.label}</span>
+                    <span className="block text-xs text-gray-400">{d.email}</span>
+                  </button>
+                ))}
+                <p className="text-center text-xs text-gray-400">
+                  Tap one, then press Log in. Password is pre-filled.
+                </p>
+              </div>
+            )}
+          </div>
         </CardContent>
       </Card>
     </div>
