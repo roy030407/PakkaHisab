@@ -7,6 +7,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation
+ *   - Quality fixes: Supabase error handling, negative stock guard, NaN-safe quantity coercion
  *
  * WHERE IT FITS:
  *   Called by /api/inventory (GET) and lib/inventory/suggestions.ts.
@@ -25,7 +26,7 @@ export async function getConsumptionData(
 ): Promise<ConsumptionData | null> {
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
 
-  const { data: movements } = await supabase
+  const { data: movements, error } = await supabase
     .from('stock_movements')
     .select('quantity, created_at')
     .eq('store_id', storeId)
@@ -33,6 +34,10 @@ export async function getConsumptionData(
     .eq('movement_type', 'purchase')
     .gte('created_at', thirtyDaysAgo)
     .order('created_at', { ascending: false })
+
+  if (error) return null
+
+  const safeStock = Math.max(0, currentStock)
 
   if (!movements || movements.length === 0) return null
 
@@ -42,8 +47,11 @@ export async function getConsumptionData(
     Math.floor((Date.now() - lastPurchaseDate.getTime()) / (1000 * 60 * 60 * 24))
   )
 
-  const orderedQty = movements.reduce((sum, m) => sum + Number(m.quantity), 0)
-  const consumed = orderedQty - currentStock
+  const orderedQty = movements.reduce((sum, m) => {
+    const qty = parseFloat(m.quantity)
+    return sum + (isFinite(qty) ? qty : 0)
+  }, 0)
+  const consumed = orderedQty - safeStock
 
   if (consumed <= 0) {
     return { orderedQty, daysSinceOrder, dailyRate: 0, daysUntilStockout: Infinity }
@@ -51,7 +59,7 @@ export async function getConsumptionData(
 
   const dailyRate = Math.round((consumed / daysSinceOrder) * 10) / 10
   const daysUntilStockout = dailyRate > 0
-    ? Math.round((currentStock / dailyRate) * 10) / 10
+    ? Math.round((safeStock / dailyRate) * 10) / 10
     : Infinity
 
   return { orderedQty, daysSinceOrder, dailyRate, daysUntilStockout }
