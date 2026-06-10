@@ -2,11 +2,12 @@
  * FILE: app/(auth)/login/page.tsx
  *
  * WHAT THIS DOES:
- *   Email OTP login page. User enters their email, receives a 6-digit OTP,
- *   then enters it to authenticate. No passwords.
+ *   Magic-link login. User enters email, Supabase sends a sign-in link,
+ *   clicking it calls /api/auth/callback which creates the session.
  *
  * CHANGES THIS SESSION:
  *   - Initial creation
+ *   - Switch from OTP code entry to magic link flow; add emailRedirectTo
  *
  * WHERE IT FITS:
  *   Entry point for returning users. Unauthenticated dashboard access
@@ -31,53 +32,33 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
-type Step = "email" | "otp";
+type Step = "email" | "sent";
 
 export default function LoginPage() {
   const [step, setStep] = useState<Step>("email");
   const [email, setEmail] = useState("");
-  const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
   const supabase = createSupabaseBrowserClient();
 
-  async function handleSendOtp(e: React.FormEvent) {
+  async function handleSendLink(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: { shouldCreateUser: false },
+      options: {
+        shouldCreateUser: false,
+        emailRedirectTo: `${window.location.origin}/api/auth/callback`,
+      },
     });
 
     if (error) {
-      setError("Could not send login code. Check your email and try again.");
+      setError("Could not send login link. Check your email and try again.");
     } else {
-      setStep("otp");
-    }
-    setLoading(false);
-  }
-
-  async function handleVerifyOtp(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-
-    const { error } = await supabase.auth.verifyOtp({
-      email,
-      token: otp,
-      type: "email",
-    });
-
-    if (error) {
-      setError("Invalid or expired code. Try again.");
-    } else {
-      router.push("/dashboard");
-      router.refresh();
+      setStep("sent");
     }
     setLoading(false);
   }
@@ -89,13 +70,13 @@ export default function LoginPage() {
           <CardTitle className="text-xl">PakkaHisab</CardTitle>
           <CardDescription>
             {step === "email"
-              ? "Enter your email to receive a login code"
-              : `Enter the 6-digit code sent to ${email}`}
+              ? "Enter your email to receive a sign-in link"
+              : `Check your inbox — we sent a link to ${email}`}
           </CardDescription>
         </CardHeader>
         <CardContent>
           {step === "email" ? (
-            <form onSubmit={handleSendOtp} className="space-y-4">
+            <form onSubmit={handleSendLink} className="space-y-4">
               <div className="space-y-1">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -110,49 +91,29 @@ export default function LoginPage() {
               </div>
               {error && <p className="text-sm text-red-600">{error}</p>}
               <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Sending..." : "Send login code"}
+                {loading ? "Sending..." : "Send login link"}
               </Button>
               <p className="text-center text-sm text-gray-500">
                 New here?{" "}
-                <Link
-                  href="/signup"
-                  className="font-medium text-slate-700 underline"
-                >
+                <Link href="/signup" className="font-medium text-slate-700 underline">
                   Create account
                 </Link>
               </p>
             </form>
           ) : (
-            <form onSubmit={handleVerifyOtp} className="space-y-4">
-              <div className="space-y-1">
-                <Label htmlFor="otp">Login code</Label>
-                <Input
-                  id="otp"
-                  type="text"
-                  inputMode="numeric"
-                  placeholder="123456"
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
-                  maxLength={6}
-                  required
-                  autoComplete="one-time-code"
-                />
-              </div>
-              {error && <p className="text-sm text-red-600">{error}</p>}
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Verifying..." : "Log in"}
-              </Button>
+            <div className="space-y-4 text-center">
+              <p className="text-sm text-gray-600">
+                Click the <strong>Sign in</strong> link in the email to log in.
+                The link expires in 1 hour.
+              </p>
               <button
                 type="button"
-                onClick={() => {
-                  setStep("email");
-                  setError(null);
-                }}
-                className="w-full text-center text-sm text-gray-500 underline"
+                onClick={() => { setStep("email"); setError(null); }}
+                className="text-sm text-gray-500 underline"
               >
                 Use a different email
               </button>
-            </form>
+            </div>
           )}
         </CardContent>
       </Card>

@@ -24,7 +24,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "PakkaHisab — Your AI CFO",
+  title: "PakkaHisab - Your AI CFO",
   description: "Scan bills, understand your business, get paid faster.",
 };
 

@@ -102,7 +102,7 @@ export function QuickEntry({ onSaved, onSwitchFull }: Props) {
       <div className="flex-1 px-4 py-2">
         {products.length === 0 ? (
           <div className="flex items-center justify-center py-16">
-            <p className="text-sm text-gray-400">No products yet — add some in Settings</p>
+            <p className="text-sm text-gray-400">No products yet - add some in Settings</p>
           </div>
         ) : (
           <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">

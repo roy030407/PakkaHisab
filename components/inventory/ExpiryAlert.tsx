@@ -44,7 +44,7 @@ export function ExpiryAlert({ items }: Props) {
         return (
           <div key={item.productId} className="flex items-center justify-between text-sm">
             <span className="text-amber-900">
-              {item.productName} — {item.currentStock} {item.unit}{item.currentStock === 1 ? '' : 's'}
+              {item.productName} - {item.currentStock} {item.unit}{item.currentStock === 1 ? '' : 's'}
             </span>
             <span className="text-amber-700 font-medium shrink-0 ml-2">
               {daysUntil <= 0 ? 'Expired' : `${daysUntil}d left`}

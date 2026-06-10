@@ -137,7 +137,7 @@ export function ExtractionReview({ extraction, documentUploadId, duplicateWarnin
         {hasLowConfidence && (
           <div className="mx-4 mt-3 rounded-xl bg-yellow-50 border border-yellow-200 px-4 py-3">
             <p className="text-sm text-yellow-800 font-medium">
-              ⚠ Some fields may be incorrect — review before saving.
+              ⚠ Some fields may be incorrect - review before saving.
             </p>
           </div>
         )}
@@ -168,7 +168,7 @@ export function ExtractionReview({ extraction, documentUploadId, duplicateWarnin
                     </p>
                     {item.needsCatalogAdd && (
                       <p className="text-xs text-red-600 mt-0.5">
-                        Not in catalog — will be added as new product
+                        Not in catalog - will be added as new product
                       </p>
                     )}
                     {rowLowConf && (
