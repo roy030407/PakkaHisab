@@ -21,7 +21,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server"
 import { getDailyInsight } from "@/lib/anthropic/insight"
 import { aiRateLimit } from "@/lib/ratelimit"
 
-export async function GET(request: Request) {
+export async function GET() {
   const supabase = createSupabaseServerClient()
   const {
     data: { user },
