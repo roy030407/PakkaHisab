@@ -10,6 +10,7 @@
  * CHANGES THIS SESSION:
  *   - Replaced magic link flow with email + password (signUp)
  *   - Added password confirmation and client-side validation
+ *   - Added export const dynamic = "force-dynamic" to prevent build-time prerender
  *
  * WHERE IT FITS:
  *   Entry point for first-time users. Leads to /onboarding on success.
@@ -19,6 +20,8 @@
  */
 
 "use client";
+
+export const dynamic = "force-dynamic";
 
 import { useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";

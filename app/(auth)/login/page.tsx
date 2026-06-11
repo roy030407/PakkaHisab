@@ -9,6 +9,7 @@
  * CHANGES THIS SESSION:
  *   - Replaced magic link flow with email + password (signInWithPassword)
  *   - Added demo accounts quick-fill panel for testing
+ *   - Added export const dynamic = "force-dynamic" to prevent build-time prerender
  *
  * WHERE IT FITS:
  *   Entry point for returning users. Unauthenticated dashboard access
@@ -19,6 +20,8 @@
  */
 
 "use client";
+
+export const dynamic = "force-dynamic";
 
 import { useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
