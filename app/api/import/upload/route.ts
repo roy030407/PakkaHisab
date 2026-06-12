@@ -9,6 +9,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation for Phase 6 data import
+ *   - Fix: add server-side magic byte validation so client-supplied MIME/extension can't be spoofed
  *
  * WHERE IT FITS:
  *   Step 1 of the import wizard in settings page.
@@ -65,6 +66,25 @@ export async function POST(request: Request) {
   }
 
   const buffer = Buffer.from(await file.arrayBuffer())
+
+  // Server-side magic byte validation — client-supplied MIME/extension cannot be trusted.
+  // .xlsx: PK zip header 50 4B 03 04
+  // .xls:  OLE2 header   D0 CF 11 E0
+  const sig = buffer.slice(0, 4)
+  const hasPKHeader  = sig[0] === 0x50 && sig[1] === 0x4B && sig[2] === 0x03 && sig[3] === 0x04
+  const hasOLEHeader = sig[0] === 0xD0 && sig[1] === 0xCF && sig[2] === 0x11 && sig[3] === 0xE0
+  if (isExcel && !hasPKHeader && !hasOLEHeader) {
+    return NextResponse.json(
+      { error: 'File content does not match Excel format' },
+      { status: 400 }
+    )
+  }
+  if (isCSV && (hasPKHeader || hasOLEHeader)) {
+    return NextResponse.json(
+      { error: 'File appears to be a binary file, not CSV' },
+      { status: 400 }
+    )
+  }
 
   let headers: string[] = []
   let rows: Record<string, string>[] = []

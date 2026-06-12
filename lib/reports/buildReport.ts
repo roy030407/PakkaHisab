@@ -8,6 +8,8 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation (extracted from app/api/reports/route.ts)
+ *   - Fix: filter on logical `date` column instead of `created_at` for correct period bucketing
+ *   - Fix: chunk transaction_items IN query to avoid PostgREST URL-length limit on busy stores
  *
  * WHERE IT FITS:
  *   Called by /api/reports, /api/reports/pdf, and /api/cron/* routes.
@@ -34,16 +36,18 @@ export async function buildPeriodReport(
   period: ReportPeriod,
 ): Promise<PeriodReport> {
   const bounds = getPeriodBounds(period)
-  const startISO = bounds.start.toISOString()
-  const endISO = bounds.end.toISOString()
+  // Use the logical business `date` column (not created_at) so back-entered
+  // transactions are bucketed into the period they belong to, not when they were typed.
+  const startDate = bounds.start.toISOString().split('T')[0]
+  const endDate   = bounds.end.toISOString().split('T')[0]
 
   const [txResult, costsResult] = await Promise.all([
     supabase
       .from('transactions')
       .select('id, type, total_amount, tax_amount, payment_method, date')
       .eq('store_id', storeId)
-      .gte('created_at', startISO)
-      .lte('created_at', endISO),
+      .gte('date', startDate)
+      .lte('date', endDate),
     supabase
       .from('fixed_costs')
       .select('amount, frequency, is_active')
@@ -77,18 +81,27 @@ export async function buildPeriodReport(
   const profit = calculateProfit(totalSales, totalPurchases, fixedCosts)
   const taxSummary = calculateTax(txRows)
 
-  // Top products
+  // Top products — chunked to avoid PostgREST URL-length limit (each UUID is ~37 chars;
+  // a 200+ UUID IN clause exceeds the ~8 KB URL limit on busy stores).
   const txIds = txRows.filter((t) => t.type === 'sale').map((t) => t.id)
   let topProducts: TopProduct[] = []
 
   if (txIds.length > 0) {
-    const { data: items } = await supabase
-      .from('transaction_items')
-      .select('product_id, product_name_raw, quantity, total_price')
-      .in('transaction_id', txIds)
+    const CHUNK = 100
+    const chunks: string[][] = []
+    for (let i = 0; i < txIds.length; i += CHUNK) chunks.push(txIds.slice(i, i + CHUNK))
+    const chunkResults = await Promise.all(
+      chunks.map((chunk) =>
+        supabase
+          .from('transaction_items')
+          .select('product_id, product_name_raw, quantity, total_price')
+          .in('transaction_id', chunk)
+      )
+    )
+    const items = chunkResults.flatMap((r) => r.data ?? [])
 
     const productMap = new Map<string, { name: string; revenue: number; quantity: number }>()
-    for (const item of items ?? []) {
+    for (const item of items) {
       const key = item.product_id ?? item.product_name_raw
       const existing = productMap.get(key)
       if (existing) {

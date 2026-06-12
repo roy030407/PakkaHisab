@@ -3,12 +3,13 @@
  *
  * WHAT THIS DOES:
  *   POST: Streams a Claude response to the merchant's question.
- *   Builds full business context, calls claude-sonnet-4-20250514 with
+ *   Builds full business context, calls claude-sonnet-4-6 with
  *   streaming, and saves the conversation to ai_conversations.
  *   Returns a Server-Sent Events stream.
  *
  * CHANGES THIS SESSION:
  *   - Initial creation for Phase 5 AI Advisor
+ *   - Fix: update model from claude-sonnet-4-20250514 to claude-sonnet-4-6 (EOL June 15 2026)
  *
  * WHERE IT FITS:
  *   Called by components/ai/ChatInterface.tsx via fetch with ReadableStream.
@@ -91,7 +92,7 @@ export async function POST(request: Request) {
       let fullText = ""
       try {
         const anthropicStream = await anthropic.messages.stream({
-          model: "claude-sonnet-4-20250514",
+          model: "claude-sonnet-4-6",
           max_tokens: 1024,
           system: systemPrompt,
           messages: messages.map((m) => ({

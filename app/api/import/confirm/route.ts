@@ -9,6 +9,8 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation for Phase 6 data import
+ *   - Fix: use raw amountStr check (not !totalAmount) so ₹0 transactions aren't silently dropped
+ *   - Fix: chunk large batch inserts into 500-row slices to avoid PostgREST 6 MB body limit
  *
  * WHERE IT FITS:
  *   Final step of the import wizard. Called after merchant confirms mapping.
@@ -31,6 +33,17 @@ interface ImportPayload {
 function mapped(row: Record<string, string>, mapping: Record<string, string | null>, field: string): string {
   const col = Object.entries(mapping).find(([, v]) => v === field)?.[0]
   return col ? (row[col] ?? "") : ""
+}
+
+// Chunk a large array into slices of `size` and insert sequentially to stay
+// under PostgREST's ~6 MB request body limit per call.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function insertInChunks(supabase: any, table: string, rows: object[], chunkSize = 500) {
+  for (let i = 0; i < rows.length; i += chunkSize) {
+    const { error } = await supabase.from(table).insert(rows.slice(i, i + chunkSize))
+    if (error) return { error }
+  }
+  return { error: null }
 }
 
 export async function POST(request: Request) {
@@ -99,7 +112,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "No valid product rows found" }, { status: 400 })
     }
 
-    const { error } = await supabase.from("products").insert(batch)
+    const { error } = await insertInChunks(supabase, "products", batch)
     if (error) {
       return NextResponse.json({ error: "Failed to insert products" }, { status: 500 })
     }
@@ -129,7 +142,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "No valid customer rows found" }, { status: 400 })
     }
 
-    const { error } = await supabase.from("customers").insert(batch)
+    const { error } = await insertInChunks(supabase, "customers", batch)
     if (error) {
       return NextResponse.json({ error: "Failed to insert customers" }, { status: 500 })
     }
@@ -142,7 +155,8 @@ export async function POST(request: Request) {
         const amountStr = mapped(row, mapping, "total_amount")
         const totalAmount = parseIndianAmount(amountStr)
         const dateStr = parseIndianDate(mapped(row, mapping, "date"))
-        if (!totalAmount || !dateStr) return null
+        // Check raw string for emptiness so a valid ₹0 amount is not silently dropped
+        if (!amountStr.trim() || !dateStr) return null
         return {
           id: randomUUID(),
           store_id: store.id,
@@ -164,7 +178,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "No valid transaction rows found" }, { status: 400 })
     }
 
-    const { error } = await supabase.from("transactions").insert(batch)
+    const { error } = await insertInChunks(supabase, "transactions", batch)
     if (error) {
       return NextResponse.json({ error: "Failed to insert transactions" }, { status: 500 })
     }

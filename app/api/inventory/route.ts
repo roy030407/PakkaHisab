@@ -54,6 +54,7 @@ export async function GET() {
 
   if (invResult.error) return NextResponse.json({ error: 'Failed to fetch inventory' }, { status: 500 })
   if (prodResult.error) return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 })
+  if (movResult.error) return NextResponse.json({ error: 'Failed to fetch stock movements' }, { status: 500 })
 
   const inventoryRows = invResult.data ?? []
   if (inventoryRows.length === 0) return NextResponse.json({ items: [] })

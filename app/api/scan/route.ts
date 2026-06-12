@@ -116,6 +116,8 @@ export async function POST(request: Request) {
     .single()
 
   if (docError || !docUpload) {
+    // Clean up the orphaned storage object so quota isn't wasted
+    await supabase.storage.from('documents').remove([storagePath])
     return NextResponse.json({ error: 'Failed to record upload' }, { status: 500 })
   }
 

@@ -8,6 +8,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation for Phase 5 AI Advisor
+ *   - Fix: update model to claude-sonnet-4-6; fix upsert onConflict target to match DB constraint
  *
  * WHERE IT FITS:
  *   Called by /api/ai/insight. Result shown as InsightCard on dashboard.
@@ -46,7 +47,7 @@ export async function getDailyInsight(
 
   const anthropic = getAnthropicClient()
   const message = await anthropic.messages.create({
-    model: "claude-sonnet-4-20250514",
+    model: "claude-sonnet-4-6",
     max_tokens: 200,
     system: systemPrompt,
     messages: [
@@ -70,7 +71,7 @@ export async function getDailyInsight(
       summary_text: text,
       report_json: null,
     },
-    { onConflict: "store_id,report_type,period_start" }
+    { onConflict: "store_id,report_type" }
   )
 
   return text

@@ -11,6 +11,8 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation for Phase 7 report sharing
+ *   - Fix: preserve existing share_token on re-share so previously distributed links stay valid
+ *   - Fix: validate token is a well-formed UUID before querying (GET handler)
  *
  * WHERE IT FITS:
  *   POST called by the reports page share button.
@@ -53,19 +55,30 @@ export async function POST(request: Request) {
     : 'monthly'
 
   const report = await buildPeriodReport(supabase, store.id, period)
-  const shareToken = randomUUID()
-
-  // Upsert into periodic_reports (share tokens expire when a new one is created
-  // for the same store+period — one active link per period is sufficient for v1)
   const svc = createSupabaseServiceClient()
+
+  // Reuse the existing share_token if one already exists for this store+period
+  // so previously distributed links remain valid after the report is refreshed.
+  const { data: existing } = await svc
+    .from('periodic_reports')
+    .select('share_token')
+    .eq('store_id', store.id)
+    .eq('report_type', period)
+    .maybeSingle()
+
+  const shareToken = existing?.share_token ?? randomUUID()
+
+  const startDate = report.cashFlowData[0]?.date ?? new Date().toISOString().split('T')[0]
+  const endDate   = report.cashFlowData.at(-1)?.date ?? new Date().toISOString().split('T')[0]
+
   const { error: upsertErr } = await svc
     .from('periodic_reports')
     .upsert(
       {
         store_id: store.id,
         report_type: period,
-        period_start: report.cashFlowData[0]?.date ?? new Date().toISOString().split('T')[0],
-        period_end:   report.cashFlowData.at(-1)?.date ?? new Date().toISOString().split('T')[0],
+        period_start: startDate,
+        period_end:   endDate,
         summary_text: `${report.periodLabel} report for ${store.name}`,
         report_json:  report,
         share_token:  shareToken,
@@ -81,11 +94,14 @@ export async function POST(request: Request) {
   return NextResponse.json({ url: `${appUrl}/share/${shareToken}` })
 }
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
 /** GET /api/reports/share?token=<uuid> — public, no auth required */
 export async function GET(request: Request) {
   const url = new URL(request.url)
   const token = url.searchParams.get('token')
   if (!token) return NextResponse.json({ error: 'Missing token' }, { status: 400 })
+  if (!UUID_RE.test(token)) return NextResponse.json({ error: 'Invalid token' }, { status: 400 })
 
   const svc = createSupabaseServiceClient()
   const { data, error } = await svc
