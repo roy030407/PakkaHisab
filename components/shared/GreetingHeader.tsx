@@ -7,6 +7,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation for Khata Green redesign
+ *   - Fix: handle Intl hour "24" at midnight
  *
  * WHERE IT FITS:
  *   Top of the dashboard page. Server component (time = server render time).
@@ -30,8 +31,9 @@ function greeting(): string {
       timeZone: "Asia/Kolkata",
     }).format(new Date())
   )
-  if (hour < 12) return "Good morning"
-  if (hour < 17) return "Good afternoon"
+  const adjusted = hour === 24 ? 0 : hour
+  if (adjusted < 12) return "Good morning"
+  if (adjusted < 17) return "Good afternoon"
   return "Good evening"
 }
 
