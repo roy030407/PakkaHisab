@@ -7,6 +7,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation for Phase 5 AI Advisor
+ *   - Khata Green restyle: emerald left-border card, Aaj ki salah header
  *
  * WHERE IT FITS:
  *   Rendered at the top of the dashboard page below the header.
@@ -36,10 +37,10 @@ export function InsightCard() {
 
   if (loading) {
     return (
-      <div className="rounded-xl border border-violet-100 bg-violet-50 p-4 animate-pulse">
-        <div className="h-3 w-24 rounded bg-violet-200 mb-2" />
-        <div className="h-4 w-full rounded bg-violet-100 mb-1" />
-        <div className="h-4 w-3/4 rounded bg-violet-100" />
+      <div className="rounded-2xl border border-gray-100 border-l-[3px] border-l-emerald-500 bg-white p-4 shadow-sm animate-pulse">
+        <div className="h-3 w-32 rounded bg-emerald-100 mb-2" />
+        <div className="h-4 w-full rounded bg-gray-100 mb-1" />
+        <div className="h-4 w-3/4 rounded bg-gray-100" />
       </div>
     )
   }
@@ -47,16 +48,16 @@ export function InsightCard() {
   if (!insight) return null
 
   return (
-    <div className="rounded-xl border border-violet-200 bg-violet-50 p-4">
-      <p className="text-xs font-semibold text-violet-600 uppercase tracking-wide mb-1">
-        Today&apos;s insight
+    <div className="rounded-2xl border border-gray-100 border-l-[3px] border-l-emerald-500 bg-white p-4 shadow-sm">
+      <p className="mb-1 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-emerald-700">
+        <span aria-hidden>✨</span> Aaj ki salah · Today&apos;s tip
       </p>
-      <p className="text-sm text-gray-800 leading-relaxed">{insight}</p>
+      <p className="text-sm leading-relaxed text-gray-800">{insight}</p>
       <Link
         href="/advisor"
-        className="mt-3 inline-block text-xs font-medium text-violet-700 underline underline-offset-2"
+        className="mt-3 inline-block text-xs font-semibold text-emerald-700 hover:text-emerald-800"
       >
-        Ask your advisor
+        Tell me more →
       </Link>
     </div>
   )

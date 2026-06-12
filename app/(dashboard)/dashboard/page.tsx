@@ -10,6 +10,7 @@
  *   - Added InsightCard for Phase 5 AI Advisor proactive insight
  *   - Redesign: two-column desktop layout, quick actions with Lucide icons,
  *     trend arrow on profit card, page-enter animation
+ *   - Khata Green redesign: greeting header, hero sparkline + trend pill, AttentionCard
  *
  * WHERE IT FITS:
  *   First page a merchant sees after logging in. Uses server-side fetch
@@ -22,9 +23,16 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server"
 import { StatCard, formatINR } from "@/components/reports/StatCard"
 import { InsightCard } from "@/components/ai/InsightCard"
+import { GreetingHeader } from "@/components/shared/GreetingHeader"
+import { AttentionCard } from "@/components/shared/AttentionCard"
+import { Sparkline } from "@/components/shared/Sparkline"
+import { AnimatedNumber } from "@/components/shared/AnimatedNumber"
 import Link from "next/link"
-import { Camera, PenLine, Package, TrendingUp, TrendingDown } from "lucide-react"
-import type { DashboardSnapshot } from "@/types"
+import { Camera, PenLine, Package, ShoppingCart, HandCoins } from "lucide-react"
+
+function istDateString(d: Date): string {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata" }).format(d)
+}
 
 export default async function DashboardPage() {
   const supabase = createSupabaseServerClient()
@@ -36,27 +44,25 @@ export default async function DashboardPage() {
     .eq("owner_id", user!.id)
     .maybeSingle()
 
-  let snapshot: DashboardSnapshot = {
-    todaySales: 0,
-    todayPurchases: 0,
-    todayNetProfit: 0,
-    outstandingReceivables: 0,
-    lowStockCount: 0,
-    expiryAlertCount: 0,
-    storeName: store?.name ?? "Your store",
-    ownerName: store?.owner_name ?? "",
-  }
+  // Last 7 days (inclusive of today), IST
+  const today = istDateString(new Date())
+  const sevenDaysAgo = istDateString(new Date(Date.now() - 6 * 86400000))
+
+  let salesToday = 0, purchasesToday = 0, txCountToday = 0
+  let dailyFixedCost = 0, outstandingReceivables = 0, receivableCustomers = 0
+  let lowStockCount = 0, expiryCount = 0
+  let profitByDay: number[] = []
+  let dayLabels: string[] = []
 
   if (store) {
-    const today = new Date().toISOString().split("T")[0]
-
     const [txResult, costsResult, customersResult, inventoryResult, expiryResult] =
       await Promise.all([
         supabase
           .from("transactions")
-          .select("type, total_amount")
+          .select("type, total_amount, date")
           .eq("store_id", store.id)
-          .eq("date", today),
+          .gte("date", sevenDaysAgo)
+          .lte("date", today),
         supabase
           .from("fixed_costs")
           .select("amount, frequency")
@@ -75,22 +81,11 @@ export default async function DashboardPage() {
           .from("inventory")
           .select("id", { count: "exact", head: true })
           .eq("store_id", store.id)
-          .lte(
-            "expiry_date",
-            new Date(Date.now() + 7 * 86400000).toISOString().split("T")[0]
-          )
+          .lte("expiry_date", istDateString(new Date(Date.now() + 7 * 86400000)))
           .gt("current_stock", 0),
       ])
 
-    let todaySales = 0
-    let todayPurchases = 0
-    for (const tx of txResult.data ?? []) {
-      const amt = Number(tx.total_amount) || 0
-      if (tx.type === "sale") todaySales += amt
-      else if (tx.type === "purchase") todayPurchases += amt
-    }
-
-    const dailyFixedCost = (costsResult.data ?? []).reduce((sum, c) => {
+    dailyFixedCost = (costsResult.data ?? []).reduce((sum, c) => {
       const amt = Number(c.amount) || 0
       if (c.frequency === "daily") return sum + amt
       if (c.frequency === "weekly") return sum + amt / 7
@@ -99,164 +94,173 @@ export default async function DashboardPage() {
       return sum
     }, 0)
 
-    const outstandingReceivables = (customersResult.data ?? []).reduce(
-      (sum, c) => sum + (Number(c.current_balance) || 0),
-      0
+    // Bucket transactions into the 7 calendar days
+    const buckets = new Map<string, { sales: number; purchases: number; count: number }>()
+    for (let i = 6; i >= 0; i--) {
+      buckets.set(istDateString(new Date(Date.now() - i * 86400000)), {
+        sales: 0, purchases: 0, count: 0,
+      })
+    }
+    for (const tx of txResult.data ?? []) {
+      const b = buckets.get(tx.date)
+      if (!b) continue
+      const amt = Number(tx.total_amount) || 0
+      if (tx.type === "sale") { b.sales += amt; b.count++ }
+      else if (tx.type === "purchase") { b.purchases += amt; b.count++ }
+    }
+
+    profitByDay = Array.from(buckets.values()).map(
+      (b) => b.sales - b.purchases - dailyFixedCost
+    )
+    dayLabels = Array.from(buckets.keys()).map((d, i) =>
+      i === 6 ? "Today"
+        : new Intl.DateTimeFormat("en-IN", { weekday: "short", timeZone: "Asia/Kolkata" })
+            .format(new Date(`${d}T12:00:00`))
     )
 
-    let lowStockCount = 0
+    const todayBucket = buckets.get(today)!
+    salesToday = todayBucket.sales
+    purchasesToday = todayBucket.purchases
+    txCountToday = todayBucket.count
+
+    outstandingReceivables = (customersResult.data ?? []).reduce(
+      (sum, c) => sum + (Number(c.current_balance) || 0), 0
+    )
+    receivableCustomers = (customersResult.data ?? []).length
+
     for (const inv of inventoryResult.data ?? []) {
       const stock = Number(inv.current_stock) || 0
       const reorder = Number(inv.reorder_point) || 0
       if (stock <= 0 || (reorder > 0 && stock <= reorder)) lowStockCount++
     }
-
-    snapshot = {
-      todaySales: Math.round(todaySales),
-      todayPurchases: Math.round(todayPurchases),
-      todayNetProfit: Math.round(todaySales - todayPurchases - dailyFixedCost),
-      outstandingReceivables: Math.round(outstandingReceivables),
-      lowStockCount,
-      expiryAlertCount: expiryResult.count ?? 0,
-      storeName: store.name,
-      ownerName: store.owner_name,
-    }
+    expiryCount = expiryResult.count ?? 0
   }
 
-  const profitAccent =
-    snapshot.todayNetProfit > 0 ? "green" :
-    snapshot.todayNetProfit < 0 ? "red" : "slate"
-
-  const ProfitIcon = snapshot.todayNetProfit > 0
-    ? TrendingUp
-    : snapshot.todayNetProfit < 0
-    ? TrendingDown
-    : null
+  const netProfitToday = Math.round(salesToday - purchasesToday - dailyFixedCost)
+  const netProfitYesterday = Math.round(profitByDay[5] ?? 0)
+  const trendPct =
+    netProfitYesterday !== 0
+      ? Math.round(((netProfitToday - netProfitYesterday) / Math.abs(netProfitYesterday)) * 100)
+      : null
 
   return (
     <div className="page-enter px-4 py-6 md:px-8 md:py-8 max-w-5xl mx-auto">
-      {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-xl font-bold text-gray-900">{snapshot.storeName}</h1>
-        <p className="text-sm text-gray-400 mt-0.5">Today&apos;s overview</p>
+      <div className="mb-5">
+        <GreetingHeader
+          ownerName={store?.owner_name ?? ""}
+          storeName={store?.name ?? "Your store"}
+        />
       </div>
 
-      {/* Desktop two-column grid */}
       <div className="md:grid md:grid-cols-[1fr_300px] md:gap-6">
+        <div className="space-y-4">
 
-        {/* Left: stats + quick actions */}
-        <div className="space-y-5">
+          {/* Hero profit card */}
+          <div className="relative overflow-hidden rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-emerald-100 p-5">
+            <div className="pointer-events-none absolute -right-5 -top-5 h-28 w-28 rounded-full bg-emerald-500/[0.08]" />
+            <div className="pointer-events-none absolute -bottom-9 right-5 h-20 w-20 rounded-full bg-emerald-500/[0.06]" />
+            <p className="text-[11px] font-bold uppercase tracking-wider text-emerald-700">
+              Net profit today
+            </p>
+            <div className="mt-1 flex items-end gap-2.5">
+              <p className={`text-3xl font-extrabold tracking-tight leading-none ${
+                netProfitToday < 0 ? "text-red-700" : "text-emerald-950"
+              }`}>
+                <AnimatedNumber
+                  value={netProfitToday}
+                  format={(n) => `₹${n.toLocaleString("en-IN")}`}
+                />
+              </p>
+              {trendPct !== null && (
+                <span className={`mb-0.5 rounded-full border px-2 py-0.5 text-[11px] font-bold ${
+                  trendPct >= 0
+                    ? "border-emerald-300 bg-emerald-100 text-emerald-700"
+                    : "border-red-200 bg-red-50 text-red-600"
+                }`}>
+                  {trendPct >= 0 ? "▲" : "▼"} {Math.abs(trendPct)}% vs yesterday
+                </span>
+              )}
+            </div>
+            <div className="mt-4">
+              <Sparkline values={profitByDay} labels={dayLabels} />
+            </div>
+          </div>
+
           {/* Quick actions */}
           <div className="grid grid-cols-3 gap-2">
             <Link href="/entry"
-              className="flex flex-col items-center gap-1.5 rounded-xl bg-slate-900 py-3.5 text-white hover:bg-slate-800 active:opacity-90 transition-colors">
+              className="flex flex-col items-center gap-1.5 rounded-xl bg-emerald-700 py-3.5 text-white hover:bg-emerald-800 active:opacity-90 transition-colors">
               <PenLine size={18} />
               <span className="text-xs font-medium">Add Sale</span>
             </Link>
             <Link href="/scan"
-              className="flex flex-col items-center gap-1.5 rounded-xl bg-white border border-gray-200 py-3.5 text-gray-700 hover:bg-gray-50 active:opacity-80 transition-colors">
+              className="card-lift flex flex-col items-center gap-1.5 rounded-xl bg-white border border-gray-200 py-3.5 text-gray-700">
               <Camera size={18} />
               <span className="text-xs font-medium">Scan Bill</span>
             </Link>
             <Link href="/inventory"
-              className="flex flex-col items-center gap-1.5 rounded-xl bg-white border border-gray-200 py-3.5 text-gray-700 hover:bg-gray-50 active:opacity-80 transition-colors">
+              className="card-lift flex flex-col items-center gap-1.5 rounded-xl bg-white border border-gray-200 py-3.5 text-gray-700">
               <Package size={18} />
               <span className="text-xs font-medium">Stock</span>
             </Link>
           </div>
 
-          {/* Snapshot stat cards */}
+          {/* Sales + Udhaar */}
           <div className="grid grid-cols-2 gap-3">
             <StatCard
               label="Sales today"
-              value={formatINR(snapshot.todaySales)}
-              accent="slate"
+              value={formatINR(Math.round(salesToday))}
+              rawValue={Math.round(salesToday)}
+              format={formatINR}
+              sublabel={`${txCountToday} transaction${txCountToday === 1 ? "" : "s"}`}
+              icon={ShoppingCart}
             />
-            <StatCard
-              label="Purchases today"
-              value={formatINR(snapshot.todayPurchases)}
-              accent="slate"
-            />
-            {/* Profit card with trend icon */}
-            <div className={`rounded-xl border p-4 ${
-              profitAccent === "green" ? "bg-green-50 border-green-100" :
-              profitAccent === "red"   ? "bg-red-50 border-red-100" :
-              "bg-white border-gray-200"
-            }`}>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
-                Net profit today
-              </p>
-              <div className="flex items-end gap-1.5">
-                <p className={`text-2xl font-bold tracking-tight ${
-                  profitAccent === "green" ? "text-green-800" :
-                  profitAccent === "red"   ? "text-red-700" :
-                  "text-gray-900"
-                }`}>
-                  {formatINR(snapshot.todayNetProfit)}
-                </p>
-                {ProfitIcon && (
-                  <ProfitIcon size={16} className={`mb-0.5 ${
-                    profitAccent === "green" ? "text-green-600" : "text-red-500"
-                  }`} />
-                )}
-              </div>
-              <p className="text-xs text-gray-400 mt-1">after costs</p>
-            </div>
-
             <Link href="/customers" className="contents">
               <StatCard
-                label="Receivables"
-                value={formatINR(snapshot.outstandingReceivables)}
-                sublabel="outstanding credit"
-                accent={snapshot.outstandingReceivables > 0 ? "amber" : "slate"}
-              />
-            </Link>
-            <Link href="/inventory" className="contents">
-              <StatCard
-                label="Low stock"
-                value={String(snapshot.lowStockCount)}
-                sublabel={snapshot.lowStockCount > 0 ? "tap to view" : "all stocked up"}
-                accent={snapshot.lowStockCount > 0 ? "red" : "slate"}
-              />
-            </Link>
-            <Link href="/inventory" className="contents">
-              <StatCard
-                label="Expiring soon"
-                value={String(snapshot.expiryAlertCount)}
-                sublabel={snapshot.expiryAlertCount > 0 ? "within 7 days" : "none expiring"}
-                accent={snapshot.expiryAlertCount > 0 ? "amber" : "slate"}
+                label="Udhaar due"
+                value={formatINR(Math.round(outstandingReceivables))}
+                rawValue={Math.round(outstandingReceivables)}
+                format={formatINR}
+                sublabel={
+                  receivableCustomers > 0
+                    ? `from ${receivableCustomers} customer${receivableCustomers === 1 ? "" : "s"}`
+                    : "no credit pending"
+                }
+                accent={outstandingReceivables > 0 ? "amber" : "slate"}
+                icon={HandCoins}
               />
             </Link>
           </div>
+
+          {/* Consolidated alerts */}
+          <AttentionCard lowStockCount={lowStockCount} expiryCount={expiryCount} />
         </div>
 
-        {/* Right column (desktop only): AI insight + secondary links */}
+        {/* Right rail (desktop) */}
         <div className="hidden md:flex flex-col gap-4">
           <InsightCard />
           <Link href="/reports"
-            className="flex items-center justify-center rounded-xl border border-gray-200 bg-white py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+            className="card-lift flex items-center justify-center rounded-xl border border-gray-200 bg-white py-3 text-sm font-medium text-gray-700">
             View full reports
           </Link>
           <Link href="/advisor"
-            className="flex items-center justify-center rounded-xl border border-gray-200 bg-white py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+            className="card-lift flex items-center justify-center rounded-xl border border-gray-200 bg-white py-3 text-sm font-medium text-gray-700">
             Ask the AI advisor
           </Link>
         </div>
       </div>
 
-      {/* AI insight — mobile only (after stats) */}
-      <div className="md:hidden mt-5">
+      {/* Mobile: insight + links */}
+      <div className="md:hidden mt-4">
         <InsightCard />
       </div>
-
-      {/* Bottom nav links — mobile only */}
-      <div className="md:hidden grid grid-cols-2 gap-3 mt-4">
+      <div className="md:hidden grid grid-cols-2 gap-3 mt-4 mb-8">
         <Link href="/reports"
-          className="flex items-center justify-center rounded-xl border border-gray-200 bg-white py-3 text-sm font-medium text-gray-700 hover:bg-gray-50">
+          className="flex items-center justify-center rounded-xl border border-gray-200 bg-white py-3 text-sm font-medium text-gray-700">
           View reports
         </Link>
         <Link href="/advisor"
-          className="flex items-center justify-center rounded-xl bg-gray-900 py-3 text-sm font-medium text-white hover:bg-gray-800">
+          className="flex items-center justify-center rounded-xl bg-emerald-700 py-3 text-sm font-medium text-white hover:bg-emerald-800">
           Ask advisor
         </Link>
       </div>
