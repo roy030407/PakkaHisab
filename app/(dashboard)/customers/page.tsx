@@ -68,7 +68,7 @@ export default function CustomersPage() {
               <button key={c.id} onClick={() => setSelected(c.id)}
                 className="w-full text-left flex items-center gap-3 px-3 py-3 border-b border-gray-100 last:border-0 hover:bg-gray-50">
                 <div className="w-9 h-9 rounded-full bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center text-sm shrink-0">
-                  {c.name.charAt(0).toUpperCase()}
+                  {(c.name || "?").charAt(0).toUpperCase()}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-900">{c.name}</p>
