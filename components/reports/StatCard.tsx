@@ -8,6 +8,7 @@
  * CHANGES THIS SESSION:
  *   - Initial creation for Phase 4 reporting
  *   - Khata Green: icon chips, hover lift, optional count-up via AnimatedNumber
+ *   - Fix: format prop is now a string preset (functions can't cross RSC boundary)
  *
  * WHERE IT FITS:
  *   Used on the dashboard home screen and the reports page.
@@ -25,9 +26,9 @@ interface Props {
   sublabel?: string
   accent?: "green" | "red" | "amber" | "blue" | "slate"
   icon?: LucideIcon
-  /** When provided, value animates with a count-up using `format` */
+  /** When provided, value animates with a count-up (default format: compact INR) */
   rawValue?: number
-  format?: (n: number) => string
+  format?: "plain" | "inr" | "inr-compact"
   onClick?: () => void
 }
 
@@ -72,8 +73,8 @@ export function StatCard({
         <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-400">{label}</p>
       </div>
       <p className={`text-xl font-bold tracking-tight ${VALUE_CLASSES[accent]}`}>
-        {rawValue !== undefined && format ? (
-          <AnimatedNumber value={rawValue} format={format} />
+        {rawValue !== undefined ? (
+          <AnimatedNumber value={rawValue} format={format ?? "inr-compact"} />
         ) : (
           value
         )}

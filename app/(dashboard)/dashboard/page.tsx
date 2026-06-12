@@ -166,10 +166,7 @@ export default async function DashboardPage() {
               <p className={`text-3xl font-extrabold tracking-tight leading-none ${
                 netProfitToday < 0 ? "text-red-700" : "text-emerald-950"
               }`}>
-                <AnimatedNumber
-                  value={netProfitToday}
-                  format={(n) => `₹${n.toLocaleString("en-IN")}`}
-                />
+                <AnimatedNumber value={netProfitToday} format="inr" />
               </p>
               {trendPct !== null && (
                 <span className={`mb-0.5 rounded-full border px-2 py-0.5 text-[11px] font-bold ${
@@ -211,7 +208,7 @@ export default async function DashboardPage() {
               label="Sales today"
               value={formatINR(Math.round(salesToday))}
               rawValue={Math.round(salesToday)}
-              format={formatINR}
+              format="inr-compact"
               sublabel={`${txCountToday} transaction${txCountToday === 1 ? "" : "s"}`}
               icon={ShoppingCart}
             />
@@ -220,7 +217,7 @@ export default async function DashboardPage() {
                 label="Udhaar due"
                 value={formatINR(Math.round(outstandingReceivables))}
                 rawValue={Math.round(outstandingReceivables)}
-                format={formatINR}
+                format="inr-compact"
                 sublabel={
                   receivableCustomers > 0
                     ? `from ${receivableCustomers} customer${receivableCustomers === 1 ? "" : "s"}`
