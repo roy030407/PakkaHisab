@@ -11,6 +11,7 @@
  * CHANGES THIS SESSION:
  *   - Initial creation for Phase 1d (fixed costs) + 1e (tax config display)
  *   - Added Phase 6: template loader and CSV/Excel import wizard
+ *   - Khata Green restyle
  *
  * WHERE IT FITS:
  *   Fixed costs feed into profit calculations. Tax config feeds into
@@ -162,7 +163,7 @@ export default function SettingsPage() {
         </div>
 
         {costs.length > 0 && (
-          <div className="mb-4 rounded-lg border border-gray-100 bg-gray-50 px-4 py-3 text-sm text-gray-600">
+          <div className="mb-4 rounded-2xl border border-emerald-100 bg-emerald-50/60 px-4 py-3 text-sm text-gray-600">
             <span className="font-medium">₹{totalDailyFixed.toFixed(0)}/day</span>
             {" · "}
             <span>₹{totalMonthlyFixed.toFixed(0)}/month</span>
@@ -171,7 +172,7 @@ export default function SettingsPage() {
         )}
 
         {showForm && (
-          <div className="mb-5 rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+          <div className="mb-5 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
             <form onSubmit={handleSave} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="col-span-2 space-y-1">
@@ -268,7 +269,7 @@ export default function SettingsPage() {
             {costs.map((cost) => (
               <div
                 key={cost.id}
-                className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-4 py-3"
+                className="flex items-center justify-between rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-sm"
               >
                 <div>
                   <p className="font-medium text-gray-900">{cost.name}</p>
@@ -320,7 +321,7 @@ export default function SettingsPage() {
           title="Tax Configuration"
           subtitle="GST slabs and interstate settings — coming soon."
         />
-        <div className="rounded-lg border border-dashed border-gray-200 p-6 text-sm text-gray-400 text-center">
+        <div className="rounded-2xl border border-dashed border-gray-200 p-6 text-sm text-gray-400 text-center">
           GST configuration (CGST+SGST / IGST toggle, per-product rates)
           will be configurable here. Currently set to intra-state by default.
         </div>
@@ -382,7 +383,7 @@ function TemplateLoader() {
             key={t.key}
             onClick={() => loadTemplate(t.key)}
             disabled={loading !== null}
-            className="rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-700 hover:border-gray-400 hover:bg-gray-50 disabled:opacity-50 text-left"
+            className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-700 hover:border-emerald-300 hover:bg-emerald-50/60 disabled:opacity-50 text-left shadow-sm"
           >
             {loading === t.key ? "Loading…" : t.label}
           </button>
@@ -529,12 +530,12 @@ function ImportWizard() {
       />
 
       {step === "idle" && (
-        <div className="rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 p-8 text-center">
+        <div className="rounded-2xl border-2 border-dashed border-emerald-100 bg-gray-50 p-8 text-center">
           <p className="text-sm text-gray-500 mb-4">
             Supported: .csv, .xlsx, .xls · Max 10MB
           </p>
           <label className="cursor-pointer">
-            <span className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800">
+            <span className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-800">
               {uploading ? "Uploading…" : "Choose file"}
             </span>
             <input
@@ -551,7 +552,7 @@ function ImportWizard() {
 
       {(step === "preview" || step === "mapping") && (
         <div className="space-y-5">
-          <div className="rounded-xl border border-gray-200 bg-white p-4">
+          <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
             <div className="flex items-center justify-between mb-3">
               <div>
                 <p className="text-sm font-semibold text-gray-900">{fileName}</p>
@@ -590,7 +591,7 @@ function ImportWizard() {
           </div>
 
           {/* Column mapping */}
-          <div className="rounded-xl border border-gray-200 bg-white p-4">
+          <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
             <p className="text-sm font-semibold text-gray-900 mb-1">Column mapping</p>
             <p className="text-xs text-gray-400 mb-4">
               {mappingLoading ? "Claude is detecting columns…" : "Confirm or adjust how your columns map to our fields."}
@@ -639,7 +640,7 @@ function ImportWizard() {
             <button
               onClick={handleConfirm}
               disabled={importing || mappingLoading}
-              className="rounded-xl bg-gray-900 px-6 py-2.5 text-sm font-medium text-white disabled:opacity-50 hover:bg-gray-800"
+              className="rounded-xl bg-emerald-700 px-6 py-2.5 text-sm font-medium text-white disabled:opacity-50 hover:bg-emerald-800"
             >
               {importing ? "Importing…" : `Import ${totalRows} rows`}
             </button>

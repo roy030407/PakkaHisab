@@ -7,6 +7,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation for Phase 4 reporting
+ *   - Khata Green restyle
  *
  * WHERE IT FITS:
  *   Placed on the reports page below the period toggle.

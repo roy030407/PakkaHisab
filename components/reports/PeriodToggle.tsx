@@ -6,6 +6,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation for Phase 4 reporting
+ *   - Khata Green restyle
  *
  * WHERE IT FITS:
  *   Placed at the top of the reports page; controls what period all
@@ -33,15 +34,15 @@ const PERIODS: { value: ReportPeriod; label: string }[] = [
 
 export function PeriodToggle({ value, onChange }: Props) {
   return (
-    <div className="flex rounded-lg border border-gray-200 bg-gray-100 p-1 gap-1">
+    <div className="inline-flex rounded-xl bg-gray-100 p-1 gap-1 w-full">
       {PERIODS.map((p) => (
         <button
           key={p.value}
           onClick={() => onChange(p.value)}
-          className={`flex-1 rounded-md py-1.5 text-sm font-medium transition-colors ${
+          className={`flex-1 rounded-lg py-1.5 text-sm transition-colors ${
             value === p.value
-              ? "bg-white text-gray-900 shadow-sm"
-              : "text-gray-500 hover:text-gray-700"
+              ? "bg-white text-emerald-800 shadow-sm font-semibold"
+              : "text-gray-500 hover:text-gray-700 font-medium"
           }`}
         >
           {p.label}

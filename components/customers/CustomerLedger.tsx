@@ -7,6 +7,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation
+ *   - Khata Green restyle
  *
  * WHERE IT FITS:
  *   Opened by tapping a customer in the customers page.
@@ -41,7 +42,7 @@ export function CustomerLedger({ customerId, onBack }: Props) {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-16">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-slate-700" />
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-emerald-700" />
       </div>
     )
   }
@@ -50,7 +51,7 @@ export function CustomerLedger({ customerId, onBack }: Props) {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <div className="bg-white px-4 py-4 border-b border-gray-200">
-        <button onClick={onBack} className="text-sm text-slate-600 mb-2">&larr; Back</button>
+        <button onClick={onBack} className="text-sm text-emerald-700 mb-2">&larr; Back</button>
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-semibold text-gray-900">{customer.name}</h2>
@@ -76,7 +77,7 @@ export function CustomerLedger({ customerId, onBack }: Props) {
                     &nbsp;&middot;&nbsp;{tx.payment_method}
                   </p>
                 </div>
-                <p className={`text-sm font-semibold ${tx.type === 'sale' ? 'text-green-700' : 'text-gray-900'}`}>
+                <p className={`text-sm font-semibold tabular-nums ${tx.type === 'sale' ? 'text-green-700' : 'text-gray-900'}`}>
                   {tx.type === 'sale' ? '+' : '-'}&#8377;{Number(tx.total_amount).toLocaleString('en-IN')}
                 </p>
               </div>

@@ -8,6 +8,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation for Phase 4 reporting
+ *   - Khata Green restyle
  *
  * WHERE IT FITS:
  *   Placed on the reports page alongside CashFlowChart.
@@ -76,8 +77,8 @@ export function SalesPurchasesChart({ data }: Props) {
             iconSize={8}
             wrapperStyle={{ fontSize: 12, paddingTop: 8 }}
           />
-          <Bar dataKey="sales" fill="#16a34a" name="Sales" radius={[4, 4, 0, 0]} />
-          <Bar dataKey="purchases" fill="#f97316" name="Purchases" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="sales" fill="#047857" name="Sales" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="purchases" fill="#f59e0b" name="Purchases" radius={[4, 4, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>

@@ -8,6 +8,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation for Phase 4 reporting
+ *   - Khata Green restyle
  *
  * WHERE IT FITS:
  *   Placed on the reports page. Receives pre-built CashFlowPoint[] from
@@ -80,7 +81,7 @@ export function CashFlowChart({ data }: Props) {
           <Line
             type="monotone"
             dataKey="sales"
-            stroke="#16a34a"
+            stroke="#047857"
             strokeWidth={2}
             dot={false}
             name="Sales"

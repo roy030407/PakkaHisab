@@ -8,6 +8,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation for Phase 4 reporting
+ *   - Khata Green restyle
  *
  * WHERE IT FITS:
  *   Accessible from the bottom nav "Reports" tab and dashboard quick links.
@@ -19,7 +20,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { Download, Share2 } from "lucide-react"
+import { Download, Share2, ShoppingCart, Package, TrendingUp, Landmark } from "lucide-react"
 import { toast } from "sonner"
 import { PeriodToggle } from "@/components/reports/PeriodToggle"
 import { StatCard, formatINR } from "@/components/reports/StatCard"
@@ -122,18 +123,20 @@ export default function ReportsPage() {
         <div className="space-y-4">
           {/* Summary stat row */}
           <div className="grid grid-cols-2 gap-3">
-            <StatCard label="Sales" value={formatINR(report.sales)} accent="slate" />
-            <StatCard label="Purchases" value={formatINR(report.purchases)} accent="slate" />
+            <StatCard label="Sales" value={formatINR(report.sales)} accent="green" icon={ShoppingCart} />
+            <StatCard label="Purchases" value={formatINR(report.purchases)} accent="amber" icon={Package} />
             <StatCard
               label="Net profit"
               value={formatINR(report.netProfit)}
               accent={report.netProfit >= 0 ? "green" : "red"}
+              icon={TrendingUp}
             />
             <StatCard
               label="GST payable"
               value={formatINR(Math.abs(report.taxSummary.payable))}
               sublabel={report.taxSummary.payable >= 0 ? "owe to govt" : "credit"}
-              accent={report.taxSummary.payable > 0 ? "amber" : "slate"}
+              accent={report.taxSummary.payable > 0 ? "amber" : "green"}
+              icon={Landmark}
             />
           </div>
 

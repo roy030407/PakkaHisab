@@ -7,6 +7,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation for Phase 4 reporting
+ *   - Khata Green restyle
  *
  * WHERE IT FITS:
  *   Placed on the reports page below the cash flow charts.
@@ -32,7 +33,7 @@ interface Props {
   products: TopProduct[]
 }
 
-const COLORS = ["#1d4ed8", "#2563eb", "#3b82f6", "#60a5fa", "#93c5fd"]
+const COLORS = ["#047857", "#10b981", "#6ee7b7", "#a7f3d0", "#f59e0b"]
 
 function fmt(v: number) {
   if (v >= 100000) return `₹${(v / 100000).toFixed(1)}L`

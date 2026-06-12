@@ -9,6 +9,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation for Phase 5 AI Advisor
+ *   - Khata Green restyle
  *
  * WHERE IT FITS:
  *   The only component on app/(dashboard)/advisor/page.tsx.
@@ -146,12 +147,12 @@ export function ChatInterface() {
             <p className="text-center text-xs text-gray-400 mb-6">
               Knows your sales, inventory, and customers
             </p>
-            <div className="grid grid-cols-1 gap-2">
+            <div className="flex flex-wrap gap-2 justify-center">
               {QUICK_PROMPTS.map((p) => (
                 <button
                   key={p}
                   onClick={() => send(p)}
-                  className="text-left rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 hover:border-violet-300 hover:bg-violet-50 transition-colors"
+                  className="rounded-full bg-emerald-50 text-emerald-800 border border-emerald-100 px-3 py-1.5 text-xs font-medium hover:bg-emerald-100 transition-colors"
                 >
                   {p}
                 </button>
@@ -166,15 +167,15 @@ export function ChatInterface() {
             className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
           >
             <div
-              className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed whitespace-pre-wrap ${
+              className={`max-w-[85%] px-4 py-2.5 text-sm leading-relaxed whitespace-pre-wrap ${
                 msg.role === "user"
-                  ? "bg-gray-900 text-white rounded-br-sm"
-                  : "bg-gray-100 text-gray-900 rounded-bl-sm"
+                  ? "bg-emerald-700 text-white rounded-2xl rounded-br-md"
+                  : "bg-white border border-gray-100 text-gray-800 rounded-2xl rounded-bl-md shadow-sm"
               }`}
             >
               {msg.content}
               {msg.streaming && (
-                <span className="inline-block w-1.5 h-3.5 bg-gray-400 ml-0.5 animate-pulse rounded-sm align-middle" />
+                <span className="inline-block w-1.5 h-3.5 bg-emerald-400 ml-0.5 animate-pulse rounded-sm align-middle" />
               )}
             </div>
           </div>
@@ -193,14 +194,14 @@ export function ChatInterface() {
             onKeyDown={handleKeyDown}
             placeholder="Ask anything about your business…"
             rows={1}
-            className="flex-1 resize-none rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent max-h-32 overflow-auto"
+            className="flex-1 resize-none rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent max-h-32 overflow-auto"
             style={{ lineHeight: "1.5" }}
             disabled={loading}
           />
           <button
             onClick={() => send(input)}
             disabled={loading || !input.trim()}
-            className="flex-shrink-0 rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-medium text-white disabled:opacity-40 hover:bg-gray-800 active:opacity-80 transition-colors"
+            className="flex-shrink-0 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-medium text-white disabled:opacity-40 hover:bg-emerald-800 active:opacity-80 transition-colors"
           >
             {loading ? "…" : "Send"}
           </button>
