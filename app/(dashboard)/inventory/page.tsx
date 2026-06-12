@@ -12,6 +12,7 @@
  * CHANGES THIS SESSION:
  *   - Initial creation
  *   - Khata Green restyle
+ *   - Fix: restore per-item ExpiryAlert below the AttentionCard summary
  *
  * WHERE IT FITS:
  *   Accessed via /inventory route, BottomNav "Stock" tab.
@@ -29,6 +30,7 @@ import { ConsumptionCard } from '@/components/inventory/ConsumptionCard'
 import { OrderSuggestionCard } from '@/components/inventory/OrderSuggestionCard'
 import { ListPageSkeleton } from '@/components/shared/PageSkeleton'
 import { AttentionCard } from '@/components/shared/AttentionCard'
+import { ExpiryAlert } from '@/components/inventory/ExpiryAlert'
 
 interface InventoryResponse {
   items: StockItemWithConsumption[]
@@ -123,8 +125,11 @@ export default function InventoryPage() {
         </div>
       )}
 
-      {/* Consolidated attention card (replaces separate ExpiryAlert summary banner) */}
+      {/* Consolidated attention card (summary strip) */}
       <AttentionCard lowStockCount={lowStockCount} expiryCount={expiryCount} href="/inventory" />
+
+      {/* Per-item expiry detail — lists which products expire, with units and days left */}
+      <ExpiryAlert items={items} />
 
       {/* AI ordering suggestions */}
       <OrderSuggestionCard />

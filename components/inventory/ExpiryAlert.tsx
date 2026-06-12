@@ -9,6 +9,7 @@
  * CHANGES THIS SESSION:
  *   - Initial creation
  *   - Khata Green restyle
+ *   - Re-instated on inventory page below AttentionCard (CALLED BY section confirmed accurate)
  *
  * WHERE IT FITS:
  *   Top of the inventory page, above the stock list.
