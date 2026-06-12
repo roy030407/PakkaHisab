@@ -173,7 +173,7 @@ export default async function LandingPage() {
             {FEATURES.map((f, i) => (
               <div key={f.title} data-reveal
                 style={{ "--reveal-delay": `${(i % 3) * 0.1}s`, "--reveal-rot": `${f.rot * 3}deg`, "--reveal-rot-final": `${f.rot}deg` } as React.CSSProperties}
-                className="transition-transform duration-200 hover:!rotate-0 hover:-translate-y-1">
+                className="transition-transform duration-200 hover:[--reveal-rot-final:0deg] hover:-translate-y-1">
                 <ComicCard rotate={0} className="h-full">
                   <div className="text-3xl">{f.emoji}</div>
                   <h3 className="mt-2 text-base font-extrabold">{f.title}</h3>
