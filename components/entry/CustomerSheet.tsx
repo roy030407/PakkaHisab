@@ -7,6 +7,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation
+ *   - Khata Green restyle
  *
  * WHERE IT FITS:
  *   Opened from QuickEntry and FullEntryForm footer.
@@ -61,7 +62,7 @@ export function CustomerSheet({ open, onClose, onSelect }: Props) {
         </div>
         <button onClick={() => setCredit(!credit)}
           className="flex items-center gap-2 mb-3 text-sm text-gray-700 self-start">
-          <div className={`w-10 h-5 rounded-full flex items-center px-0.5 transition-colors ${credit ? 'bg-slate-800 justify-end' : 'bg-gray-200 justify-start'}`}>
+          <div className={`w-10 h-5 rounded-full flex items-center px-0.5 transition-colors ${credit ? 'bg-emerald-700 justify-end' : 'bg-gray-200 justify-start'}`}>
             <div className="w-4 h-4 rounded-full bg-white shadow" />
           </div>
           On credit (pay later)
@@ -90,7 +91,7 @@ export function CustomerSheet({ open, onClose, onSelect }: Props) {
               className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none" />
             <div className="flex gap-2">
               <button onClick={() => setCreating(false)} className="flex-1 border border-gray-200 rounded-lg py-2.5 text-sm">Back</button>
-              <button onClick={createAndSelect} className="flex-1 bg-slate-800 text-white rounded-lg py-2.5 text-sm font-medium">Save &amp; select</button>
+              <button onClick={createAndSelect} className="flex-1 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg py-2.5 text-sm font-medium">Save &amp; select</button>
             </div>
           </div>
         )}
