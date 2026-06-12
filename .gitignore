@@ -38,3 +38,6 @@ next-env.d.ts
 /lib/generated/prisma
 
 .vercel
+
+# brainstorm visual companion sessions
+.superpowers/
