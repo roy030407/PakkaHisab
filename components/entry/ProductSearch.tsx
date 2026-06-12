@@ -8,6 +8,7 @@
  * CHANGES THIS SESSION:
  *   - Initial creation
  *   - Bug fix: updated p.itemNumber/p.sellingPrice to snake_case
+ *   - Khata Green restyle
  *
  * WHERE IT FITS:
  *   Used in FullEntryForm product search bar.
@@ -39,7 +40,7 @@ export function ProductSearch({ products, onSelect, placeholder = 'Search produc
     <div className="relative">
       <input type="text" value={query} onChange={e => setQuery(e.target.value)}
         placeholder={placeholder}
-        className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-300" />
+        className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300" />
       {filtered.length > 0 && (
         <div className="absolute z-20 left-0 right-0 top-full mt-1 bg-white rounded-xl border border-gray-200 shadow-lg max-h-52 overflow-y-auto">
           {filtered.slice(0, 20).map(p => (

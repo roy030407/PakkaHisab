@@ -8,6 +8,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation
+ *   - Khata Green restyle
  *
  * WHERE IT FITS:
  *   Route /scan. Accessible from BottomNav.
@@ -121,7 +122,7 @@ export default function ScanPage() {
         <p className="text-sm text-gray-500 mb-6">{errorMessage}</p>
         <button
           onClick={() => setState('upload')}
-          className="bg-slate-800 text-white px-6 py-2.5 rounded-xl text-sm font-medium"
+          className="bg-emerald-700 text-white px-6 py-2.5 rounded-xl text-sm font-medium"
         >
           Try again
         </button>

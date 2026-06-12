@@ -10,6 +10,7 @@
  *   - Initial creation
  *   - Bug fix: updated p.sellingPrice/p.purchasePrice/p.isPinned to snake_case to
  *     match the Supabase response (was producing ₹NaN on every product)
+ *   - Khata Green restyle
  *
  * WHERE IT FITS:
  *   Default mode on /entry page.
@@ -22,6 +23,7 @@ import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 import type { Product, TransactionType, PaymentMethod } from '@/types'
 import { CustomerSheet } from './CustomerSheet'
+import { AnimatedNumber } from '@/components/shared/AnimatedNumber'
 
 interface LineItem { productId: string; productName: string; unitPrice: number; quantity: number }
 interface Props {
@@ -87,15 +89,17 @@ export function QuickEntry({ onSaved, onSwitchFull }: Props) {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       {/* Sticky running total */}
-      <div className="sticky top-0 z-10 bg-slate-900 px-4 py-3 flex items-center justify-between">
+      <div className="sticky top-0 z-10 bg-gradient-to-r from-emerald-700 to-emerald-600 text-white rounded-2xl shadow-lg shadow-emerald-200/60 px-4 py-3 flex items-center justify-between">
         <div>
-          <p className="text-xs text-slate-400">{itemCount} item{itemCount !== 1 ? 's' : ''} added</p>
-          <p className="text-xl font-bold text-white">&#8377;{total.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</p>
+          <p className="text-xs text-emerald-200">{itemCount} item{itemCount !== 1 ? 's' : ''} added</p>
+          <p className="text-xl font-bold text-white">
+            <AnimatedNumber value={total} format={(n) => `₹${n.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`} />
+          </p>
         </div>
         <div className="flex gap-1 bg-white/10 rounded-lg p-1">
           {(['sale', 'purchase', 'expense'] as TransactionType[]).map(t => (
             <button key={t} onClick={() => setType(t)}
-              className={`text-xs px-2 py-1 rounded transition-colors ${type === t ? 'bg-white text-slate-900 font-semibold' : 'text-slate-400'}`}>
+              className={`text-xs px-2 py-1 rounded transition-colors ${type === t ? 'bg-white text-emerald-800 font-semibold' : 'text-emerald-200'}`}>
               {t.charAt(0).toUpperCase() + t.slice(1)}
             </button>
           ))}
@@ -114,19 +118,19 @@ export function QuickEntry({ onSaved, onSwitchFull }: Props) {
               const qty = qtys.get(p.id) ?? 0
               const price = getPrice(p)
               return (
-                <div key={p.id} className="flex items-center px-3 py-3 border-b border-gray-100 last:border-0">
+                <div key={p.id} className="flex items-center px-3 py-3 border-b border-gray-100 last:border-0 card-lift">
                   <div className="flex-1 min-w-0 mr-3">
                     <p className="text-sm font-medium text-gray-900 truncate">{p.name}</p>
                     <p className="text-xs text-gray-400">&#8377;{price} each</p>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <button onClick={() => adj(p.id, -1)} aria-label={`Decrease ${p.name}`}
-                      className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-medium ${qty === 0 ? 'bg-gray-100 text-gray-300' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+                      className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-medium ${qty === 0 ? 'bg-emerald-50 text-emerald-300' : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'}`}>
                       &minus;
                     </button>
                     <span className={`text-sm font-bold min-w-[20px] text-center ${qty === 0 ? 'text-gray-300' : 'text-gray-900'}`}>{qty}</span>
                     <button onClick={() => adj(p.id, 1)} aria-label={`Increase ${p.name}`}
-                      className="w-7 h-7 rounded-full bg-slate-800 text-white flex items-center justify-center text-sm hover:bg-slate-700">
+                      className="w-7 h-7 rounded-full bg-emerald-700 text-white flex items-center justify-center text-sm hover:bg-emerald-800">
                       +
                     </button>
                   </div>
@@ -140,12 +144,12 @@ export function QuickEntry({ onSaved, onSwitchFull }: Props) {
       {/* Footer */}
       <div className="sticky bottom-0 px-4 pb-8 pt-3 bg-white border-t border-gray-100 space-y-2">
         {type === 'sale' && (
-          <button onClick={() => setShowCustomer(true)} className="w-full text-sm text-slate-600 py-1">
+          <button onClick={() => setShowCustomer(true)} className="w-full text-sm text-emerald-700 py-1">
             {customerId ? '&#10003; Customer added' : '+ Add customer (optional)'}
           </button>
         )}
         <button onClick={handleSave} disabled={saving || itemCount === 0}
-          className="w-full bg-green-600 text-white font-semibold py-3.5 rounded-xl text-sm disabled:opacity-60 hover:bg-green-700">
+          className="w-full bg-emerald-700 text-white font-semibold py-3.5 rounded-xl text-sm disabled:opacity-60 hover:bg-emerald-800">
           {saving ? 'Saving...' : `Save ${type} · ₹${total.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`}
         </button>
         <button onClick={() => onSwitchFull(buildLineItems())} className="w-full text-center text-xs text-gray-400 py-1">

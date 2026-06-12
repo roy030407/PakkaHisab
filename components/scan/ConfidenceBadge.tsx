@@ -6,6 +6,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation
+ *   - Khata Green restyle
  *
  * WHERE IT FITS:
  *   Used inside ExtractionReview rows for low/medium confidence fields.
@@ -21,7 +22,7 @@ export function ConfidenceBadge({ level }: Props) {
   if (level === 'high') return null
   return (
     <span className={`inline-flex items-center gap-1 text-xs font-medium px-1.5 py-0.5 rounded ${
-      level === 'medium' ? 'bg-amber-50 text-amber-700' : 'bg-red-50 text-red-700'
+      level === 'medium' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'
     }`}>
       ⚠ check
     </span>

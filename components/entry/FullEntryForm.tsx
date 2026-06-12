@@ -9,6 +9,7 @@
  * CHANGES THIS SESSION:
  *   - Initial creation
  *   - Bug fix: updated p.sellingPrice/p.purchasePrice to snake_case
+ *   - Khata Green restyle
  *
  * WHERE IT FITS:
  *   "Full entry" mode on /entry page.
@@ -87,8 +88,8 @@ export function FullEntryForm({ initialItems, onSaved, onSwitchQuick }: Props) {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       {/* Sticky total */}
-      <div className="sticky top-0 z-10 bg-slate-900 px-4 py-3">
-        <p className="text-xs text-slate-400">{items.length} item{items.length !== 1 ? 's' : ''}</p>
+      <div className="sticky top-0 z-10 bg-emerald-700 px-4 py-3">
+        <p className="text-xs text-emerald-200">{items.length} item{items.length !== 1 ? 's' : ''}</p>
         <p className="text-xl font-bold text-white">&#8377;{total.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</p>
       </div>
 
@@ -139,7 +140,7 @@ export function FullEntryForm({ initialItems, onSaved, onSwitchQuick }: Props) {
           ? <input value={vendorName} onChange={e => setVendorName(e.target.value)} placeholder="Vendor name (optional)"
               className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none" />
           : <button onClick={() => setShowCustomer(true)}
-              className="w-full text-left text-sm text-slate-600 border border-gray-200 rounded-lg px-3 py-2 bg-white">
+              className="w-full text-left text-sm text-emerald-700 border border-gray-200 rounded-lg px-3 py-2 bg-white">
               {customerId ? '&#10003; Customer selected' : '+ Add customer (optional)'}
             </button>
         }
@@ -148,7 +149,7 @@ export function FullEntryForm({ initialItems, onSaved, onSwitchQuick }: Props) {
         <div className="flex gap-2">
           {pmOptions.map(pm => (
             <button key={pm} onClick={() => setPaymentMethod(pm)}
-              className={`flex-1 py-2 rounded-lg text-sm font-medium border transition-colors ${paymentMethod === pm ? 'bg-slate-800 text-white border-slate-800' : 'bg-white text-gray-600 border-gray-200'}`}>
+              className={`flex-1 py-2 rounded-lg text-sm font-medium border transition-colors ${paymentMethod === pm ? 'bg-emerald-700 text-white border-emerald-700' : 'bg-white text-gray-600 border-gray-200'}`}>
               {pm.charAt(0).toUpperCase() + pm.slice(1)}
             </button>
           ))}
@@ -161,7 +162,7 @@ export function FullEntryForm({ initialItems, onSaved, onSwitchQuick }: Props) {
 
       <div className="sticky bottom-0 px-4 pb-8 pt-3 bg-white border-t border-gray-100 space-y-2">
         <button onClick={handleSave} disabled={saving || items.length === 0}
-          className="w-full bg-green-600 text-white font-semibold py-3.5 rounded-xl text-sm disabled:opacity-60">
+          className="w-full bg-emerald-700 text-white font-semibold py-3.5 rounded-xl text-sm disabled:opacity-60 hover:bg-emerald-800">
           {saving ? 'Saving...' : `Save ${type} · ₹${total.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`}
         </button>
         <button onClick={onSwitchQuick} className="w-full text-center text-xs text-gray-400 py-1">Switch to quick entry</button>

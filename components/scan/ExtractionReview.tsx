@@ -8,6 +8,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation
+ *   - Khata Green restyle
  *
  * WHERE IT FITS:
  *   Shown when scan state = 'review' and documentType = 'single_bill'.
@@ -109,19 +110,19 @@ export function ExtractionReview({ extraction, documentUploadId, duplicateWarnin
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       {/* Dark sticky header */}
-      <div className="sticky top-0 z-10 bg-slate-900 px-4 py-4">
+      <div className="sticky top-0 z-10 bg-emerald-700 px-4 py-4">
         <div className="flex items-start justify-between">
           <div>
             <p className="text-sm font-semibold text-white">
               {extraction.vendorName ?? 'Unknown vendor'}
             </p>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-emerald-200 mt-0.5">
               {extraction.date ?? 'Date not detected'}
             </p>
           </div>
           <button
             onClick={onEditAll}
-            className="text-xs text-slate-400 border border-slate-600 rounded px-2 py-1 hover:border-slate-400"
+            className="text-xs text-emerald-200 border border-emerald-500 rounded px-2 py-1 hover:border-emerald-300"
           >
             Edit
           </button>
@@ -190,7 +191,7 @@ export function ExtractionReview({ extraction, documentUploadId, duplicateWarnin
                     </span>
                     <button
                       onClick={() => adjustQty(idx, 1)}
-                      className="w-7 h-7 rounded-full bg-slate-800 text-white flex items-center justify-center text-sm hover:bg-slate-700"
+                      className="w-7 h-7 rounded-full bg-emerald-700 text-white flex items-center justify-center text-sm hover:bg-emerald-800"
                       aria-label={`Increase quantity for ${item.productNameRaw}`}
                     >
                       +
@@ -211,7 +212,7 @@ export function ExtractionReview({ extraction, documentUploadId, duplicateWarnin
         <button
           onClick={handleSave}
           disabled={saving || items.filter(i => i.editedQty > 0).length === 0}
-          className="w-full bg-green-600 text-white font-semibold py-3.5 rounded-xl text-sm disabled:opacity-60 hover:bg-green-700"
+          className="w-full bg-emerald-700 text-white font-semibold py-3.5 rounded-xl text-sm disabled:opacity-60 hover:bg-emerald-800"
         >
           {saving
             ? 'Saving...'

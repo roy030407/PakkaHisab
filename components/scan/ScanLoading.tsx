@@ -7,6 +7,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation
+ *   - Khata Green restyle
  *
  * WHERE IT FITS:
  *   Shown when scan state = 'loading', between upload and confirm screens.
@@ -35,7 +36,7 @@ export function ScanLoading() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] px-6">
-      <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-200 border-t-slate-700 mb-6" />
+      <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-200 border-t-emerald-700 mb-6" />
       <p className="text-base font-medium text-gray-700 transition-all">{MESSAGES[idx]}</p>
       <p className="text-sm text-gray-400 mt-2">This takes 5–15 seconds</p>
     </div>

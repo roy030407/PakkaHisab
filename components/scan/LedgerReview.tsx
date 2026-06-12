@@ -8,6 +8,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation
+ *   - Khata Green restyle
  *
  * WHERE IT FITS:
  *   Shown when scan state = 'review' and documentType = 'ledger_page'.
@@ -92,8 +93,8 @@ export function LedgerReview({ extraction, documentUploadId, onSave }: Props) {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-slate-900 px-4 py-4">
-        <p className="text-sm text-slate-400">Ledger page</p>
+      <div className="bg-emerald-700 px-4 py-4">
+        <p className="text-sm text-emerald-200">Ledger page</p>
         <p className="text-xl font-bold text-white mt-0.5">
           {rows.length} entr{rows.length === 1 ? 'y' : 'ies'} detected
         </p>
@@ -108,7 +109,7 @@ export function LedgerReview({ extraction, documentUploadId, onSave }: Props) {
               <button
                 onClick={() => toggleCheck(idx)}
                 className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 ${
-                  row.checked ? 'bg-slate-800 border-slate-800' : 'border-gray-300'
+                  row.checked ? 'bg-emerald-700 border-emerald-700' : 'border-gray-300'
                 }`}>
                 {row.checked && <span className="text-white text-xs leading-none">&#10003;</span>}
               </button>
@@ -121,7 +122,7 @@ export function LedgerReview({ extraction, documentUploadId, onSave }: Props) {
                   onChange={e => setField(idx, 'editedDate', e.target.value)}
                   onBlur={() => setField(idx, 'editingDate', false)}
                   autoFocus
-                  className="text-xs border-b border-slate-400 focus:outline-none bg-transparent w-24"
+                  className="text-xs border-b border-emerald-400 focus:outline-none bg-transparent w-24"
                 />
               ) : (
                 <button onClick={() => setField(idx, 'editingDate', true)}
@@ -143,7 +144,7 @@ export function LedgerReview({ extraction, documentUploadId, onSave }: Props) {
                   onChange={e => setField(idx, 'editedAmount', Number(e.target.value))}
                   onBlur={() => setField(idx, 'editingAmount', false)}
                   autoFocus
-                  className="text-sm font-semibold text-right border-b border-slate-400 focus:outline-none bg-transparent w-20"
+                  className="text-sm font-semibold text-right border-b border-emerald-400 focus:outline-none bg-transparent w-20"
                 />
               ) : (
                 <button onClick={() => setField(idx, 'editingAmount', true)}
@@ -159,7 +160,7 @@ export function LedgerReview({ extraction, documentUploadId, onSave }: Props) {
       {/* Footer */}
       <div className="fixed bottom-0 left-0 right-0 px-4 pb-8 pt-3 bg-white border-t border-gray-100">
         <button onClick={handleSave} disabled={saving || checkedRows.length === 0}
-          className="w-full bg-green-600 text-white font-semibold py-3.5 rounded-xl text-sm disabled:opacity-60 hover:bg-green-700">
+          className="w-full bg-emerald-700 text-white font-semibold py-3.5 rounded-xl text-sm disabled:opacity-60 hover:bg-emerald-800">
           {saving ? 'Saving...' : `Save ${checkedRows.length} transaction${checkedRows.length !== 1 ? 's' : ''}`}
         </button>
       </div>

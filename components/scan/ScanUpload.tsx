@@ -7,6 +7,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation
+ *   - Khata Green restyle
  *
  * WHERE IT FITS:
  *   First screen of the scan flow. Shown when scan state = 'upload'.
@@ -35,9 +36,10 @@ export function ScanUpload({ onFileSelected }: Props) {
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] px-6 py-8">
       <h2 className="text-lg font-semibold text-gray-900 mb-2">Scan a bill</h2>
-      <p className="text-sm text-gray-500 mb-8 text-center">
+      <p className="text-sm text-gray-500 mb-1 text-center">
         Take a photo, pick from gallery, or upload a file
       </p>
+      <p className="text-xs text-gray-400 mt-1 mb-8 text-center">Photo kheencho, hisab ho gaya ✨</p>
 
       {/* Hidden inputs */}
       <input ref={cameraRef} type="file" accept="image/*" capture="environment"
@@ -47,7 +49,7 @@ export function ScanUpload({ onFileSelected }: Props) {
       <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp,application/pdf"
         className="hidden" onChange={handleChange} />
 
-      <div className="w-full max-w-xs space-y-3">
+      <div className="w-full max-w-xs space-y-3 rounded-2xl border-2 border-dashed border-emerald-300 bg-emerald-50/40 hover:bg-emerald-50 transition-colors p-4">
         {/* Camera + Gallery row */}
         <div className="grid grid-cols-2 gap-3">
           <button
