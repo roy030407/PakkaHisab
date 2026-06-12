@@ -8,6 +8,7 @@
  * CHANGES THIS SESSION:
  *   - Initial creation for Phase 1c
  *   - Fixed price display: show "—" instead of "₹0.00" when price not set
+ *   - Khata Green restyle
  *
  * WHERE IT FITS:
  *   Used in the products page list and the variant manager.
@@ -69,7 +70,7 @@ export function ProductCard({
       : "text-red-600";
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md">
+    <div className="card-lift rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
@@ -77,7 +78,7 @@ export function ProductCard({
               #{product.item_number}
             </span>
             {product.is_pinned && (
-              <span className="shrink-0 rounded bg-blue-50 px-1.5 py-0.5 text-xs text-blue-600">
+              <span className="shrink-0 rounded bg-emerald-100 px-1.5 py-0.5 text-xs text-emerald-700">
                 pinned
               </span>
             )}
@@ -131,7 +132,7 @@ export function ProductCard({
           </button>
           <button
             onClick={() => onEdit(product.id)}
-            className="rounded px-2 py-1 text-xs text-blue-600 hover:bg-blue-50"
+            className="rounded px-2 py-1 text-xs text-emerald-700 hover:bg-emerald-50"
           >
             Edit
           </button>

@@ -8,6 +8,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation for Phase 1c
+ *   - Khata Green restyle
  *
  * WHERE IT FITS:
  *   Core catalog management UI. Products created here are used across
@@ -389,6 +390,7 @@ export default function ProductsPage() {
         <LoadingState message="Loading products..." />
       ) : products.length === 0 ? (
         <EmptyState
+          illustration="box"
           title={search ? "No products match your search" : "No products yet"}
           description={
             search

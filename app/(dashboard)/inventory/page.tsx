@@ -11,6 +11,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation
+ *   - Khata Green restyle
  *
  * WHERE IT FITS:
  *   Accessed via /inventory route, BottomNav "Stock" tab.
@@ -24,10 +25,10 @@ import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
 import type { StockItemWithConsumption, AdjustmentReason } from '@/types'
 import { StockList } from '@/components/inventory/StockList'
-import { ExpiryAlert } from '@/components/inventory/ExpiryAlert'
 import { ConsumptionCard } from '@/components/inventory/ConsumptionCard'
 import { OrderSuggestionCard } from '@/components/inventory/OrderSuggestionCard'
 import { ListPageSkeleton } from '@/components/shared/PageSkeleton'
+import { AttentionCard } from '@/components/shared/AttentionCard'
 
 interface InventoryResponse {
   items: StockItemWithConsumption[]
@@ -82,9 +83,22 @@ export default function InventoryPage() {
     return <ListPageSkeleton rows={6} />
   }
 
+  // Derive counts for AttentionCard from already-fetched items
+  const lowStockCount = items.filter(i => i.stockStatus === 'low' || i.stockStatus === 'critical' || i.stockStatus === 'out').length
+  const expiryCount = items.filter(item => {
+    if (!item.expiryDate || item.currentStock <= 0) return false
+    const daysUntil = Math.ceil(
+      (new Date(item.expiryDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+    )
+    return daysUntil <= 7
+  }).length
+
   return (
     <div className="mx-auto max-w-lg px-4 py-6 space-y-5 pb-24">
-      <h1 className="text-xl font-semibold text-foreground">Stock</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-semibold text-foreground">Stock</h1>
+        <Link href="/products" className="text-xs font-semibold text-emerald-700">Manage products →</Link>
+      </div>
 
       {/* Upload schedule prompt */}
       {showUploadPrompt && lastTxDate && (
@@ -96,7 +110,7 @@ export default function InventoryPage() {
             <p className="text-xs text-blue-700 mt-0.5">Upload now to keep inventory accurate.</p>
           </div>
           <div className="flex items-center gap-3 shrink-0">
-            <Link href="/scan" className="text-xs font-semibold text-blue-700 underline underline-offset-2">
+            <Link href="/scan" className="text-xs font-semibold text-emerald-700">
               Scan bill
             </Link>
             <button
@@ -109,11 +123,11 @@ export default function InventoryPage() {
         </div>
       )}
 
+      {/* Consolidated attention card (replaces separate ExpiryAlert summary banner) */}
+      <AttentionCard lowStockCount={lowStockCount} expiryCount={expiryCount} href="/inventory" />
+
       {/* AI ordering suggestions */}
       <OrderSuggestionCard />
-
-      {/* Expiry alerts */}
-      <ExpiryAlert items={items} />
 
       {/* Consumption alerts (stockout within 7 days) */}
       {consumptionAlerts.length > 0 && (

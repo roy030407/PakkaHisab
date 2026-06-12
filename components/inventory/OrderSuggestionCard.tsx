@@ -9,6 +9,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation
+ *   - Khata Green restyle
  *
  * WHERE IT FITS:
  *   Top section of the inventory page, below the upload schedule prompt.
@@ -75,8 +76,8 @@ export function OrderSuggestionCard() {
         <SuggestionSection
           title="Reduce ordering"
           items={data.reduceOrdering}
-          accentClass="border-slate-100 bg-slate-50"
-          titleClass="text-slate-700"
+          accentClass="border-emerald-100 bg-emerald-50"
+          titleClass="text-emerald-700"
           showLogPurchase={false}
           onLogPurchase={() => {}}
         />
@@ -112,7 +113,7 @@ function SuggestionSection({
           {showLogPurchase && (
             <button
               onClick={() => onLogPurchase(item.productId)}
-              className="shrink-0 text-xs font-medium text-slate-700 underline underline-offset-2"
+              className="shrink-0 text-xs font-medium text-emerald-700"
             >
               Log purchase
             </button>

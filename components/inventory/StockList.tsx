@@ -8,6 +8,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation
+ *   - Khata Green restyle
  *
  * WHERE IT FITS:
  *   Main content area of the inventory page.
@@ -26,7 +27,7 @@ interface Props {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  ok: 'bg-green-100 text-green-800',
+  ok: 'bg-emerald-100 text-emerald-800',
   low: 'bg-amber-100 text-amber-800',
   critical: 'bg-red-100 text-red-800',
   out: 'bg-gray-100 text-gray-500',
@@ -84,7 +85,7 @@ export function StockList({ items, onAdjust }: Props) {
         {filtered.map((item, idx) => (
           <div
             key={item.productId}
-            className={`flex items-center px-4 py-3 gap-3 cursor-pointer hover:bg-muted/40 active:bg-muted/60 transition-colors ${idx < filtered.length - 1 ? 'border-b border-border' : ''}`}
+            className={`card-lift flex items-center px-4 py-3 gap-3 cursor-pointer hover:bg-muted/40 active:bg-muted/60 transition-colors ${idx < filtered.length - 1 ? 'border-b border-border' : ''}`}
             onClick={() => { setAdjusting(item.productId); setDelta(0); setReason('correction') }}
           >
             {/* Status dot */}
@@ -137,7 +138,7 @@ export function StockList({ items, onAdjust }: Props) {
                   </span>
                   <button
                     onClick={() => setDelta(d => d + 1)}
-                    className="w-10 h-10 rounded-full bg-slate-800 text-white text-xl flex items-center justify-center"
+                    className="w-10 h-10 rounded-full bg-emerald-700 text-white text-xl flex items-center justify-center"
                   >+</button>
                 </div>
               </div>
@@ -150,7 +151,7 @@ export function StockList({ items, onAdjust }: Props) {
                     <button
                       key={r}
                       onClick={() => setReason(r)}
-                      className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${reason === r ? 'bg-slate-800 text-white border-slate-800' : 'bg-background text-foreground border-border'}`}
+                      className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${reason === r ? 'bg-emerald-700 text-white border-emerald-700' : 'bg-background text-foreground border-border'}`}
                     >
                       {r.charAt(0).toUpperCase() + r.slice(1)}
                     </button>
@@ -161,7 +162,7 @@ export function StockList({ items, onAdjust }: Props) {
               <button
                 onClick={handleSave}
                 disabled={delta === 0 || saving}
-                className="w-full py-3 rounded-xl bg-slate-800 text-white font-semibold text-sm disabled:opacity-40"
+                className="w-full py-3 rounded-xl bg-emerald-700 text-white font-semibold text-sm disabled:opacity-40"
               >
                 {saving ? 'Saving...' : `Save adjustment (${delta > 0 ? '+' : ''}${delta} ${item.unit})`}
               </button>

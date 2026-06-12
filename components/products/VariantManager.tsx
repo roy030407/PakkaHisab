@@ -8,6 +8,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation for Phase 1c
+ *   - Khata Green restyle
  *
  * WHERE IT FITS:
  *   Rendered inside the product edit/add form when the product has or
@@ -84,7 +85,7 @@ export function VariantManager({
         <button
           type="button"
           onClick={() => setShowForm((v) => !v)}
-          className="text-xs text-blue-600 hover:underline"
+          className="text-xs text-emerald-700 hover:underline"
         >
           + Add variant
         </button>
@@ -120,7 +121,7 @@ export function VariantManager({
       )}
 
       {showForm && (
-        <div className="rounded-md border border-blue-100 bg-blue-50 p-3 space-y-3">
+        <div className="rounded-md border border-emerald-100 bg-emerald-50 p-3 space-y-3">
           <div className="space-y-1">
             <Label className="text-xs">Variant name</Label>
             <Input
