@@ -12,6 +12,7 @@
  *     store-specific fields (storeType, ownerName, city, gstNumber)
  *   - Added sample store offer after storeType selection
  *   - Now calls /api/stores instead of /api/businesses
+ *   - Khata Green restyle: emerald accents, brand mark, radial glow backdrop
  *
  * WHERE IT FITS:
  *   Shown immediately after signup (and on dashboard access if no store
@@ -106,7 +107,7 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12">
+    <div className="flex min-h-screen items-center justify-center bg-white [background-image:radial-gradient(ellipse_at_top,#ecfdf5_0%,transparent_55%)] px-4 py-12">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Set up your store</CardTitle>

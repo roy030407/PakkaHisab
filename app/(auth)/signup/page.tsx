@@ -11,6 +11,7 @@
  *   - Replaced magic link flow with email + password (signUp)
  *   - Added password confirmation and client-side validation
  *   - Added export const dynamic = "force-dynamic" to prevent build-time prerender
+ *   - Khata Green restyle: emerald accents, brand mark, radial glow backdrop
  *
  * WHERE IT FITS:
  *   Entry point for first-time users. Leads to /onboarding on success.
@@ -91,9 +92,10 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-white [background-image:radial-gradient(ellipse_at_top,#ecfdf5_0%,transparent_55%)] px-4">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
+          <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 text-lg font-extrabold text-white shadow-md shadow-emerald-200">₹</div>
           <CardTitle className="text-xl">Create your account</CardTitle>
           <CardDescription>Set an email and password to get started</CardDescription>
         </CardHeader>
@@ -142,7 +144,7 @@ export default function SignupPage() {
             </Button>
             <p className="text-center text-sm text-gray-500">
               Already have an account?{" "}
-              <Link href="/login" className="font-medium text-slate-700 underline">
+              <Link href="/login" className="font-medium text-emerald-700 underline">
                 Log in
               </Link>
             </p>
