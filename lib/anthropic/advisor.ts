@@ -4,7 +4,7 @@
  * WHAT THIS DOES:
  *   Builds the business context payload that goes into Claude's system prompt.
  *   Queries the last 90 days of transactions, inventory, fixed costs,
- *   and customer balances — all scoped to the authenticated store.
+ *   and customer balances - all scoped to the authenticated store.
  *
  * CHANGES THIS SESSION:
  *   - Initial creation for Phase 5 AI Advisor

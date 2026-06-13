@@ -4,8 +4,7 @@
  * WHAT THIS DOES:
  *   GET: list all active fixed costs for the user's store.
  *   POST: create a new fixed cost entry.
- *   Fixed costs are used in profit calculations throughout the app —
- *   distributed across reporting periods (monthly / 30 = daily cost).
+ *   Fixed costs are used in profit calculations throughout the app - *   distributed across reporting periods (monthly / 30 = daily cost).
  *
  * CHANGES THIS SESSION:
  *   - Initial creation for Phase 1d

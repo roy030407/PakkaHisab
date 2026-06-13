@@ -2,8 +2,8 @@
  * FILE: app/api/customers/[id]/route.ts
  *
  * WHAT THIS DOES:
- *   GET — customer detail with last 50 transactions.
- *   PATCH — update customer fields (name, phone, type, creditLimit, notes).
+ *   GET - customer detail with last 50 transactions.
+ *   PATCH - update customer fields (name, phone, type, creditLimit, notes).
  *
  * CHANGES THIS SESSION:
  *   - Initial creation

@@ -4,7 +4,7 @@
  * WHAT THIS DOES:
  *   Next.js middleware that refreshes the Supabase auth session on every
  *   request, keeping auth cookies fresh without client-side polling.
- *   Redirect logic lives in the dashboard layout — middleware only
+ *   Redirect logic lives in the dashboard layout - middleware only
  *   refreshes tokens.
  *
  * CHANGES THIS SESSION:
@@ -44,7 +44,7 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  // Refresh session — do not add redirect logic here
+  // Refresh session - do not add redirect logic here
   await supabase.auth.getUser();
 
   return supabaseResponse;

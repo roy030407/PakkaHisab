@@ -46,7 +46,7 @@ export async function updateStock(
     reason: reason ?? null,
   })
 
-  // Upsert inventory row — increment or decrement current_stock
+  // Upsert inventory row - increment or decrement current_stock
   const { data: existing } = await supabase
     .from('inventory')
     .select('id, current_stock')

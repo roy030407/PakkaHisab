@@ -8,7 +8,7 @@
  *   Optionally triggers sample product seeding if wantsSampleStore=true.
  *
  * CHANGES THIS SESSION:
- *   - Initial creation — replaces old /api/businesses route
+ *   - Initial creation - replaces old /api/businesses route
  *
  * WHERE IT FITS:
  *   Called by the onboarding page on submit, and by the dashboard layout

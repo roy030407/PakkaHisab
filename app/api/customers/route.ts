@@ -2,8 +2,8 @@
  * FILE: app/api/customers/route.ts
  *
  * WHAT THIS DOES:
- *   GET — list all customers for the store.
- *   POST — create a new customer.
+ *   GET - list all customers for the store.
+ *   POST - create a new customer.
  *
  * CHANGES THIS SESSION:
  *   - Initial creation

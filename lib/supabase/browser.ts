@@ -3,7 +3,7 @@
  *
  * WHAT THIS DOES:
  *   Creates a Supabase browser client for use in Client Components.
- *   Call this function to get a client — do not share a singleton across
+ *   Call this function to get a client - do not share a singleton across
  *   renders to avoid stale session state.
  *
  * CHANGES THIS SESSION:

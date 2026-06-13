@@ -13,7 +13,7 @@
  * WHERE IT FITS:
  *   Imported by lib/supabase/server.ts and lib/supabase/browser.ts.
  *   Supabase's complex template-literal type inference requires the
- *   generated output — this placeholder disables that inference until
+ *   generated output - this placeholder disables that inference until
  *   a real project is wired up.
  *
  * CALLED BY / IMPORTS FROM:

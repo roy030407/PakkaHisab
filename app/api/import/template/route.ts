@@ -3,7 +3,7 @@
  *
  * WHAT THIS DOES:
  *   POST { templateName }: loads a curated sample product catalog and
- *   fixed costs into the authenticated store. Idempotent — skips products
+ *   fixed costs into the authenticated store. Idempotent - skips products
  *   if the store already has > 10 products (won't overwrite existing data).
  *
  * CHANGES THIS SESSION:
@@ -57,7 +57,7 @@ export async function POST(request: Request) {
     )
   }
 
-  // Check if store already has products — don't overwrite
+  // Check if store already has products - don't overwrite
   const { count: existingCount } = await supabase
     .from("products")
     .select("id", { count: "exact", head: true })

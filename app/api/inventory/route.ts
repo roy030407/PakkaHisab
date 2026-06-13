@@ -2,8 +2,8 @@
  * FILE: app/api/inventory/route.ts
  *
  * WHAT THIS DOES:
- *   GET — returns all products with stock levels, consumption data, and stock status.
- *   PATCH — applies a manual stock adjustment (writes stock_movements + updates inventory).
+ *   GET - returns all products with stock levels, consumption data, and stock status.
+ *   PATCH - applies a manual stock adjustment (writes stock_movements + updates inventory).
  *
  * CHANGES THIS SESSION:
  *   - Initial creation
@@ -147,7 +147,7 @@ export async function PATCH(request: Request) {
       payment_method: 'cash',
       source: 'manual_quick',
       tax_amount: 0,
-      notes: `Manual adjustment: ${body.reason}${body.notes ? ' — ' + body.notes : ''}`,
+      notes: `Manual adjustment: ${body.reason}${body.notes ? ' - ' + body.notes : ''}`,
     })
     .select('id')
     .single()

@@ -61,6 +61,27 @@
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   }
+  /* Button lift: rises with a soft shadow on hover, presses down on click */
+  .btn-lift {
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+  }
+  .btn-lift:hover:not(:disabled) {
+    transform: translateY(-1px) scale(1.01);
+    box-shadow: 0 6px 16px rgba(4, 120, 87, 0.18);
+  }
+  .btn-lift:active:not(:disabled) {
+    transform: translateY(0) scale(0.99);
+    box-shadow: 0 2px 6px rgba(4, 120, 87, 0.14);
+  }
+  /* Row lift: subtle raise + shadow for clickable list rows */
+  .row-lift {
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+  }
+  .row-lift:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    z-index: 1;
+  }
   /* Success pulse on save confirmations */
   .save-pulse {
     animation: save-pulse 0.4s ease-out both;
@@ -95,6 +116,54 @@
   0%, 100% { opacity: 1; }
   50%      { opacity: 0; }
 }
+/* Slow drifting background gradient for the hero */
+@keyframes hero-drift {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+/* Sweeping shine across primary CTAs */
+@keyframes cta-shine {
+  0%   { transform: translateX(-120%); }
+  60%, 100% { transform: translateX(220%); }
+}
+/* Reveal that pops in with a slight overshoot */
+@keyframes reveal-pop {
+  0%   { opacity: 0; transform: translateY(28px) scale(0.96); }
+  60%  { opacity: 1; transform: translateY(-4px) scale(1.01); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.hero-aurora {
+  background: linear-gradient(120deg,
+    oklch(0.97 0.03 95) 0%,
+    oklch(0.96 0.05 150) 35%,
+    oklch(0.95 0.04 95) 70%,
+    oklch(0.97 0.05 160) 100%);
+  background-size: 220% 220%;
+  animation: hero-drift 18s ease-in-out infinite;
+}
+/* CTA shine overlay element */
+.cta-shine {
+  position: relative;
+  overflow: hidden;
+}
+.cta-shine::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+  transform: translateX(-120%);
+  animation: cta-shine 4.5s ease-in-out 1.5s infinite;
+}
+/* Mouse/scroll parallax: LandingReveal sets --px/--py per element */
+.parallax {
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  transform: translate3d(var(--px, 0px), var(--py, 0px), 0) rotate(var(--float-rot, 0deg));
+  will-change: transform;
+}
 
 .landing-float {
   animation: drop-in 0.6s ease-out both, float-soft 4s ease-in-out 0.6s infinite;
@@ -115,9 +184,14 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .landing-float, .landing-marquee, .save-pulse, .page-enter { animation: none !important; }
+  .landing-float, .landing-marquee, .save-pulse, .page-enter,
+  .hero-aurora { animation: none !important; }
+  .cta-shine::after { display: none; }
+  .parallax { transform: rotate(var(--float-rot, 0deg)) !important; transition: none; }
   [data-reveal] { opacity: 1; transform: none; transition: none; }
   .card-lift, .card-lift:hover { transition: none; transform: none; }
+  .btn-lift, .btn-lift:hover, .btn-lift:active,
+  .row-lift, .row-lift:hover { transition: none; transform: none; box-shadow: none; }
 }
 
 @layer base {
@@ -196,5 +270,13 @@
   }
   html {
     @apply font-sans;
+  }
+  /* Hand cursor on every interactive element so things read as clickable */
+  button, a, [role="button"], summary, label[for], select,
+  input[type="checkbox"], input[type="radio"], input[type="submit"] {
+    cursor: pointer;
+  }
+  button:disabled, [aria-disabled="true"] {
+    cursor: not-allowed;
   }
 }

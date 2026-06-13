@@ -81,10 +81,11 @@ export async function buildPeriodReport(
   const profit = calculateProfit(totalSales, totalPurchases, fixedCosts)
   const taxSummary = calculateTax(txRows)
 
-  // Top products — chunked to avoid PostgREST URL-length limit (each UUID is ~37 chars;
+  // Top products - chunked to avoid PostgREST URL-length limit (each UUID is ~37 chars;
   // a 200+ UUID IN clause exceeds the ~8 KB URL limit on busy stores).
   const txIds = txRows.filter((t) => t.type === 'sale').map((t) => t.id)
   let topProducts: TopProduct[] = []
+  let itemsSold: TopProduct[] = []
 
   if (txIds.length > 0) {
     const CHUNK = 100
@@ -116,7 +117,7 @@ export async function buildPeriodReport(
       }
     }
 
-    topProducts = Array.from(productMap.entries())
+    itemsSold = Array.from(productMap.entries())
       .map(([id, v]) => ({
         productId: id,
         productName: v.name,
@@ -124,7 +125,9 @@ export async function buildPeriodReport(
         quantity: Math.round(v.quantity),
       }))
       .sort((a, b) => b.revenue - a.revenue)
-      .slice(0, 10)
+
+    // Charts only need the leaders; the per-item section uses the full list.
+    topProducts = itemsSold.slice(0, 10)
   }
 
   const labels = generateChartLabels(period)
@@ -144,6 +147,7 @@ export async function buildPeriodReport(
     netProfit: profit.netProfit,
     taxSummary,
     topProducts,
+    itemsSold,
     paymentBreakdown: {
       cash: Math.round(paymentBreakdown.cash),
       upi: Math.round(paymentBreakdown.upi),

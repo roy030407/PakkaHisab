@@ -47,7 +47,7 @@ export function ProductSearch({ products, onSelect, placeholder = 'Search produc
             <button key={p.id} onClick={() => { onSelect(p); setQuery('') }}
               className="w-full text-left px-3 py-2.5 hover:bg-gray-50 border-b border-gray-100 last:border-0">
               <p className="text-sm font-medium text-gray-900">{p.name}</p>
-              <p className="text-xs text-gray-400">#{p.item_number} &middot; &#8377;{Number(p.selling_price) || '—'}</p>
+              <p className="text-xs text-gray-400">#{p.item_number} &middot; &#8377;{Number(p.selling_price) || ' - '}</p>
             </button>
           ))}
         </div>

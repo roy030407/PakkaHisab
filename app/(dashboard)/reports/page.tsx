@@ -29,6 +29,7 @@ import { TaxSummary } from "@/components/reports/TaxSummary"
 import { CashFlowChart } from "@/components/reports/CashFlowChart"
 import { SalesPurchasesChart } from "@/components/reports/SalesPurchasesChart"
 import { TopProductsChart } from "@/components/reports/TopProductsChart"
+import { ItemsSoldCard } from "@/components/reports/ItemsSoldCard"
 import { ReportSkeleton } from "@/components/shared/PageSkeleton"
 import type { ReportPeriod, PeriodReport } from "@/types"
 
@@ -154,6 +155,9 @@ export default function ReportsPage() {
               ))}
             </div>
           </div>
+
+          {/* Per-item sales breakdown (collapsed preview, expandable) */}
+          <ItemsSoldCard items={report.itemsSold ?? report.topProducts ?? []} />
 
           {/* Profit breakdown */}
           <ProfitCard report={report} />

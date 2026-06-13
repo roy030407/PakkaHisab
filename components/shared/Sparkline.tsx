@@ -3,7 +3,7 @@
  *
  * WHAT THIS DOES:
  *   Tiny 7-bar flex chart for showing a week of values inside cards.
- *   Pure CSS bars — no chart library. Server-component friendly.
+ *   Pure CSS bars - no chart library. Server-component friendly.
  *
  * CHANGES THIS SESSION:
  *   - Initial creation for Khata Green redesign

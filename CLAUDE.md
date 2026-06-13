@@ -1,4 +1,4 @@
-# PakkaHisab — Project Source of Truth
+# PakkaHisab - Project Source of Truth
 
 Read this file at the start of every single task. This is the authoritative reference for every decision.
 
@@ -9,7 +9,7 @@ PROJECT: PAKKAHISAB
 What it is:
 A complete business operating system for Indian SME owners.
 Scan bills, manage inventory, track customers, understand profit,
-pay taxes correctly, and get AI-powered suggestions — all in one place.
+pay taxes correctly, and get AI-powered suggestions - all in one place.
 Designed to feel like a smart assistant, not accounting software.
 
 Core principle:
@@ -21,7 +21,24 @@ Kirana stores, medical shops, hardware stores, distributors,
 small manufacturers, and anyone who tracks daily business manually.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-TECH STACK — exact, do not deviate
+WRITING & STYLE RULES (apply to ALL output)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. NEVER use em dashes (—) anywhere. Not in UI copy, code comments,
+   file headers, commit messages, AI system prompts, AI-generated text,
+   or this file. Use a comma, a period, parentheses, or a plain
+   hyphen (-) with spaces instead. This is non-negotiable.
+2. Every clickable element must use cursor: pointer (hand cursor).
+   Disabled controls use cursor: not-allowed.
+3. Every interactive element (button, card, nav item, list row) must
+   have a visible hover state. The chosen feedback style is LIFT + SHADOW:
+   element rises a couple px with a soft shadow on hover and presses down
+   on click. Shared utilities live in app/globals.css:
+   .btn-lift (buttons / nav / links), .row-lift (list rows),
+   .card-lift (cards). Respect prefers-reduced-motion (already handled).
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TECH STACK - exact, do not deviate
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Framework:      Next.js 14, App Router, TypeScript strict
@@ -47,11 +64,11 @@ ANTHROPIC_API_KEY               ← server only
 NEXT_PUBLIC_APP_URL
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-PHASES — build in strict order
+PHASES - build in strict order
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ════════════════════════════════════════
-PHASE 1 — Foundation and Store Setup
+PHASE 1 - Foundation and Store Setup
 ════════════════════════════════════════
 
 Goal: merchant can sign up, set up their store, and have a
@@ -79,8 +96,7 @@ product catalog ready before scanning a single bill.
       id (auto), item_number (sequential, per store),
       name, brand (optional), category, subcategory,
       unit (kg / litre / piece / box / dozen / other),
-      variants (e.g. "Thums Up 200ml", "Thums Up 500ml", "Thums Up 2L"
-      — stored as child records under a parent product),
+      variants (e.g. "Thums Up 200ml", "Thums Up 500ml", "Thums Up 2L" - stored as child records under a parent product),
       purchase_price, selling_price, tax_rate (GST %),
       is_active, is_frequently_used (auto-calculated),
       created_at, updated_at.
@@ -109,7 +125,7 @@ product catalog ready before scanning a single bill.
     IGST vs CGST+SGST toggle (for inter-state vs intra-state).
 
 ════════════════════════════════════════
-PHASE 2 — Bill Scanning and Transaction Entry
+PHASE 2 - Bill Scanning and Transaction Entry
 ════════════════════════════════════════
 
 Goal: the core loop. A bill comes in, it gets scanned,
@@ -127,8 +143,7 @@ This is the primary daily action in the app.
     2. Upload to Supabase Storage (private bucket)
     3. Claude Vision extracts structured data
        (see EXTRACTION SPEC below)
-    4. Extracted items are matched against the product catalog
-       — exact match first, then fuzzy match
+    4. Extracted items are matched against the product catalog - exact match first, then fuzzy match
     5. Unmatched items are flagged: "This item is not in your
        catalog. Add it?"
     6. Duplicate detection: if the same bill (same vendor,
@@ -219,7 +234,7 @@ This is the primary daily action in the app.
     Manual adjustments allowed at any time with a reason field.
 
 ════════════════════════════════════════
-PHASE 3 — Inventory Management
+PHASE 3 - Inventory Management
 ════════════════════════════════════════
 
 Goal: merchant knows exactly what they have, what's running low,
@@ -250,11 +265,11 @@ what might expire, and what to order next.
 
 3d. AI ordering suggestions
     Every morning (or on demand), generate:
-      "Order today" list — products below reorder point
+      "Order today" list - products below reorder point
         or predicted to run out within 3 days.
-      "Reduce ordering" list — products with low consumption
+      "Reduce ordering" list - products with low consumption
         rate where stock will last more than 30 days.
-      "Watch for expiry" list — products expiring within 7 days.
+      "Watch for expiry" list - products expiring within 7 days.
     These are suggestions, not automated orders.
     Merchant can tap any item to log a purchase directly.
 
@@ -265,7 +280,7 @@ what might expire, and what to order next.
     Bulk CSV or Excel upload supported for historical data.
 
 ════════════════════════════════════════
-PHASE 4 — Reporting and Financial Intelligence
+PHASE 4 - Reporting and Financial Intelligence
 ════════════════════════════════════════
 
 Goal: merchant can answer any business question in seconds,
@@ -323,7 +338,7 @@ without a CA and without waiting for month-end.
     Downloadable as PDF or shareable as a link.
 
 ════════════════════════════════════════
-PHASE 5 — AI Advisor
+PHASE 5 - AI Advisor
 ════════════════════════════════════════
 
 Goal: a conversational AI that knows the merchant's business
@@ -350,7 +365,7 @@ employee would.
 
 5b. Proactive suggestions
     Claude generates one daily insight shown as a card
-    on the dashboard. Not a generic tip — must be based on
+    on the dashboard. Not a generic tip - must be based on
     that merchant's actual data.
     Examples:
     "Your Tuesday sales are consistently 30% lower than
@@ -360,7 +375,7 @@ employee would.
     Merchant can tap "Tell me more" to open the full chat.
 
 ════════════════════════════════════════
-PHASE 6 — Data Import and Migration
+PHASE 6 - Data Import and Migration
 ════════════════════════════════════════
 
 Goal: a merchant with existing data should not have to
@@ -398,7 +413,7 @@ start from zero.
     accuracy over time without any model fine-tuning.
 
 ════════════════════════════════════════
-PHASE 7 — Voice Entry (future reference)
+PHASE 7 - Voice Entry (future reference)
 ════════════════════════════════════════
 
 Do not build this now. Design all interfaces so voice can
@@ -425,7 +440,7 @@ Design requirement now:
   This makes Phase 7 a UI addition, not an architectural change.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-DATABASE SCHEMA — Prisma models
+DATABASE SCHEMA - Prisma models
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 stores
@@ -518,31 +533,31 @@ FILE STRUCTURE
   /(auth)
     /login              page.tsx
     /signup             page.tsx
-    /onboarding         page.tsx — store setup + sample import
-  /(dashboard)          layout.tsx — session guard here only
-    /dashboard          page.tsx — home, today's snapshot
-    /scan               page.tsx — bill scanner
-    /entry              page.tsx — quick + full manual entry
-    /inventory          page.tsx — stock list + alerts
-    /products           page.tsx — catalog management
-    /customers          page.tsx — customer list + ledgers
-    /reports            page.tsx — all reports + graphs
-    /advisor            page.tsx — AI chat
-    /settings           page.tsx — store config, tax, fixed costs
+    /onboarding         page.tsx - store setup + sample import
+  /(dashboard)          layout.tsx - session guard here only
+    /dashboard          page.tsx - home, today's snapshot
+    /scan               page.tsx - bill scanner
+    /entry              page.tsx - quick + full manual entry
+    /inventory          page.tsx - stock list + alerts
+    /products           page.tsx - catalog management
+    /customers          page.tsx - customer list + ledgers
+    /reports            page.tsx - all reports + graphs
+    /advisor            page.tsx - AI chat
+    /settings           page.tsx - store config, tax, fixed costs
   /api
-    /scan               route.ts — upload + extract
-    /scan/confirm       route.ts — save confirmed items
-    /entry/quick        route.ts — quick +/- transaction
-    /entry/full         route.ts — full transaction form
-    /products           route.ts — CRUD
-    /inventory          route.ts — stock levels + movements
-    /inventory/suggest  route.ts — AI ordering suggestions
-    /customers          route.ts — CRUD + balance
-    /reports            route.ts — generate reports
-    /ai/chat            route.ts — advisor chat (streaming)
-    /ai/insight         route.ts — daily proactive insight
-    /import/excel       route.ts — Excel/CSV upload + parse
-    /import/confirm     route.ts — bulk import confirm
+    /scan               route.ts - upload + extract
+    /scan/confirm       route.ts - save confirmed items
+    /entry/quick        route.ts - quick +/- transaction
+    /entry/full         route.ts - full transaction form
+    /products           route.ts - CRUD
+    /inventory          route.ts - stock levels + movements
+    /inventory/suggest  route.ts - AI ordering suggestions
+    /customers          route.ts - CRUD + balance
+    /reports            route.ts - generate reports
+    /ai/chat            route.ts - advisor chat (streaming)
+    /ai/insight         route.ts - daily proactive insight
+    /import/excel       route.ts - Excel/CSV upload + parse
+    /import/confirm     route.ts - bulk import confirm
 
 /components
   /scan
@@ -635,7 +650,7 @@ FILE STRUCTURE
   useReports.ts
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-EXTRACTION SPEC — Claude Vision
+EXTRACTION SPEC - Claude Vision
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 The extraction prompt must:
@@ -664,16 +679,16 @@ The extraction prompt must:
 4. Return ONLY valid JSON. No preamble, no markdown.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-DATA SOURCES — Kaggle integration
+DATA SOURCES - Kaggle integration
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Use these Kaggle datasets (publicly available, open licence)
 to seed the product database and extraction examples:
 
 For product catalog seeding:
-  "Indian Grocery Store Dataset" — FMCG product names,
+  "Indian Grocery Store Dataset" - FMCG product names,
   categories, common prices for kirana context.
-  "Indian Retail Products Dataset" — broader retail coverage.
+  "Indian Retail Products Dataset" - broader retail coverage.
   Manually curate top 100-200 products per store type.
   Store in /data/seeds/ as TypeScript constants.
   Run once via prisma seed to populate kaggle_products table.
@@ -691,7 +706,7 @@ All Kaggle data is preprocessed, curated, and stored locally
 in the app's own database. Static, not dynamic.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-UX PRINCIPLES — apply to every screen
+UX PRINCIPLES - apply to every screen
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 1. Every primary action must be reachable in 2 taps from home.
@@ -702,7 +717,7 @@ UX PRINCIPLES — apply to every screen
 5. All confirmations show exactly what will be saved.
    No surprises after saving.
 6. Empty states are helpful, not blank.
-   "No products yet — add your first product" with a button.
+   "No products yet - add your first product" with a button.
 7. All error messages are in plain language.
    Never show technical errors to the merchant.
 8. Loading states always show something useful.
@@ -712,41 +727,41 @@ UX PRINCIPLES — apply to every screen
     with a slow 4G connection. No heavy assets on initial load.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-WORKFLOW — same for every feature
+WORKFLOW - same for every feature
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-STEP 1 — THINK
+STEP 1 - THINK
   Invoke superpowers:brainstorming before any decision.
   Surface tradeoffs, alternatives, hidden constraints.
 
-STEP 2 — PLAN
+STEP 2 - PLAN
   Invoke superpowers:writing-plans.
   Output: numbered tasks, dependencies, files touched,
   success criteria, what done looks like.
 
-STEP 3 — STOP AND SHOW
+STEP 3 - STOP AND SHOW
   Present full plan. Do not write application code until
   user types "approved" or "go".
   Revise if requested. Show again. Repeat until approved.
 
-STEP 4 — BUILD
+STEP 4 - BUILD
   Invoke superpowers:executing-plans.
   Any task touching more than one file:
     invoke superpowers:subagent-driven-development.
     One subagent per task. Never batch.
 
-STEP 5 — SECURITY CHECK
+STEP 5 - SECURITY CHECK
   End of every phase: invoke vibe-security.
   Fix all Critical and High findings before next phase.
   Show findings as: Severity | Issue | File:Line | Fix
 
-STEP 6 — COMMIT GATE
+STEP 6 - COMMIT GATE
   Phase complete: list changed files, write commit message.
   STOP. Wait for "commit" before running git commit.
   Never auto-commit.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-FILE COMMENT BLOCK — every file touched
+FILE COMMENT BLOCK - every file touched
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 /**
@@ -786,7 +801,7 @@ SECURITY REQUIREMENTS
     invoke fullstack-dev-skills:secure-code-guardian.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-SKILLS — invoke at these triggers
+SKILLS - invoke at these triggers
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Before any UI component:
@@ -818,8 +833,49 @@ SCHEMA DESIGN DECISIONS (from brainstorm)
 - store_id is the primary tenant key on all data tables
 - stores.owner_id = auth.uid() for v1 (one user = one store)
 - RLS policy pattern: store_id IN (SELECT id FROM stores WHERE owner_id = auth.uid())
-- kaggle_products has no RLS — it is a public read-only seed table
+- kaggle_products has no RLS - it is a public read-only seed table
 - Prisma used for migrations; API routes use Supabase client with user JWT for RLS
 - Migration order: stores → products → inventory → customers → transactions →
   transaction_items → stock_movements → document_uploads → extraction_corrections →
   fixed_costs → ai_conversations → periodic_reports → kaggle_products
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SESSION LEARNINGS (UI/UX polish pass)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+- snake_case vs camelCase trap: Supabase/PostgREST returns snake_case
+  (current_balance, selling_price, is_pinned). Several components read
+  camelCase and silently rendered NaN/undefined. When a value shows as
+  ₹NaN, suspect this first. Fixes applied: QuickEntry (selling_price),
+  customers page (current_balance, normalized in the fetch), and
+  CreditBadge now guards with Number.isFinite as a safety net.
+  Rule: when consuming a Supabase response, normalize to the camelCase
+  type at the fetch boundary, do not assume the field name matches.
+
+- Sale / Purchase / Expense: all three are required for true profit and
+  correct inventory (Sale = goods out / cash in, decreases stock;
+  Purchase = stock in / cash out, increases stock; Expense = cash out,
+  no stock). Sale is ~90% of daily use, so the quick-entry screen is
+  Sale-first: Sale is the default, Purchase/Expense tuck behind a
+  "Recording something else?" toggle.
+
+- Products discoverability: the catalog (/products) is reached via a
+  [Stock | Products] segmented tab (components/shared/StockTabs.tsx)
+  shown on both /inventory and /products, so it works on mobile too.
+
+- Logout lives in components/shared/LogoutButton.tsx (variants: "nav"
+  for the Sidebar, "button" for Settings). It signs out of Supabase and
+  always returns to "/" (landing), even if sign-out errors.
+
+- Reports per-item: buildReport now returns itemsSold (full revenue-sorted
+  list); topProducts stays capped at 10 for the charts. The Reports page
+  shows a collapsed ItemsSoldCard preview (top 3) that expands to the full
+  list, respecting the period toggle.
+
+- Landing motion lives in components/landing/LandingReveal.tsx (scroll
+  reveal + count-up + mouse parallax) and app/globals.css (hero-aurora,
+  cta-shine, parallax, reveal keyframes). All motion respects
+  prefers-reduced-motion.
+
+- Em dashes were swept from app/, components/, lib/, types/ and this file
+  via a Node script (replace /\s*—\s*/g with " - "). Keep them out.

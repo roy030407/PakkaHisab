@@ -8,7 +8,7 @@
  * CHANGES THIS SESSION:
  *   - Initial creation for Khata Green redesign
  *   - Fix: accept string format presets ("inr", "inr-compact") so server
- *     components can use it — functions can't cross the RSC boundary
+ *     components can use it - functions can't cross the RSC boundary
  *
  * WHERE IT FITS:
  *   Used by StatCard, the dashboard hero, and landing page number band.

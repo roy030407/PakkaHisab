@@ -7,7 +7,7 @@
  *   in future bill scans for this store (improving per-merchant accuracy).
  *
  * CHANGES THIS SESSION:
- *   - Initial creation for Phase 6 (6c — handwriting correction feedback loop)
+ *   - Initial creation for Phase 6 (6c - handwriting correction feedback loop)
  *
  * WHERE IT FITS:
  *   Called by the scan confirm screen when merchant edits an extracted value.

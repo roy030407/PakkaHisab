@@ -11,6 +11,8 @@
  *   - Bug fix: updated p.sellingPrice/p.purchasePrice/p.isPinned to snake_case to
  *     match the Supabase response (was producing ₹NaN on every product)
  *   - Khata Green restyle
+ *   - Sale-first UX: Sale is the default; Purchase/Expense tuck behind a
+ *     "Recording something else?" toggle. Hover lift on action buttons.
  *
  * WHERE IT FITS:
  *   Default mode on /entry page.
@@ -38,7 +40,20 @@ export function QuickEntry({ onSaved, onSwitchFull }: Props) {
   const [customerId, setCustomerId] = useState<string | undefined>()
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('cash')
   const [showCustomer, setShowCustomer] = useState(false)
+  const [showTypeOptions, setShowTypeOptions] = useState(false)
   const [saving, setSaving] = useState(false)
+
+  const TYPE_META: Record<TransactionType, { label: string; hint: string }> = {
+    sale: { label: 'Sale', hint: 'selling to a customer' },
+    purchase: { label: 'Purchase', hint: 'buying stock' },
+    expense: { label: 'Expense', hint: 'a cost, no stock' },
+    income: { label: 'Income', hint: 'other money in' },
+  }
+
+  function chooseType(t: TransactionType) {
+    setType(t)
+    if (t === 'sale') setShowTypeOptions(false)
+  }
 
   useEffect(() => {
     fetch('/api/products').then(r => r.json()).then(d => setProducts(d.products ?? []))
@@ -96,13 +111,28 @@ export function QuickEntry({ onSaved, onSwitchFull }: Props) {
             <AnimatedNumber value={total} format={(n) => `₹${n.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`} />
           </p>
         </div>
-        <div className="flex gap-1 bg-white/10 rounded-lg p-1">
-          {(['sale', 'purchase', 'expense'] as TransactionType[]).map(t => (
-            <button key={t} onClick={() => setType(t)}
-              className={`text-xs px-2 py-1 rounded transition-colors ${type === t ? 'bg-white text-emerald-800 font-semibold' : 'text-emerald-200'}`}>
-              {t.charAt(0).toUpperCase() + t.slice(1)}
-            </button>
-          ))}
+        <div className="flex flex-col items-end gap-1">
+          {showTypeOptions || type !== 'sale' ? (
+            <>
+              <div className="flex gap-1 bg-white/10 rounded-lg p-1">
+                {(['sale', 'purchase', 'expense'] as TransactionType[]).map(t => (
+                  <button key={t} onClick={() => chooseType(t)}
+                    className={`text-xs px-2.5 py-1 rounded transition-colors ${type === t ? 'bg-white text-emerald-800 font-semibold shadow-sm' : 'text-emerald-100 hover:text-white'}`}>
+                    {TYPE_META[t].label}
+                  </button>
+                ))}
+              </div>
+              <span className="text-[10px] text-emerald-100/80">{TYPE_META[type].hint}</span>
+            </>
+          ) : (
+            <>
+              <span className="text-sm font-semibold bg-white text-emerald-800 px-3 py-1 rounded-lg shadow-sm">Sale</span>
+              <button onClick={() => setShowTypeOptions(true)}
+                className="text-[10px] text-emerald-100/90 hover:text-white underline-offset-2 hover:underline">
+                Recording something else?
+              </button>
+            </>
+          )}
         </div>
       </div>
 
@@ -125,12 +155,12 @@ export function QuickEntry({ onSaved, onSwitchFull }: Props) {
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <button onClick={() => adj(p.id, -1)} aria-label={`Decrease ${p.name}`}
-                      className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-medium ${qty === 0 ? 'bg-emerald-50 text-emerald-300' : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'}`}>
+                      className={`btn-lift w-7 h-7 rounded-full flex items-center justify-center text-sm font-medium ${qty === 0 ? 'bg-emerald-50 text-emerald-300' : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'}`}>
                       &minus;
                     </button>
                     <span className={`text-sm font-bold min-w-[20px] text-center ${qty === 0 ? 'text-gray-300' : 'text-gray-900'}`}>{qty}</span>
                     <button onClick={() => adj(p.id, 1)} aria-label={`Increase ${p.name}`}
-                      className="w-7 h-7 rounded-full bg-emerald-700 text-white flex items-center justify-center text-sm hover:bg-emerald-800">
+                      className="btn-lift w-7 h-7 rounded-full bg-emerald-700 text-white flex items-center justify-center text-sm hover:bg-emerald-800">
                       +
                     </button>
                   </div>
@@ -144,15 +174,17 @@ export function QuickEntry({ onSaved, onSwitchFull }: Props) {
       {/* Footer */}
       <div className="sticky bottom-0 px-4 pb-8 pt-3 bg-white border-t border-gray-100 space-y-2">
         {type === 'sale' && (
-          <button onClick={() => setShowCustomer(true)} className="w-full text-sm text-emerald-700 py-1">
-            {customerId ? '&#10003; Customer added' : '+ Add customer (optional)'}
+          <button onClick={() => setShowCustomer(true)}
+            className="btn-lift w-full text-sm text-emerald-700 py-2 rounded-lg hover:bg-emerald-50">
+            {customerId ? '✓ Customer added' : '+ Add customer (optional)'}
           </button>
         )}
         <button onClick={handleSave} disabled={saving || itemCount === 0}
-          className="w-full bg-emerald-700 text-white font-semibold py-3.5 rounded-xl text-sm disabled:opacity-60 hover:bg-emerald-800">
+          className="btn-lift w-full bg-emerald-700 text-white font-semibold py-3.5 rounded-xl text-sm disabled:opacity-60 hover:bg-emerald-800">
           {saving ? 'Saving...' : `Save ${type} · ₹${total.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`}
         </button>
-        <button onClick={() => onSwitchFull(buildLineItems())} className="w-full text-center text-xs text-gray-400 py-1">
+        <button onClick={() => onSwitchFull(buildLineItems())}
+          className="btn-lift w-full text-center text-xs text-gray-500 py-2 rounded-lg hover:bg-gray-100 hover:text-gray-700">
           Switch to full entry
         </button>
       </div>

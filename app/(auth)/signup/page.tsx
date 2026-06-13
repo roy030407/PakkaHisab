@@ -84,7 +84,7 @@ export default function SignupPage() {
       return;
     }
 
-    // Email confirmation is enabled on the project — no session yet.
+    // Email confirmation is enabled on the project - no session yet.
     setNotice(
       "Account created. Please check your email to confirm, then log in."
     );

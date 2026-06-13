@@ -31,6 +31,7 @@ import { OrderSuggestionCard } from '@/components/inventory/OrderSuggestionCard'
 import { ListPageSkeleton } from '@/components/shared/PageSkeleton'
 import { AttentionCard } from '@/components/shared/AttentionCard'
 import { ExpiryAlert } from '@/components/inventory/ExpiryAlert'
+import { StockTabs } from '@/components/shared/StockTabs'
 
 interface InventoryResponse {
   items: StockItemWithConsumption[]
@@ -97,9 +98,9 @@ export default function InventoryPage() {
 
   return (
     <div className="mx-auto max-w-lg px-4 py-6 space-y-5 pb-24">
-      <div className="flex items-center justify-between">
+      <div className="space-y-3">
         <h1 className="text-xl font-semibold text-foreground">Stock</h1>
-        <Link href="/products" className="text-xs font-semibold text-emerald-700">Manage products →</Link>
+        <StockTabs />
       </div>
 
       {/* Upload schedule prompt */}
@@ -128,7 +129,7 @@ export default function InventoryPage() {
       {/* Consolidated attention card (summary strip) */}
       <AttentionCard lowStockCount={lowStockCount} expiryCount={expiryCount} href="/inventory" />
 
-      {/* Per-item expiry detail — lists which products expire, with units and days left */}
+      {/* Per-item expiry detail - lists which products expire, with units and days left */}
       <ExpiryAlert items={items} />
 
       {/* AI ordering suggestions */}

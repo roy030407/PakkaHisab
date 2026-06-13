@@ -45,7 +45,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
-  // Rate limit — 20 AI requests per minute per user
+  // Rate limit - 20 AI requests per minute per user
   const rl = await aiRateLimit(user.id)
   if (!rl.success) {
     return NextResponse.json(

@@ -36,6 +36,7 @@ import { VariantManager } from "@/components/products/VariantManager";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { LoadingState } from "@/components/shared/LoadingState";
+import { StockTabs } from "@/components/shared/StockTabs";
 
 type Product = {
   id: string;
@@ -228,10 +229,13 @@ export default function ProductsPage() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
+      <div className="mb-4">
+        <StockTabs />
+      </div>
       <div className="flex items-center justify-between">
         <PageHeader
           title="Products"
-          subtitle="Your product catalog — the foundation for bills, inventory, and reports."
+          subtitle="Your product catalog, the foundation for bills, inventory, and reports."
         />
         <Button onClick={openAdd} size="sm">
           + Add product
@@ -341,7 +345,7 @@ export default function ProductsPage() {
               </div>
             </div>
 
-            {/* Variant manager — only shown when editing an existing product */}
+            {/* Variant manager - only shown when editing an existing product */}
             {editingId && (
               <VariantManager
                 parentId={editingId}

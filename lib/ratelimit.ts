@@ -8,8 +8,8 @@
  *   deployments without Redis are unaffected.
  *
  *   Two limiters:
- *   - scanLimiter:  10 req / 60s per user — bill scanning is expensive (Vision API)
- *   - aiLimiter:    20 req / 60s per user — AI chat + insights
+ *   - scanLimiter:  10 req / 60s per user - bill scanning is expensive (Vision API)
+ *   - aiLimiter:    20 req / 60s per user - AI chat + insights
  *
  * CHANGES THIS SESSION:
  *   - Initial creation for Phase 7 security
@@ -30,7 +30,7 @@ type Limiters = {
   ai:   (id: string) => Promise<LimitResult>
 } | null
 
-// Promise singleton — concurrent callers all await the same init, preventing
+// Promise singleton - concurrent callers all await the same init, preventing
 // the race where _initialized=true but limiters are still null.
 let _initPromise: Promise<Limiters> | null = null
 
@@ -64,7 +64,7 @@ function createLimiters(): Promise<Limiters> {
         ai:   (id) => aiRL.limit(id),
       }
     } catch {
-      // Redis unavailable — fall through to no-op fallback
+      // Redis unavailable - fall through to no-op fallback
       return null
     }
   })()

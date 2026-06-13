@@ -7,7 +7,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation for Phase 1c
- *   - Fixed price display: show "—" instead of "₹0.00" when price not set
+ *   - Fixed price display: show " - " instead of "₹0.00" when price not set
  *   - Khata Green restyle
  *
  * WHERE IT FITS:
@@ -42,7 +42,7 @@ interface ProductCardProps {
 
 function fmt(v: number | string | null | undefined): string {
   const n = Number(v)
-  if (!isFinite(n) || n === 0) return "—"
+  if (!isFinite(n) || n === 0) return " - "
   return n.toFixed(2)
 }
 
@@ -96,14 +96,14 @@ export function ProductCard({
 
         <div className="shrink-0 text-right">
           <p className="text-base font-semibold text-gray-900">
-            {fmt(product.selling_price) === "—" ? (
+            {fmt(product.selling_price) === " - " ? (
               <span className="text-sm text-gray-400 italic">Price not set</span>
             ) : (
               <>₹{fmt(product.selling_price)}</>
             )}
           </p>
           <p className="text-xs text-gray-400">
-            cost {fmt(product.purchase_price) === "—" ? "—" : `₹${fmt(product.purchase_price)}`}
+            cost {fmt(product.purchase_price) === " - " ? " - " : `₹${fmt(product.purchase_price)}`}
           </p>
           {isFinite(sp) && sp > 0 && (
             <p className={`text-xs font-medium ${marginColor}`}>

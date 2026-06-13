@@ -49,7 +49,7 @@ export async function GET(request: Request) {
             report_type: 'monthly',
             period_start: report.cashFlowData[0]?.date ?? new Date().toISOString().split('T')[0],
             period_end:   report.cashFlowData.at(-1)?.date ?? new Date().toISOString().split('T')[0],
-            summary_text: `Monthly report for ${store.name} — ${report.periodLabel}`,
+            summary_text: `Monthly report for ${store.name} - ${report.periodLabel}`,
             report_json:  report,
           },
           { onConflict: 'store_id,report_type' }

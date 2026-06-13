@@ -33,7 +33,7 @@ export function AttentionCard({ lowStockCount, expiryCount, href = "/inventory" 
       <div className="flex items-center gap-2 rounded-2xl border border-emerald-100 bg-emerald-50/60 px-4 py-3">
         <CheckCircle2 size={16} className="text-emerald-600" />
         <p className="text-sm font-medium text-emerald-800">
-          All good — stock levels healthy, nothing expiring soon
+          All good - stock levels healthy, nothing expiring soon
         </p>
       </div>
     )

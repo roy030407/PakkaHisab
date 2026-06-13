@@ -67,7 +67,7 @@ export async function POST(request: Request) {
 
   const buffer = Buffer.from(await file.arrayBuffer())
 
-  // Server-side magic byte validation — client-supplied MIME/extension cannot be trusted.
+  // Server-side magic byte validation - client-supplied MIME/extension cannot be trusted.
   // .xlsx: PK zip header 50 4B 03 04
   // .xls:  OLE2 header   D0 CF 11 E0
   const sig = buffer.slice(0, 4)

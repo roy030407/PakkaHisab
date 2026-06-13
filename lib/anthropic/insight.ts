@@ -58,7 +58,7 @@ export async function getDailyInsight(
   })
   const text = (result.text ?? "").trim()
 
-  // Cache it — if this fails, every dashboard load re-bills the Claude API,
+  // Cache it - if this fails, every dashboard load re-bills the Claude API,
   // so the failure must be visible in server logs.
   const { error: cacheError } = await supabase.from("periodic_reports").upsert(
     {

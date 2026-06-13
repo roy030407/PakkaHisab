@@ -94,7 +94,7 @@ export default function OnboardingPage() {
     if (res.ok) {
       // Trigger sample data seeding if merchant opted in
       if (form.wantsSampleStore) {
-        // Fire-and-forget — don't block navigation if seed fails
+        // Fire-and-forget - don't block navigation if seed fails
         fetch("/api/stores/seed", { method: "POST" }).catch(() => {});
       }
       router.push("/dashboard");
@@ -152,7 +152,7 @@ export default function OnboardingPage() {
               </Select>
             </div>
 
-            {/* Sample store offer — shown after store type is touched */}
+            {/* Sample store offer - shown after store type is touched */}
             {storeTypeSelected && (
               <div className="rounded-lg border border-blue-100 bg-blue-50 p-4">
                 <p className="text-sm font-medium text-blue-900">

@@ -4,7 +4,7 @@
  * WHAT THIS DOES:
  *   POST: Receives a bill image, validates MIME+size, uploads to Supabase Storage,
  *   calls Claude Vision extraction, runs duplicate detection, returns ExtractionResult.
- *   Synchronous — client waits for the full pipeline before receiving a response.
+ *   Synchronous - client waits for the full pipeline before receiving a response.
  *
  * CHANGES THIS SESSION:
  *   - Initial creation
@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  // Rate limit — 10 scans per minute per user
+  // Rate limit - 10 scans per minute per user
   const rl = await scanRateLimit(user.id)
   if (!rl.success) {
     return NextResponse.json(

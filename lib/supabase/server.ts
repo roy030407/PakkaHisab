@@ -3,7 +3,7 @@
  *
  * WHAT THIS DOES:
  *   Creates Supabase server clients for use in API routes and Server
- *   Components — one with the user's JWT (RLS enforced), one with the
+ *   Components - one with the user's JWT (RLS enforced), one with the
  *   service role (webhook handler only).
  *
  * CHANGES THIS SESSION:
@@ -37,7 +37,7 @@ export function createSupabaseServerClient() {
               cookieStore.set(name, value, options);
             });
           } catch {
-            // Server Component — cookies are read-only in RSC. Ignored safely.
+            // Server Component - cookies are read-only in RSC. Ignored safely.
           }
         },
       },

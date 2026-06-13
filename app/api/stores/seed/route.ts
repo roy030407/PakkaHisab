@@ -5,7 +5,7 @@
  *   POST: seeds the calling user's store with sample products and fixed costs
  *   appropriate for their store type. Called after store creation when the
  *   merchant opts in to sample data during onboarding.
- *   Safe to call only once — if the store already has products, it returns
+ *   Safe to call only once - if the store already has products, it returns
  *   without inserting duplicates.
  *
  * CHANGES THIS SESSION:
@@ -13,7 +13,7 @@
  *
  * WHERE IT FITS:
  *   Called by app/(auth)/onboarding/page.tsx when wantsSampleStore = true.
- *   Uses data/seeds/*.ts as the source — no Kaggle API at runtime.
+ *   Uses data/seeds/*.ts as the source - no Kaggle API at runtime.
  *
  * CALLED BY / IMPORTS FROM:
  *   app/(auth)/onboarding/page.tsx (POST after store creation)
@@ -100,7 +100,7 @@ export async function POST() {
 
     const { error } = await supabase.from("products").insert(batch);
     if (error) {
-      // Log but don't fail — partial seed is better than none
+      // Log but don't fail - partial seed is better than none
       console.error("Seed batch error:", error.message);
     } else {
       inserted += batch.length;

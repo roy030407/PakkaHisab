@@ -108,7 +108,7 @@ export async function POST(request: Request) {
       is_confirmed: true,
     })
 
-    // Only write stock movements for sale and purchase — not expense/income
+    // Only write stock movements for sale and purchase - not expense/income
     if (body.type === 'sale' || body.type === 'purchase') {
       const delta = body.type === 'sale' ? -item.quantity : item.quantity
       await updateStock(supabase, {

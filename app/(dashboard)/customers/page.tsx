@@ -30,7 +30,17 @@ export default function CustomersPage() {
 
   useEffect(() => {
     fetch('/api/customers').then(r => r.json())
-      .then(d => { setCustomers(d.customers ?? []); setLoading(false) })
+      .then(d => {
+        // API returns snake_case (current_balance); normalize to the camelCase
+        // Customer shape so the balance badge never renders NaN.
+        const rows = (d.customers ?? []).map((c: Record<string, unknown>) => ({
+          ...c,
+          currentBalance: Number(c.current_balance ?? c.currentBalance ?? 0),
+          creditLimit: Number(c.credit_limit ?? c.creditLimit ?? 0),
+        }))
+        setCustomers(rows as Customer[])
+        setLoading(false)
+      })
   }, [])
 
   if (selected) {
@@ -59,14 +69,14 @@ export default function CustomersPage() {
             </div>
             <p className="text-sm font-medium text-gray-900">No customers yet</p>
             <p className="text-xs text-gray-400 mt-1 max-w-[200px]">
-              Customers are added when you record a sale — they&apos;ll appear here.
+              Customers are added when you record a sale - they&apos;ll appear here.
             </p>
           </div>
         ) : (
           <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
             {filtered.map(c => (
               <button key={c.id} onClick={() => setSelected(c.id)}
-                className="w-full text-left flex items-center gap-3 px-3 py-3 border-b border-gray-100 last:border-0 hover:bg-gray-50">
+                className="w-full text-left flex items-center gap-3 px-3 py-3 border-b border-gray-100 last:border-0 bg-white hover:bg-gray-50 row-lift relative">
                 <div className="w-9 h-9 rounded-full bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center text-sm shrink-0">
                   {(c.name || "?").charAt(0).toUpperCase()}
                 </div>

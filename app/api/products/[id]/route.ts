@@ -175,7 +175,7 @@ export async function DELETE(
     return NextResponse.json({ error: "Store not found" }, { status: 404 });
   }
 
-  // Soft delete — preserves transaction history
+  // Soft delete - preserves transaction history
   const { error } = await supabase
     .from("products")
     .update({ is_active: false })

@@ -3,9 +3,9 @@
  *
  * WHAT THIS DOES:
  *   Settings hub with two sections:
- *   1. Fixed costs — add/edit/delete recurring business costs
+ *   1. Fixed costs - add/edit/delete recurring business costs
  *      (rent, salaries, electricity, transport, other).
- *   2. Store info — displays current store details, GST config
+ *   2. Store info - displays current store details, GST config
  *      (editable in a future patch; read-only for now).
  *
  * CHANGES THIS SESSION:
@@ -37,6 +37,7 @@ import {
 import { PageHeader } from "@/components/shared/PageHeader";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { LoadingState } from "@/components/shared/LoadingState";
+import { LogoutButton } from "@/components/shared/LogoutButton";
 
 type FixedCost = {
   id: string;
@@ -319,7 +320,7 @@ export default function SettingsPage() {
       <section>
         <PageHeader
           title="Tax Configuration"
-          subtitle="GST slabs and interstate settings — coming soon."
+          subtitle="GST slabs and interstate settings - coming soon."
         />
         <div className="rounded-2xl border border-dashed border-gray-200 p-6 text-sm text-gray-400 text-center">
           GST configuration (CGST+SGST / IGST toggle, per-product rates)
@@ -332,6 +333,15 @@ export default function SettingsPage() {
 
       {/* Import Wizard */}
       <ImportWizard />
+
+      {/* Account */}
+      <section>
+        <PageHeader
+          title="Account"
+          subtitle="Sign out of PakkaHisab and return to the home page."
+        />
+        <LogoutButton variant="button" />
+      </section>
     </div>
   );
 }
@@ -444,7 +454,7 @@ function ImportWizard() {
     const form = new FormData()
     form.append("file", file)
 
-    // We need all rows too — re-parse client-side via same endpoint but also store them
+    // We need all rows too - re-parse client-side via same endpoint but also store them
     const res = await fetch("/api/import/upload", { method: "POST", body: form })
     const data = await res.json()
     if (!res.ok) {
@@ -482,7 +492,7 @@ function ImportWizard() {
     e.target.value = ""
   }
 
-  // We re-upload to get all rows when confirming — instead, we pass the preview rows
+  // We re-upload to get all rows when confirming - instead, we pass the preview rows
   // In a full implementation allRows would come from a server-side temp store.
   // Here we pass preview rows as a simplified demo (full-file import needs larger payload).
 
@@ -622,7 +632,7 @@ function ImportWizard() {
                     }
                     className="flex-1 rounded-lg border border-gray-200 px-3 py-1.5 text-xs text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400"
                   >
-                    <option value="">— skip —</option>
+                    <option value=""> - skip - </option>
                     {(SCHEMA_FIELDS[dataType] ?? []).map((f) => (
                       <option key={f} value={f}>{f}</option>
                     ))}

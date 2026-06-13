@@ -2,7 +2,7 @@
  * FILE: types/index.ts
  *
  * WHAT THIS DOES:
- *   Global TypeScript type definitions for PakkaHisab — all phases.
+ *   Global TypeScript type definitions for PakkaHisab - all phases.
  *
  * CHANGES THIS SESSION:
  *   - Complete rewrite: replaced Business/Industry/RevenueRange/TeamSize
@@ -375,6 +375,7 @@ export interface PeriodReport {
   netProfit: number
   taxSummary: TaxSummary
   topProducts: TopProduct[]
+  itemsSold?: TopProduct[]   // every product sold in the period (full list, revenue-sorted)
   paymentBreakdown: PaymentBreakdown
   cashFlowData: CashFlowPoint[]
   transactionCount: number

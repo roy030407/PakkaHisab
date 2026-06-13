@@ -2,11 +2,11 @@
  * FILE: app/api/reports/share/route.ts
  *
  * WHAT THIS DOES:
- *   POST — Creates a shareable link for the current period's report.
+ *   POST - Creates a shareable link for the current period's report.
  *   Generates a UUID share_token, upserts a periodic_reports row,
  *   and returns the shareable URL.
  *
- *   GET ?token=<uuid> — Public read. Returns report JSON for a share token
+ *   GET ?token=<uuid> - Public read. Returns report JSON for a share token
  *   without requiring auth. Used by the /share/[token] page.
  *
  * CHANGES THIS SESSION:
@@ -31,7 +31,7 @@ import { randomUUID } from 'crypto'
 
 const VALID_PERIODS = new Set<ReportPeriod>(['daily', 'weekly', 'monthly', 'yearly'])
 
-/** POST /api/reports/share — authenticated, creates share link */
+/** POST /api/reports/share - authenticated, creates share link */
 export async function POST(request: Request) {
   const supabase = createSupabaseServerClient()
   const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -102,7 +102,7 @@ export async function POST(request: Request) {
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
-/** GET /api/reports/share?token=<uuid> — public, no auth required */
+/** GET /api/reports/share?token=<uuid> - public, no auth required */
 export async function GET(request: Request) {
   const url = new URL(request.url)
   const token = url.searchParams.get('token')

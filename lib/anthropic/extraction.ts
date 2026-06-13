@@ -100,7 +100,7 @@ Return ONLY valid JSON. No preamble, no markdown, no explanation.
 Handle Indian formats: "Rs.", "₹", Devanagari numerals, Dr/Cr columns, "only" suffix, partial dates.
 
 If the image is a single bill/invoice, return document_type: "single_bill".
-If the image is a ledger/account page with multiple entries, return document_type: "ledger_page" — in that case, replace "items" with "transactions" array where each element has the same structure as a single bill.
+If the image is a ledger/account page with multiple entries, return document_type: "ledger_page" - in that case, replace "items" with "transactions" array where each element has the same structure as a single bill.
 
 ${correctionLines ? `Store-specific corrections learned from past scans:\n${correctionLines}\n` : ''}
 ${productContext}

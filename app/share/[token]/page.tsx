@@ -10,7 +10,7 @@
  *   - Initial creation for Phase 7 report sharing
  *
  * WHERE IT FITS:
- *   Outside the (dashboard) route group — no session guard, no nav.
+ *   Outside the (dashboard) route group - no session guard, no nav.
  *   Accessible by anyone with the link.
  *
  * CALLED BY / IMPORTS FROM:

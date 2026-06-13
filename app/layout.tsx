@@ -2,7 +2,7 @@
  * FILE: app/layout.tsx
  *
  * WHAT THIS DOES:
- *   Root Next.js layout — sets HTML metadata, global fonts, and mounts
+ *   Root Next.js layout - sets HTML metadata, global fonts, and mounts
  *   the Sonner toast provider used across all pages.
  *
  * CHANGES THIS SESSION:

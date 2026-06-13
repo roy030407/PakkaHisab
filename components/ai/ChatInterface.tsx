@@ -109,7 +109,7 @@ export function ChatInterface() {
                 setConversationId(parsed.conversationId)
               }
             } catch {
-              // malformed chunk — skip
+              // malformed chunk - skip
             }
           }
         }
@@ -194,7 +194,7 @@ export function ChatInterface() {
         <div ref={bottomRef} />
       </div>
 
-      {/* Input — full width */}
+      {/* Input - full width */}
       <div className="border-t border-gray-200 bg-white px-6 py-4">
         <div className="flex gap-3 items-end">
           <textarea

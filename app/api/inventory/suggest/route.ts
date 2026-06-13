@@ -2,7 +2,7 @@
  * FILE: app/api/inventory/suggest/route.ts
  *
  * WHAT THIS DOES:
- *   GET — returns three suggestion buckets: orderToday, reduceOrdering, watchExpiry.
+ *   GET - returns three suggestion buckets: orderToday, reduceOrdering, watchExpiry.
  *   Used by the OrderSuggestionCard on the inventory page.
  *
  * CHANGES THIS SESSION:
