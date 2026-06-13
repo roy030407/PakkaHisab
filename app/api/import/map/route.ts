@@ -2,12 +2,12 @@
  * FILE: app/api/import/map/route.ts
  *
  * WHAT THIS DOES:
- *   POST: sends file headers and a sample row to Claude, which returns
+ *   POST: sends file headers and a sample row to Gemini, which returns
  *   a suggested column mapping (user column → our schema field).
  *   Merchant reviews and confirms the mapping before import.
  *
  * CHANGES THIS SESSION:
- *   - Initial creation for Phase 6 data import
+ *   - Switched from Anthropic to Gemini 2.0 Flash (free tier)
  *
  * WHERE IT FITS:
  *   Step 2 of the import wizard. Called after /api/import/upload.
@@ -18,7 +18,7 @@
 
 import { NextResponse } from "next/server"
 import { createSupabaseServerClient } from "@/lib/supabase/server"
-import { getAnthropicClient } from "@/lib/anthropic/client"
+import { getGeminiClient } from "@/lib/anthropic/client"
 
 const PRODUCT_FIELDS = [
   "name", "brand", "category", "subcategory", "unit",
@@ -50,8 +50,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "No headers provided" }, { status: 400 })
   }
 
-  const anthropic = getAnthropicClient()
-
   const prompt = `You are helping import data into an Indian retail business app called PakkaHisab.
 
 Given these CSV/Excel column headers and a sample row, determine:
@@ -75,18 +73,23 @@ Return ONLY valid JSON in this exact format (no explanation):
   }
 }`
 
-  const message = await anthropic.messages.create({
-    model: "claude-sonnet-4-6",
-    max_tokens: 512,
-    messages: [{ role: "user", content: prompt }],
+  const genAI = getGeminiClient()
+  const model = genAI.getGenerativeModel({
+    model: "gemini-2.0-flash",
+    generationConfig: { maxOutputTokens: 512 },
   })
 
-  const text =
-    message.content[0].type === "text" ? message.content[0].text.trim() : "{}"
+  const result = await model.generateContent(prompt)
+  let text = result.response.text().trim()
+
+  // Strip markdown code fences if Gemini wraps the JSON
+  if (text.startsWith("```")) {
+    text = text.replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/, "").trim()
+  }
 
   try {
-    const result = JSON.parse(text)
-    return NextResponse.json(result)
+    const parsed = JSON.parse(text)
+    return NextResponse.json(parsed)
   } catch {
     return NextResponse.json(
       { error: "Could not determine column mapping. Please map manually." },

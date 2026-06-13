@@ -24,7 +24,7 @@ import { NextResponse } from "next/server"
 import { createSupabaseServerClient } from "@/lib/supabase/server"
 import { buildBusinessContext, buildSystemPrompt } from "@/lib/anthropic/advisor"
 import { ADVISOR_SYSTEM_PROMPT } from "@/lib/anthropic/prompts"
-import { getAnthropicClient } from "@/lib/anthropic/client"
+import { getGeminiClient } from "@/lib/anthropic/client"
 import { friendlyAIError } from "@/lib/anthropic/errors"
 import { aiRateLimit } from "@/lib/ratelimit"
 
@@ -86,7 +86,12 @@ export async function POST(request: Request) {
   const context = await buildBusinessContext(supabase, profile)
   const systemPrompt = buildSystemPrompt(ADVISOR_SYSTEM_PROMPT, profile, context)
 
-  const anthropic = getAnthropicClient()
+  const genAI = getGeminiClient()
+  const geminiModel = genAI.getGenerativeModel({
+    model: "gemini-2.0-flash",
+    systemInstruction: systemPrompt,
+    generationConfig: { maxOutputTokens: 1024 },
+  })
 
   const encoder = new TextEncoder()
 
@@ -94,22 +99,20 @@ export async function POST(request: Request) {
     async start(controller) {
       let fullText = ""
       try {
-        const anthropicStream = await anthropic.messages.stream({
-          model: "claude-sonnet-4-6",
-          max_tokens: 1024,
-          system: systemPrompt,
-          messages: messages.map((m) => ({
-            role: m.role,
-            content: m.content,
-          })),
-        })
+        // Convert history: all messages except the last user message
+        const history = messages.slice(0, -1).map((m) => ({
+          role: m.role === "assistant" ? "model" : "user",
+          parts: [{ text: m.content }],
+        }))
 
-        for await (const chunk of anthropicStream) {
-          if (
-            chunk.type === "content_block_delta" &&
-            chunk.delta.type === "text_delta"
-          ) {
-            const text = chunk.delta.text
+        const chat = geminiModel.startChat({ history })
+        const lastMessage = messages[messages.length - 1].content
+
+        const streamResult = await chat.sendMessageStream(lastMessage)
+
+        for await (const chunk of streamResult.stream) {
+          const text = chunk.text()
+          if (text) {
             fullText += text
             controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text })}\n\n`))
           }

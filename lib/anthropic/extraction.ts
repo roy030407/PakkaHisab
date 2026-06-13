@@ -2,12 +2,12 @@
  * FILE: lib/anthropic/extraction.ts
  *
  * WHAT THIS DOES:
- *   Calls Claude Vision (claude-sonnet-4-6) to extract structured bill data.
+ *   Calls Gemini 2.0 Flash (Vision) to extract structured bill data.
  *   Builds prompt with store's top-20 frequent products and last-5 corrections
  *   as few-shot context. Returns ExtractionResult JSON.
  *
  * CHANGES THIS SESSION:
- *   - Initial creation
+ *   - Switched from Anthropic Claude Vision to Gemini 2.0 Flash Vision (free tier)
  *
  * WHERE IT FITS:
  *   Called by POST /api/scan after the bill image has been uploaded to Storage.
@@ -15,11 +15,9 @@
  * CALLED BY / IMPORTS FROM:
  *   app/api/scan/route.ts
  */
-import Anthropic from '@anthropic-ai/sdk'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import type { ExtractionResult } from '@/types'
-
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+import { getGeminiClient } from './client'
 
 interface TopProduct {
   id: string
@@ -83,7 +81,7 @@ export async function extractBillData(
     ? `Store catalog (top products by frequency):\n${topProducts.map(p => `- id: ${p.id} | name: ${p.name} | unit: ${p.unit}`).join('\n')}`
     : 'No catalog products available yet.'
 
-  const systemPrompt = `You are a bill data extraction assistant for Indian retail stores. Extract structured data from bill images.
+  const systemInstruction = `You are a bill data extraction assistant for Indian retail stores. Extract structured data from bill images.
 
 Return ONLY valid JSON. No preamble, no markdown, no explanation.
 
@@ -121,32 +119,29 @@ Return this JSON schema:
   ]
 }`
 
-  const response = await anthropic.messages.create({
-    model: 'claude-sonnet-4-6',
-    max_tokens: 4096,
-    system: systemPrompt,
-    messages: [
-      {
-        role: 'user',
-        content: [
-          {
-            type: 'image',
-            source: {
-              type: 'base64',
-              media_type: mimeType as 'image/jpeg' | 'image/png' | 'image/webp' | 'image/gif',
-              data: imageBase64,
-            },
-          },
-          {
-            type: 'text',
-            text: 'Extract all data from this bill image.',
-          },
-        ],
-      },
-    ],
+  const genAI = getGeminiClient()
+  const model = genAI.getGenerativeModel({
+    model: 'gemini-2.0-flash',
+    systemInstruction,
+    generationConfig: { maxOutputTokens: 4096 },
   })
 
-  const text = response.content[0].type === 'text' ? response.content[0].text : ''
+  const response = await model.generateContent([
+    {
+      inlineData: {
+        data: imageBase64,
+        mimeType: mimeType as string,
+      },
+    },
+    'Extract all data from this bill image.',
+  ])
+
+  // Strip markdown code fences if Gemini wraps the JSON
+  let text = response.response.text().trim()
+  if (text.startsWith('```')) {
+    text = text.replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/, '').trim()
+  }
+
   const raw = JSON.parse(text)
 
   // Normalise to camelCase ExtractionResult

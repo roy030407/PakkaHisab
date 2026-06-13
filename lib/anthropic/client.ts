@@ -2,26 +2,30 @@
  * FILE: lib/anthropic/client.ts
  *
  * WHAT THIS DOES:
- *   Exports a singleton Anthropic client for server-side use only.
+ *   Exports a singleton Google Gemini client for server-side use only.
  *   Never import this in client components or NEXT_PUBLIC_ contexts.
  *
  * CHANGES THIS SESSION:
- *   - Initial creation for Phase 5 AI Advisor
+ *   - Switched from Anthropic SDK to Google Gemini (free tier, 1500 req/day)
  *
  * WHERE IT FITS:
- *   Shared by all API routes that call Claude (chat, insight, extraction).
+ *   Shared by all API routes that call AI (chat, insight, extraction, import/map).
  *
  * CALLED BY / IMPORTS FROM:
- *   lib/anthropic/advisor.ts, lib/anthropic/insight.ts, lib/anthropic/extraction.ts
+ *   lib/anthropic/extraction.ts, lib/anthropic/insight.ts,
+ *   app/api/ai/chat/route.ts, app/api/import/map/route.ts
  */
 
-import Anthropic from "@anthropic-ai/sdk"
+import { GoogleGenerativeAI } from "@google/generative-ai"
 
-let _client: Anthropic | null = null
+let _client: GoogleGenerativeAI | null = null
 
-export function getAnthropicClient(): Anthropic {
+export function getGeminiClient(): GoogleGenerativeAI {
   if (!_client) {
-    _client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+    _client = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY!)
   }
   return _client
 }
+
+// Alias so existing callers that imported getAnthropicClient still compile
+export { getGeminiClient as getAnthropicClient }
