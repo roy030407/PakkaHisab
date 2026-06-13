@@ -10,6 +10,8 @@
  * CHANGES THIS SESSION:
  *   - Initial creation for Phase 5 AI Advisor
  *   - Fix: update model from claude-sonnet-4-20250514 to claude-sonnet-4-6 (EOL June 15 2026)
+ *   - Fix: stream plain-language errors via friendlyAIError (was leaking
+ *     raw Anthropic billing error text into the chat)
  *
  * WHERE IT FITS:
  *   Called by components/ai/ChatInterface.tsx via fetch with ReadableStream.
@@ -23,6 +25,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server"
 import { buildBusinessContext, buildSystemPrompt } from "@/lib/anthropic/advisor"
 import { ADVISOR_SYSTEM_PROMPT } from "@/lib/anthropic/prompts"
 import { getAnthropicClient } from "@/lib/anthropic/client"
+import { friendlyAIError } from "@/lib/anthropic/errors"
 import { aiRateLimit } from "@/lib/ratelimit"
 
 export const runtime = "nodejs"
@@ -134,9 +137,9 @@ export async function POST(request: Request) {
           })
         }
       } catch (err) {
-        const msg = err instanceof Error ? err.message : "AI error"
+        console.error("[ai/chat] stream failed:", err instanceof Error ? err.message : err)
         controller.enqueue(
-          encoder.encode(`data: ${JSON.stringify({ error: msg })}\n\n`)
+          encoder.encode(`data: ${JSON.stringify({ error: friendlyAIError(err) })}\n\n`)
         )
         controller.close()
       }

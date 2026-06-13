@@ -4,6 +4,8 @@
 // CHANGES THIS SESSION:
 //   - Complete rewrite from old Business/businesses schema to new 14-table schema
 //   - stores replaces businesses; products, inventory, customers, etc. added
+//   - Drift fix: PeriodicReport unique is (storeId, reportType) to match live DB
+//     (002_share_tokens.sql); added shareToken column
 
 generator client {
   provider = "prisma-client"
@@ -259,11 +261,14 @@ model PeriodicReport {
   periodEnd   DateTime @map("period_end") @db.Date
   summaryText String?  @map("summary_text")
   reportJson  Json?    @map("report_json")
+  shareToken  String?  @map("share_token") @db.Uuid
   createdAt   DateTime @default(now()) @map("created_at")
 
   store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
 
-  @@unique([storeId, reportType, periodStart])
+  // Matches live DB: periodic_reports_store_period_uniq (002_share_tokens.sql).
+  // One cached report per store per period type; period_start is data, not key.
+  @@unique([storeId, reportType])
   @@map("periodic_reports")
 }
 

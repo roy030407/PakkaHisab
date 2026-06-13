@@ -9,6 +9,8 @@
  * CHANGES THIS SESSION:
  *   - Initial creation for Phase 5 AI Advisor
  *   - Fix: update model to claude-sonnet-4-6; fix upsert onConflict target to match DB constraint
+ *   - Fix: log cache-write failures (silent failure caused a paid Claude call
+ *     on every dashboard load)
  *
  * WHERE IT FITS:
  *   Called by /api/ai/insight. Result shown as InsightCard on dashboard.
@@ -61,8 +63,9 @@ export async function getDailyInsight(
   const text =
     message.content[0].type === "text" ? message.content[0].text.trim() : ""
 
-  // Cache it
-  await supabase.from("periodic_reports").upsert(
+  // Cache it — if this fails, every dashboard load re-bills the Claude API,
+  // so the failure must be visible in server logs.
+  const { error: cacheError } = await supabase.from("periodic_reports").upsert(
     {
       store_id: profile.storeId,
       report_type: "daily",
@@ -73,6 +76,9 @@ export async function getDailyInsight(
     },
     { onConflict: "store_id,report_type" }
   )
+  if (cacheError) {
+    console.error("[insight] cache write failed:", cacheError.message)
+  }
 
   return text
 }

@@ -10,6 +10,8 @@
  * CHANGES THIS SESSION:
  *   - Initial creation for Phase 5 AI Advisor
  *   - Khata Green restyle
+ *   - Fix: render SSE error events (previously ignored, leaving an empty
+ *     bubble when the AI call failed) + fallback when stream ends empty
  *
  * WHERE IT FITS:
  *   The only component on app/(dashboard)/advisor/page.tsx.
@@ -78,6 +80,7 @@ export function ChatInterface() {
         const reader = res.body.getReader()
         const decoder = new TextDecoder()
         let assistantText = ""
+        let streamError: string | null = null
 
         while (true) {
           const { done, value } = await reader.read()
@@ -92,6 +95,9 @@ export function ChatInterface() {
             if (data === "[DONE]") break
             try {
               const parsed = JSON.parse(data)
+              if (parsed.error) {
+                streamError = parsed.error
+              }
               if (parsed.text) {
                 assistantText += parsed.text
                 setMessages((prev) => [
@@ -108,9 +114,13 @@ export function ChatInterface() {
           }
         }
 
+        const finalContent =
+          assistantText ||
+          streamError ||
+          "The advisor could not answer right now. Please try again in a moment."
         setMessages((prev) => [
           ...prev.slice(0, -1),
-          { role: "assistant", content: assistantText },
+          { role: "assistant", content: finalContent },
         ])
       } catch {
         setMessages((prev) => [

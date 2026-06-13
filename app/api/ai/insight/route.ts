@@ -8,6 +8,8 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation for Phase 5 AI Advisor
+ *   - Fix: return plain-language error via friendlyAIError (was leaking
+ *     raw Anthropic billing error text to the client)
  *
  * WHERE IT FITS:
  *   Called by the dashboard page to populate the InsightCard.
@@ -19,6 +21,7 @@
 import { NextResponse } from "next/server"
 import { createSupabaseServerClient } from "@/lib/supabase/server"
 import { getDailyInsight } from "@/lib/anthropic/insight"
+import { friendlyAIError } from "@/lib/anthropic/errors"
 import { aiRateLimit } from "@/lib/ratelimit"
 
 export async function GET() {
@@ -60,7 +63,7 @@ export async function GET() {
     const insight = await getDailyInsight(supabase, profile)
     return NextResponse.json({ insight })
   } catch (err) {
-    const msg = err instanceof Error ? err.message : "Failed to generate insight"
-    return NextResponse.json({ error: msg }, { status: 500 })
+    console.error("[ai/insight] generation failed:", err instanceof Error ? err.message : err)
+    return NextResponse.json({ error: friendlyAIError(err) }, { status: 500 })
   }
 }
