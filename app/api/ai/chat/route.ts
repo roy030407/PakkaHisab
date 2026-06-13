@@ -118,14 +118,13 @@ export async function POST(request: Request) {
           }
         }
 
-        controller.enqueue(encoder.encode(`data: [DONE]\n\n`))
-        controller.close()
-
-        // Save conversation
+        // Save conversation BEFORE closing the stream
         const updatedMessages = [
           ...messages,
           { role: "assistant" as const, content: fullText },
         ]
+
+        let savedConvId: string | undefined = conversationId
 
         if (conversationId) {
           await supabase
@@ -133,21 +132,23 @@ export async function POST(request: Request) {
             .update({ messages: updatedMessages })
             .eq("id", conversationId)
             .eq("store_id", store.id)
-          controller.enqueue(
-            encoder.encode(`data: ${JSON.stringify({ conversationId })}\n\n`)
-          )
         } else {
           const { data: newConv } = await supabase
             .from("ai_conversations")
             .insert({ store_id: store.id, messages: updatedMessages })
             .select("id")
             .single()
-          if (newConv?.id) {
-            controller.enqueue(
-              encoder.encode(`data: ${JSON.stringify({ conversationId: newConv.id })}\n\n`)
-            )
-          }
+          if (newConv?.id) savedConvId = newConv.id
         }
+
+        // Emit conversationId for new conversations, then close
+        if (savedConvId && !conversationId) {
+          controller.enqueue(
+            encoder.encode(`data: ${JSON.stringify({ conversationId: savedConvId })}\n\n`)
+          )
+        }
+        controller.enqueue(encoder.encode(`data: [DONE]\n\n`))
+        controller.close()
       } catch (err) {
         console.error("[ai/chat] stream failed:", err instanceof Error ? err.message : err)
         controller.enqueue(

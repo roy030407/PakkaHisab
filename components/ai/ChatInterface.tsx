@@ -146,9 +146,9 @@ export function ChatInterface() {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100dvh-56px)] max-w-2xl mx-auto">
+    <div className="flex flex-col h-[calc(100dvh-56px)]">
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+      <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
         {messages.length === 0 && (
           <div className="pt-8">
             <p className="text-center text-sm font-medium text-gray-700 mb-1">
@@ -194,29 +194,29 @@ export function ChatInterface() {
         <div ref={bottomRef} />
       </div>
 
-      {/* Input */}
-      <div className="border-t border-gray-200 bg-white px-4 py-3">
-        <div className="flex gap-2 items-end">
+      {/* Input — full width */}
+      <div className="border-t border-gray-200 bg-white px-6 py-4">
+        <div className="flex gap-3 items-end">
           <textarea
             ref={inputRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Ask anything about your business…"
-            rows={1}
-            className="flex-1 resize-none rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent max-h-32 overflow-auto"
+            rows={2}
+            className="flex-1 resize-none rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent max-h-40 overflow-auto"
             style={{ lineHeight: "1.5" }}
             disabled={loading}
           />
           <button
             onClick={() => send(input)}
             disabled={loading || !input.trim()}
-            className="flex-shrink-0 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-medium text-white disabled:opacity-40 hover:bg-emerald-800 active:opacity-80 transition-colors"
+            className="flex-shrink-0 rounded-xl bg-emerald-700 px-6 py-3 text-sm font-medium text-white disabled:opacity-40 hover:bg-emerald-800 active:opacity-80 transition-colors"
           >
             {loading ? "…" : "Send"}
           </button>
         </div>
-        <p className="mt-1.5 text-xs text-gray-400 text-center">
+        <p className="mt-2 text-xs text-gray-400 text-center">
           Enter to send · Shift+Enter for new line
         </p>
       </div>
