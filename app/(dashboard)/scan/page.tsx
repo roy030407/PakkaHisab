@@ -146,7 +146,6 @@ export default function ScanPage() {
         documentUploadId={reviewData.documentUploadId}
         duplicateWarning={reviewData.duplicateWarning}
         onSave={handleSave}
-        onEditAll={() => router.push('/entry?mode=full')}
       />
     )
   }

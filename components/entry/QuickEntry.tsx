@@ -13,6 +13,8 @@
  *   - Khata Green restyle
  *   - Sale-first UX: Sale is the default; Purchase/Expense tuck behind a
  *     "Recording something else?" toggle. Hover lift on action buttons.
+ *   - Expense is no longer a product list: it shows an amount + category +
+ *     note form (rent, electricity, etc. are not catalog products).
  *
  * WHERE IT FITS:
  *   Default mode on /entry page.
@@ -43,6 +45,21 @@ export function QuickEntry({ onSaved, onSwitchFull }: Props) {
   const [showTypeOptions, setShowTypeOptions] = useState(false)
   const [saving, setSaving] = useState(false)
 
+  // Expense form state (only used when type === 'expense')
+  const [expenseAmount, setExpenseAmount] = useState('')
+  const [expenseCategory, setExpenseCategory] = useState('rent')
+  const [expenseNote, setExpenseNote] = useState('')
+
+  const isExpense = type === 'expense'
+
+  const EXPENSE_CATEGORIES: { value: string; label: string }[] = [
+    { value: 'rent', label: 'Rent' },
+    { value: 'salaries', label: 'Salaries' },
+    { value: 'electricity', label: 'Electricity' },
+    { value: 'transport', label: 'Transport' },
+    { value: 'other', label: 'Other' },
+  ]
+
   const TYPE_META: Record<TransactionType, { label: string; hint: string }> = {
     sale: { label: 'Sale', hint: 'selling to a customer' },
     purchase: { label: 'Purchase', hint: 'buying stock' },
@@ -72,21 +89,27 @@ export function QuickEntry({ onSaved, onSwitchFull }: Props) {
     })
   }
 
-  const total = products.reduce((s, p) => s + (qtys.get(p.id) ?? 0) * getPrice(p), 0)
+  const productTotal = products.reduce((s, p) => s + (qtys.get(p.id) ?? 0) * getPrice(p), 0)
   const itemCount = qtys.size
+  const expenseValue = Number(expenseAmount) || 0
+  const total = isExpense ? expenseValue : productTotal
+  const canSave = isExpense ? expenseValue > 0 : itemCount > 0
 
   async function handleSave() {
-    if (itemCount === 0) return
+    if (!canSave) return
     setSaving(true)
+    const body = isExpense
+      ? { type, paymentMethod: 'cash', amount: expenseValue, category: expenseCategory, note: expenseNote.trim() || undefined }
+      : {
+          type, paymentMethod, customerId,
+          items: Array.from(qtys.entries()).map(([productId, quantity]) => ({ productId, quantity })),
+        }
     await fetch('/api/entry/quick', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        type, paymentMethod, customerId,
-        items: Array.from(qtys.entries()).map(([productId, quantity]) => ({ productId, quantity })),
-      }),
+      body: JSON.stringify(body),
     })
     setSaving(false)
-    toast.success(`${type.charAt(0).toUpperCase() + type.slice(1)} saved`)
+    toast.success(`${TYPE_META[type].label} saved`)
     onSaved()
   }
 
@@ -106,7 +129,9 @@ export function QuickEntry({ onSaved, onSwitchFull }: Props) {
       {/* Sticky running total */}
       <div className="sticky top-0 z-10 bg-gradient-to-r from-emerald-700 to-emerald-600 text-white rounded-2xl shadow-lg shadow-emerald-200/60 px-4 py-3 flex items-center justify-between">
         <div>
-          <p className="text-xs text-emerald-200">{itemCount} item{itemCount !== 1 ? 's' : ''} added</p>
+          <p className="text-xs text-emerald-200">
+            {isExpense ? 'One-time cost' : `${itemCount} item${itemCount !== 1 ? 's' : ''} added`}
+          </p>
           <p className="text-xl font-bold text-white">
             <AnimatedNumber value={total} format={(n) => `₹${n.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`} />
           </p>
@@ -136,6 +161,58 @@ export function QuickEntry({ onSaved, onSwitchFull }: Props) {
         </div>
       </div>
 
+      {/* Expense form (no products) */}
+      {isExpense ? (
+        <div className="flex-1 px-4 py-4">
+          <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-4">
+            <div>
+              <label className="text-xs font-medium text-gray-500">Amount</label>
+              <div className="mt-1 flex items-center rounded-lg border border-gray-200 focus-within:ring-2 focus-within:ring-emerald-300">
+                <span className="pl-3 pr-1 text-gray-500">&#8377;</span>
+                <input
+                  type="number" min="0" inputMode="decimal" autoFocus
+                  value={expenseAmount}
+                  onChange={e => setExpenseAmount(e.target.value)}
+                  placeholder="0"
+                  className="w-full bg-transparent px-2 py-2.5 text-base font-semibold text-gray-900 outline-none"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="text-xs font-medium text-gray-500">Category</label>
+              <div className="mt-1.5 flex flex-wrap gap-2">
+                {EXPENSE_CATEGORIES.map(c => (
+                  <button
+                    key={c.value}
+                    type="button"
+                    onClick={() => setExpenseCategory(c.value)}
+                    className={`btn-lift rounded-full px-3.5 py-1.5 text-sm font-medium border ${
+                      expenseCategory === c.value
+                        ? 'bg-emerald-700 text-white border-emerald-700'
+                        : 'bg-white text-gray-600 border-gray-200 hover:border-emerald-300'
+                    }`}
+                  >
+                    {c.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label className="text-xs font-medium text-gray-500">Note (optional)</label>
+              <input
+                type="text"
+                value={expenseNote}
+                onChange={e => setExpenseNote(e.target.value)}
+                placeholder="e.g. June shop rent"
+                className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-emerald-300"
+              />
+            </div>
+          </div>
+        </div>
+      ) : (
+      <>
       {/* Product list */}
       <div className="flex-1 px-4 py-2">
         {products.length === 0 ? (
@@ -170,6 +247,8 @@ export function QuickEntry({ onSaved, onSwitchFull }: Props) {
           </div>
         )}
       </div>
+      </>
+      )}
 
       {/* Footer */}
       <div className="sticky bottom-0 px-4 pb-8 pt-3 bg-white border-t border-gray-100 space-y-2">
@@ -179,14 +258,16 @@ export function QuickEntry({ onSaved, onSwitchFull }: Props) {
             {customerId ? '✓ Customer added' : '+ Add customer (optional)'}
           </button>
         )}
-        <button onClick={handleSave} disabled={saving || itemCount === 0}
+        <button onClick={handleSave} disabled={saving || !canSave}
           className="btn-lift w-full bg-emerald-700 text-white font-semibold py-3.5 rounded-xl text-sm disabled:opacity-60 hover:bg-emerald-800">
-          {saving ? 'Saving...' : `Save ${type} · ₹${total.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`}
+          {saving ? 'Saving...' : `Save ${TYPE_META[type].label.toLowerCase()} · ₹${total.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`}
         </button>
-        <button onClick={() => onSwitchFull(buildLineItems())}
-          className="btn-lift w-full text-center text-xs text-gray-500 py-2 rounded-lg hover:bg-gray-100 hover:text-gray-700">
-          Switch to full entry
-        </button>
+        {!isExpense && (
+          <button onClick={() => onSwitchFull(buildLineItems())}
+            className="btn-lift w-full text-center text-xs text-gray-500 py-2 rounded-lg hover:bg-gray-100 hover:text-gray-700">
+            Switch to full entry
+          </button>
+        )}
       </div>
 
       <CustomerSheet open={showCustomer} onClose={() => setShowCustomer(false)}

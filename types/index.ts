@@ -253,7 +253,10 @@ export interface QuickEntryPayload {
   type: TransactionType;
   paymentMethod: PaymentMethod;
   customerId?: string;
-  items: QuickEntryItem[];
+  items?: QuickEntryItem[];      // required for sale/purchase
+  amount?: number;               // for expense/income: total, no products
+  category?: string;             // expense category (rent/electricity/...)
+  note?: string;                 // optional free-text note
 }
 
 export interface FullEntryItem {

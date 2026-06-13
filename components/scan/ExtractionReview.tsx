@@ -9,6 +9,9 @@
  * CHANGES THIS SESSION:
  *   - Initial creation
  *   - Khata Green restyle
+ *   - Full inline editing: vendor, date, product name, price and quantity are
+ *     all editable in place. Removed the "Edit all details" jump to /entry
+ *     (it discarded the scanned data); everything is corrected right here.
  *
  * WHERE IT FITS:
  *   Shown when scan state = 'review' and documentType = 'single_bill'.
@@ -23,8 +26,10 @@ import { ConfidenceBadge } from './ConfidenceBadge'
 import { DuplicateWarning } from './DuplicateWarning'
 
 interface EditableItem extends ExtractionItem {
+  editedName: string
   editedQty: number
   editedPrice: number
+  originalName: string
   originalQty: number
   originalPrice: number
 }
@@ -49,19 +54,25 @@ interface Props {
       correctedFields?: Record<string, { original: string; corrected: string }>
     }>
   }) => void
-  onEditAll: () => void
 }
 
-export function ExtractionReview({ extraction, documentUploadId, duplicateWarning, onSave, onEditAll }: Props) {
+export function ExtractionReview({ extraction, documentUploadId, duplicateWarning, onSave }: Props) {
   const [items, setItems] = useState<EditableItem[]>(
-    extraction.items.map((item: ExtractionItem) => ({
-      ...item,
-      editedQty: item.quantity,
-      editedPrice: item.unitPrice,
-      originalQty: item.quantity,
-      originalPrice: item.unitPrice,
-    }))
+    extraction.items.map((item: ExtractionItem) => {
+      const name = item.matchedProductName ?? item.productNameRaw
+      return {
+        ...item,
+        editedName: name,
+        editedQty: item.quantity,
+        editedPrice: item.unitPrice,
+        originalName: name,
+        originalQty: item.quantity,
+        originalPrice: item.unitPrice,
+      }
+    })
   )
+  const [vendorName, setVendorName] = useState(extraction.vendorName ?? '')
+  const [date, setDate] = useState(extraction.date ?? '')
   const [showDuplicate, setShowDuplicate] = useState(!!duplicateWarning)
   const [saving, setSaving] = useState(false)
 
@@ -76,15 +87,28 @@ export function ExtractionReview({ extraction, documentUploadId, duplicateWarnin
     }))
   }
 
+  function setName(idx: number, value: string) {
+    setItems(prev => prev.map((item, i) => (i === idx ? { ...item, editedName: value } : item)))
+  }
+
+  function setPrice(idx: number, value: string) {
+    const n = Math.max(0, Number(value) || 0)
+    setItems(prev => prev.map((item, i) => (i === idx ? { ...item, editedPrice: n } : item)))
+  }
+
   async function handleSave() {
     setSaving(true)
     const payload = {
       documentUploadId,
-      vendorName: extraction.vendorName,
-      date: extraction.date,
+      vendorName: vendorName.trim() || undefined,
+      date: date.trim() || undefined,
       totalAmount: total,
       items: items.filter(i => i.editedQty > 0).map(item => {
         const correctedFields: Record<string, { original: string; corrected: string }> = {}
+        const trimmedName = item.editedName.trim() || item.originalName
+        if (trimmedName !== item.originalName) {
+          correctedFields.product_name = { original: item.originalName, corrected: trimmedName }
+        }
         if (item.editedQty !== item.originalQty) {
           correctedFields.quantity = { original: String(item.originalQty), corrected: String(item.editedQty) }
         }
@@ -92,7 +116,7 @@ export function ExtractionReview({ extraction, documentUploadId, duplicateWarnin
           correctedFields.unit_price = { original: String(item.originalPrice), corrected: String(item.editedPrice) }
         }
         return {
-          productNameRaw: item.productNameRaw,
+          productNameRaw: trimmedName,
           matchedProductId: item.matchedProductId,
           needsCatalogAdd: item.needsCatalogAdd,
           quantity: item.editedQty,
@@ -109,25 +133,29 @@ export function ExtractionReview({ extraction, documentUploadId, duplicateWarnin
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      {/* Dark sticky header */}
+      {/* Dark sticky header with editable vendor + date */}
       <div className="sticky top-0 z-10 bg-emerald-700 px-4 py-4">
-        <div className="flex items-start justify-between">
+        <div className="grid grid-cols-2 gap-2">
           <div>
-            <p className="text-sm font-semibold text-white">
-              {extraction.vendorName ?? 'Unknown vendor'}
-            </p>
-            <p className="text-xs text-emerald-200 mt-0.5">
-              {extraction.date ?? 'Date not detected'}
-            </p>
+            <label className="text-[10px] uppercase tracking-wide text-emerald-200">Vendor</label>
+            <input
+              value={vendorName}
+              onChange={e => setVendorName(e.target.value)}
+              placeholder="Unknown vendor"
+              className="mt-0.5 w-full rounded-md border border-emerald-500/60 bg-emerald-800/40 px-2 py-1.5 text-sm font-semibold text-white placeholder-emerald-300 outline-none focus:border-emerald-300"
+            />
           </div>
-          <button
-            onClick={onEditAll}
-            className="text-xs text-emerald-200 border border-emerald-500 rounded px-2 py-1 hover:border-emerald-300"
-          >
-            Edit
-          </button>
+          <div>
+            <label className="text-[10px] uppercase tracking-wide text-emerald-200">Date</label>
+            <input
+              value={date}
+              onChange={e => setDate(e.target.value)}
+              placeholder="Not detected"
+              className="mt-0.5 w-full rounded-md border border-emerald-500/60 bg-emerald-800/40 px-2 py-1.5 text-sm text-white placeholder-emerald-300 outline-none focus:border-emerald-300"
+            />
+          </div>
         </div>
-        <p className="text-3xl font-bold text-white mt-2">
+        <p className="text-3xl font-bold text-white mt-3">
           ₹{total.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
         </p>
       </div>
@@ -162,43 +190,54 @@ export function ExtractionReview({ extraction, documentUploadId, duplicateWarnin
                 key={idx}
                 className={`px-3 py-3 border-b border-gray-100 last:border-0 ${rowLowConf ? 'bg-amber-50' : ''}`}
               >
-                <div className="flex items-center gap-2">
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">
-                      {item.matchedProductName ?? item.productNameRaw}
+                <div className="space-y-2">
+                  <input
+                    value={item.editedName}
+                    onChange={e => setName(idx, e.target.value)}
+                    aria-label="Product name"
+                    className="w-full rounded-md border border-transparent bg-transparent px-1 py-0.5 text-sm font-medium text-gray-900 outline-none hover:border-gray-200 focus:border-emerald-300 focus:bg-white"
+                  />
+                  {item.needsCatalogAdd && (
+                    <p className="text-xs text-red-600">
+                      Not in catalog - will be added as new product
                     </p>
-                    {item.needsCatalogAdd && (
-                      <p className="text-xs text-red-600 mt-0.5">
-                        Not in catalog - will be added as new product
-                      </p>
-                    )}
-                    {rowLowConf && (
-                      <p className="text-xs text-amber-600 mt-0.5 flex items-center gap-1">
-                        <ConfidenceBadge level="medium" /> please check
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    <button
-                      onClick={() => adjustQty(idx, -1)}
-                      className="w-7 h-7 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center text-sm hover:bg-gray-200"
-                      aria-label={`Decrease quantity for ${item.productNameRaw}`}
-                    >
-                      −
-                    </button>
-                    <span className="text-sm font-bold text-gray-900 min-w-[20px] text-center">
-                      {item.editedQty}
-                    </span>
-                    <button
-                      onClick={() => adjustQty(idx, 1)}
-                      className="w-7 h-7 rounded-full bg-emerald-700 text-white flex items-center justify-center text-sm hover:bg-emerald-800"
-                      aria-label={`Increase quantity for ${item.productNameRaw}`}
-                    >
-                      +
-                    </button>
-                    <span className="text-xs text-gray-500 min-w-[48px] text-right">
-                      ₹{item.editedPrice}
-                    </span>
+                  )}
+                  {rowLowConf && (
+                    <p className="text-xs text-amber-600 flex items-center gap-1">
+                      <ConfidenceBadge level="medium" /> please check
+                    </p>
+                  )}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1 rounded-lg border border-gray-200 bg-white px-2 py-1">
+                      <span className="text-xs text-gray-400">₹</span>
+                      <input
+                        type="number" min="0" inputMode="decimal"
+                        value={item.editedPrice}
+                        onChange={e => setPrice(idx, e.target.value)}
+                        aria-label={`Price for ${item.editedName}`}
+                        className="w-16 bg-transparent text-sm text-gray-900 outline-none"
+                      />
+                      <span className="text-xs text-gray-400">each</span>
+                    </div>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <button
+                        onClick={() => adjustQty(idx, -1)}
+                        className="btn-lift w-7 h-7 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center text-sm hover:bg-gray-200"
+                        aria-label={`Decrease quantity for ${item.editedName}`}
+                      >
+                        &minus;
+                      </button>
+                      <span className="text-sm font-bold text-gray-900 min-w-[20px] text-center">
+                        {item.editedQty}
+                      </span>
+                      <button
+                        onClick={() => adjustQty(idx, 1)}
+                        className="btn-lift w-7 h-7 rounded-full bg-emerald-700 text-white flex items-center justify-center text-sm hover:bg-emerald-800"
+                        aria-label={`Increase quantity for ${item.editedName}`}
+                      >
+                        +
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -218,12 +257,9 @@ export function ExtractionReview({ extraction, documentUploadId, duplicateWarnin
             ? 'Saving...'
             : `Save purchase · ₹${total.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`}
         </button>
-        <button
-          onClick={onEditAll}
-          className="w-full text-center text-sm text-gray-500"
-        >
-          Edit all details
-        </button>
+        <p className="text-center text-xs text-gray-400">
+          Tap any field above to fix it before saving.
+        </p>
       </div>
     </div>
   )

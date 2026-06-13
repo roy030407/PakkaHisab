@@ -9,6 +9,8 @@
  * CHANGES THIS SESSION:
  *   - Initial creation
  *   - Security: try/catch on request.json()
+ *   - Expense/income path: accept an itemless transaction (amount + category +
+ *     note) with no products and no stock movement
  *
  * WHERE IT FITS:
  *   Called by QuickEntry component on save.
@@ -39,6 +41,36 @@ export async function POST(request: Request) {
   } catch {
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
   }
+
+  // Expense / income: no products, no stock movement. Just an amount + note.
+  if (body.type === 'expense' || body.type === 'income') {
+    const amount = Number(body.amount)
+    if (!Number.isFinite(amount) || amount <= 0) {
+      return NextResponse.json({ error: 'Amount is required' }, { status: 400 })
+    }
+    const noteParts = [body.category, body.note].map(s => s?.trim()).filter(Boolean)
+    const notes = noteParts.length ? noteParts.join(' - ') : null
+
+    const { data: tx, error: txError } = await supabase
+      .from('transactions')
+      .insert({
+        store_id: store.id,
+        user_id: user.id,
+        date: new Date().toISOString().split('T')[0],
+        type: body.type,
+        total_amount: amount,
+        payment_method: body.paymentMethod ?? 'cash',
+        source: 'manual_quick',
+        tax_amount: 0,
+        notes,
+      })
+      .select('id')
+      .single()
+
+    if (txError || !tx) return NextResponse.json({ error: 'Failed to save transaction' }, { status: 500 })
+    return NextResponse.json({ transactionId: tx.id }, { status: 201 })
+  }
+
   if (!body.items?.length) return NextResponse.json({ error: 'No items provided' }, { status: 400 })
 
   const { data: products } = await supabase
