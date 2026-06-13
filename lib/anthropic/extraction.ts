@@ -17,7 +17,7 @@
  */
 import type { SupabaseClient } from '@supabase/supabase-js'
 import type { ExtractionResult } from '@/types'
-import { getGeminiClient } from './client'
+import { getGeminiClient, DEFAULT_GEMINI_MODEL } from './client'
 
 interface TopProduct {
   id: string
@@ -132,24 +132,24 @@ Return this JSON schema:
 }`
 
   const genAI = getGeminiClient()
-  const model = genAI.getGenerativeModel({
-    model: 'gemini-2.0-flash',
-    systemInstruction,
-    generationConfig: { maxOutputTokens: 4096 },
+  const response = await genAI.models.generateContent({
+    model: DEFAULT_GEMINI_MODEL,
+    contents: [{
+      role: "user",
+      parts: [
+        { inlineData: { data: imageBase64, mimeType } },
+        { text: "Extract all data from this bill image." },
+      ],
+    }],
+    config: {
+      systemInstruction,
+      maxOutputTokens: 4096,
+      responseMimeType: "application/json",
+    },
   })
 
-  const response = await model.generateContent([
-    {
-      inlineData: {
-        data: imageBase64,
-        mimeType: mimeType as string,
-      },
-    },
-    'Extract all data from this bill image.',
-  ])
-
-  // Strip markdown code fences if Gemini wraps the JSON
-  let text = response.response.text().trim()
+  let text = (response.text ?? "").trim()
+  // Strip markdown fences as a safety net (responseMimeType should prevent them)
   if (text.startsWith('```')) {
     text = text.replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/, '').trim()
   }

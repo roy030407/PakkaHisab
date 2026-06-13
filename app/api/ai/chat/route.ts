@@ -24,7 +24,7 @@ import { NextResponse } from "next/server"
 import { createSupabaseServerClient } from "@/lib/supabase/server"
 import { buildBusinessContext, buildSystemPrompt } from "@/lib/anthropic/advisor"
 import { ADVISOR_SYSTEM_PROMPT } from "@/lib/anthropic/prompts"
-import { getGeminiClient } from "@/lib/anthropic/client"
+import { getGeminiClient, DEFAULT_GEMINI_MODEL } from "@/lib/anthropic/client"
 import { friendlyAIError } from "@/lib/anthropic/errors"
 import { aiRateLimit } from "@/lib/ratelimit"
 
@@ -87,11 +87,6 @@ export async function POST(request: Request) {
   const systemPrompt = buildSystemPrompt(ADVISOR_SYSTEM_PROMPT, profile, context)
 
   const genAI = getGeminiClient()
-  const geminiModel = genAI.getGenerativeModel({
-    model: "gemini-2.0-flash",
-    systemInstruction: systemPrompt,
-    generationConfig: { maxOutputTokens: 1024 },
-  })
 
   const encoder = new TextEncoder()
 
@@ -99,19 +94,23 @@ export async function POST(request: Request) {
     async start(controller) {
       let fullText = ""
       try {
-        // Convert history: all messages except the last user message
-        const history = messages.slice(0, -1).map((m) => ({
+        // Convert all messages to Gemini format (history + last user message)
+        const contents = messages.map((m) => ({
           role: m.role === "assistant" ? "model" : "user",
           parts: [{ text: m.content }],
         }))
 
-        const chat = geminiModel.startChat({ history })
-        const lastMessage = messages[messages.length - 1].content
+        const streamResult = await genAI.models.generateContentStream({
+          model: DEFAULT_GEMINI_MODEL,
+          contents,
+          config: {
+            systemInstruction: systemPrompt,
+            maxOutputTokens: 1024,
+          },
+        })
 
-        const streamResult = await chat.sendMessageStream(lastMessage)
-
-        for await (const chunk of streamResult.stream) {
-          const text = chunk.text()
+        for await (const chunk of streamResult) {
+          const text = chunk.text ?? ""
           if (text) {
             fullText += text
             controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text })}\n\n`))

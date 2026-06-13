@@ -18,7 +18,7 @@
 
 import { NextResponse } from "next/server"
 import { createSupabaseServerClient } from "@/lib/supabase/server"
-import { getGeminiClient } from "@/lib/anthropic/client"
+import { getGeminiClient, DEFAULT_GEMINI_MODEL } from "@/lib/anthropic/client"
 
 const PRODUCT_FIELDS = [
   "name", "brand", "category", "subcategory", "unit",
@@ -74,15 +74,17 @@ Return ONLY valid JSON in this exact format (no explanation):
 }`
 
   const genAI = getGeminiClient()
-  const model = genAI.getGenerativeModel({
-    model: "gemini-2.0-flash",
-    generationConfig: { maxOutputTokens: 512 },
+  const result = await genAI.models.generateContent({
+    model: DEFAULT_GEMINI_MODEL,
+    contents: prompt,
+    config: {
+      maxOutputTokens: 512,
+      responseMimeType: "application/json",
+    },
   })
+  let text = (result.text ?? "").trim()
 
-  const result = await model.generateContent(prompt)
-  let text = result.response.text().trim()
-
-  // Strip markdown code fences if Gemini wraps the JSON
+  // Strip markdown fences as a safety net
   if (text.startsWith("```")) {
     text = text.replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/, "").trim()
   }

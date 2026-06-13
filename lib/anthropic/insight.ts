@@ -20,7 +20,7 @@
  */
 
 import type { SupabaseClient } from "@supabase/supabase-js"
-import { getGeminiClient } from "./client"
+import { getGeminiClient, DEFAULT_GEMINI_MODEL } from "./client"
 import { buildBusinessContext, buildSystemPrompt, type StoreProfile } from "./advisor"
 import { INSIGHT_SYSTEM_PROMPT } from "./prompts"
 
@@ -48,14 +48,15 @@ export async function getDailyInsight(
   const systemPrompt = buildSystemPrompt(INSIGHT_SYSTEM_PROMPT, profile, context)
 
   const genAI = getGeminiClient()
-  const model = genAI.getGenerativeModel({
-    model: "gemini-2.0-flash",
-    systemInstruction: systemPrompt,
-    generationConfig: { maxOutputTokens: 200 },
+  const result = await genAI.models.generateContent({
+    model: DEFAULT_GEMINI_MODEL,
+    contents: "Generate today's business insight.",
+    config: {
+      systemInstruction: systemPrompt,
+      maxOutputTokens: 200,
+    },
   })
-
-  const result = await model.generateContent("Generate today's business insight.")
-  const text = result.response.text().trim()
+  const text = (result.text ?? "").trim()
 
   // Cache it — if this fails, every dashboard load re-bills the Claude API,
   // so the failure must be visible in server logs.

@@ -7,6 +7,8 @@
  *
  * CHANGES THIS SESSION:
  *   - Switched from Anthropic SDK to Google Gemini (free tier, 1500 req/day)
+ *   - Upgraded from @google/generative-ai to @google/genai (supports AQ. key format)
+ *   - Model updated to gemini-2.5-flash
  *
  * WHERE IT FITS:
  *   Shared by all API routes that call AI (chat, insight, extraction, import/map).
@@ -16,15 +18,17 @@
  *   app/api/ai/chat/route.ts, app/api/import/map/route.ts
  */
 
-import { GoogleGenerativeAI } from "@google/generative-ai"
+import { GoogleGenAI } from "@google/genai"
 
-let _client: GoogleGenerativeAI | null = null
+let _client: GoogleGenAI | null = null
 
-export function getGeminiClient(): GoogleGenerativeAI {
+export const DEFAULT_GEMINI_MODEL = process.env.GEMINI_MODEL ?? "gemini-2.5-flash"
+
+export function getGeminiClient(): GoogleGenAI {
   if (!_client) {
     const apiKey = process.env.GOOGLE_AI_API_KEY
     if (!apiKey) throw new Error("GOOGLE_AI_API_KEY is not set")
-    _client = new GoogleGenerativeAI(apiKey)
+    _client = new GoogleGenAI({ apiKey })
   }
   return _client
 }
