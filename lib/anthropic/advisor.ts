@@ -193,10 +193,12 @@ export function buildSystemPrompt(
   context: string
 ): string {
   const langName = LANG_NAMES[profile.preferredLanguage] ?? "English"
+  // Strip {{...}} patterns from user-controlled fields to prevent double-substitution
+  const sanitize = (s: string) => s.replace(/\{\{[^}]*\}\}/g, "")
   return template
-    .replace(/{{storeName}}/g, profile.storeName)
-    .replace(/{{storeType}}/g, profile.storeType)
-    .replace(/{{ownerName}}/g, profile.ownerName)
+    .replace(/{{storeName}}/g, sanitize(profile.storeName))
+    .replace(/{{storeType}}/g, sanitize(profile.storeType))
+    .replace(/{{ownerName}}/g, sanitize(profile.ownerName))
     .replace(/{{language}}/g, langName)
     .replace(/{{businessContext}}/g, context)
 }

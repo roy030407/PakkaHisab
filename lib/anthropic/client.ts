@@ -22,7 +22,9 @@ let _client: GoogleGenerativeAI | null = null
 
 export function getGeminiClient(): GoogleGenerativeAI {
   if (!_client) {
-    _client = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY!)
+    const apiKey = process.env.GOOGLE_AI_API_KEY
+    if (!apiKey) throw new Error("GOOGLE_AI_API_KEY is not set")
+    _client = new GoogleGenerativeAI(apiKey)
   }
   return _client
 }

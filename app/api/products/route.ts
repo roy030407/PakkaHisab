@@ -44,8 +44,9 @@ export async function GET(request: Request) {
   }
 
   const { searchParams } = new URL(request.url);
-  const search = searchParams.get("q")?.trim();
-  const category = searchParams.get("category");
+  // Strip chars that PostgREST uses as filter operators to prevent injection
+  const search = searchParams.get("q")?.trim().replace(/[%,.()"]/g, "");
+  const category = searchParams.get("category")?.replace(/[%,.()"]/g, "");
   const parentOnly = searchParams.get("parent_only") === "true";
 
   let query = supabase

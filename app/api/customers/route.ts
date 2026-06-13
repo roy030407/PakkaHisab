@@ -42,7 +42,12 @@ export async function POST(request: Request) {
   const { data: store } = await supabase.from('stores').select('id').eq('owner_id', user.id).maybeSingle()
   if (!store) return NextResponse.json({ error: 'Store not found' }, { status: 404 })
 
-  const body: { name: string; phone?: string; type?: string; creditLimit?: number; notes?: string } = await request.json()
+  let body: { name: string; phone?: string; type?: string; creditLimit?: number; notes?: string }
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
+  }
   if (!body.name?.trim()) return NextResponse.json({ error: 'Name is required' }, { status: 400 })
 
   const { data: customer, error } = await supabase.from('customers').insert({

@@ -54,7 +54,13 @@ export async function POST(request: Request) {
     ? (rawPeriod as ReportPeriod)
     : 'monthly'
 
-  const report = await buildPeriodReport(supabase, store.id, period)
+  let report
+  try {
+    report = await buildPeriodReport(supabase, store.id, period)
+  } catch (e) {
+    console.error('[reports/share] buildPeriodReport failed:', e)
+    return NextResponse.json({ error: 'Failed to generate report' }, { status: 500 })
+  }
   const svc = createSupabaseServiceClient()
 
   // Reuse the existing share_token if one already exists for this store+period

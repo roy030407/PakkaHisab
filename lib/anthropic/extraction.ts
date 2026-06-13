@@ -37,16 +37,28 @@ export async function extractBillData(
   imageBase64: string,
   mimeType: string
 ): Promise<ExtractionResult> {
-  // Fetch top-20 products by frequency (last 7 days)
-  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
-  const { data: recentItems } = await supabase
-    .from('transaction_items')
-    .select('product_id')
+  // Fetch top-20 products by frequency via transactions scoped to this store
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+    .toISOString()
+    .split('T')[0]
+  const { data: recentTxns } = await supabase
+    .from('transactions')
+    .select('id')
     .eq('store_id', storeId)
-    .gte('created_at', sevenDaysAgo)
+    .gte('date', sevenDaysAgo)
+
+  const txnIds = (recentTxns ?? []).map((t: { id: string }) => t.id)
+  let recentItems: { product_id: string }[] = []
+  if (txnIds.length > 0) {
+    const { data } = await supabase
+      .from('transaction_items')
+      .select('product_id')
+      .in('transaction_id', txnIds)
+    recentItems = data ?? []
+  }
 
   const productFreq: Record<string, number> = {}
-  for (const item of recentItems ?? []) {
+  for (const item of recentItems) {
     productFreq[item.product_id] = (productFreq[item.product_id] ?? 0) + 1
   }
 

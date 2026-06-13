@@ -133,11 +133,20 @@ export async function POST(request: Request) {
             .update({ messages: updatedMessages })
             .eq("id", conversationId)
             .eq("store_id", store.id)
+          controller.enqueue(
+            encoder.encode(`data: ${JSON.stringify({ conversationId })}\n\n`)
+          )
         } else {
-          await supabase.from("ai_conversations").insert({
-            store_id: store.id,
-            messages: updatedMessages,
-          })
+          const { data: newConv } = await supabase
+            .from("ai_conversations")
+            .insert({ store_id: store.id, messages: updatedMessages })
+            .select("id")
+            .single()
+          if (newConv?.id) {
+            controller.enqueue(
+              encoder.encode(`data: ${JSON.stringify({ conversationId: newConv.id })}\n\n`)
+            )
+          }
         }
       } catch (err) {
         console.error("[ai/chat] stream failed:", err instanceof Error ? err.message : err)
