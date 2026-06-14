@@ -205,19 +205,51 @@ export type ExtractionStatus =
   | "confirmed"
   | "failed";
 
+export type NumberRole = "quantity" | "price" | "total" | "unknown";
+
+export interface NumberToken {
+  value: number;
+  guessedRole: NumberRole;
+  hasCurrencyMarker: boolean; // a ₹ / Rs near it
+  hasMultiplyMarker: boolean; // an x / @ near it
+  confidence: ConfidenceLevel;
+}
+
+// What the AI returns per line (reading only, no matching).
+export interface RawExtractedItem {
+  productNameRaw: string;
+  normalizedName: string;
+  sizeToken: string | null;
+  numberTokens: NumberToken[];
+}
+
+export type MatchState = "matched" | "variant_choice" | "suggest" | "unmatched";
+export type FillSource = "bill" | "catalog" | "inferred";
+
+export interface MatchCandidate {
+  productId: string;
+  name: string;
+  unitPrice: number;
+  sizeToken: string | null;
+}
+
+// What the resolver produces and the UI consumes.
 export interface ExtractionItem {
   productNameRaw: string;
+  normalizedName?: string;
+  sizeToken?: string | null;
   matchedProductId?: string;
   matchedProductName?: string;
-  needsCatalogAdd: boolean;
+  matchState: MatchState;
+  candidates: MatchCandidate[];
   quantity: number;
   unitPrice: number;
   totalPrice: number;
   taxRate?: number;
-  fieldConfidence: Record<
-    "quantity" | "unitPrice" | "totalPrice",
-    ConfidenceLevel
-  >;
+  fillSource: FillSource;
+  needsVerify: boolean;
+  ambiguousQtyPrice: boolean;
+  numberTokens?: NumberToken[];
 }
 
 export interface ExtractionResult {

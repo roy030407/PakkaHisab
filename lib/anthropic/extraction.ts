@@ -2,82 +2,41 @@
  * FILE: lib/anthropic/extraction.ts
  *
  * WHAT THIS DOES:
- *   Calls Gemini 2.0 Flash (Vision) to extract structured bill data.
- *   Builds prompt with store's top-20 frequent products and last-5 corrections
- *   as few-shot context. Returns ExtractionResult JSON.
+ *   Calls Gemini Vision to READ a bill. It normalizes each line into a clean
+ *   name + size token + number tokens (with a guessed role per number). It does
+ *   NOT match against the catalog - matching is done in code (lib/scan).
  *
  * CHANGES THIS SESSION:
- *   - Switched from Anthropic Claude Vision to Gemini 2.0 Flash Vision (free tier)
+ *   - Read-only output (normalizedName, sizeToken, numberTokens); matching moved
+ *     to lib/scan/match.ts + resolve.ts.
  *
  * WHERE IT FITS:
- *   Called by POST /api/scan after the bill image has been uploaded to Storage.
+ *   Called by app/api/scan/route.ts; its output is fed to resolveItems().
  *
  * CALLED BY / IMPORTS FROM:
  *   app/api/scan/route.ts
  */
 import type { SupabaseClient } from '@supabase/supabase-js'
-import type { ExtractionResult } from '@/types'
+import type { RawExtractedItem, NumberToken, ConfidenceLevel, DocumentType } from '@/types'
 import { getGeminiClient, DEFAULT_GEMINI_MODEL } from './client'
 
-interface TopProduct {
-  id: string
-  name: string
-  unit: string
+export interface RawExtraction {
+  documentType: DocumentType
+  vendorName?: string
+  date?: string
+  totalAmount?: number
+  confidence: ConfidenceLevel
+  rawItems: RawExtractedItem[]
 }
 
-interface Correction {
-  field_name: string
-  original_value: string
-  corrected_value: string
-}
+interface Correction { field_name: string; original_value: string; corrected_value: string }
 
 export async function extractBillData(
   supabase: SupabaseClient,
   storeId: string,
   imageBase64: string,
   mimeType: string
-): Promise<ExtractionResult> {
-  // Fetch top-20 products by frequency via transactions scoped to this store
-  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-    .toISOString()
-    .split('T')[0]
-  const { data: recentTxns } = await supabase
-    .from('transactions')
-    .select('id')
-    .eq('store_id', storeId)
-    .gte('date', sevenDaysAgo)
-
-  const txnIds = (recentTxns ?? []).map((t: { id: string }) => t.id)
-  let recentItems: { product_id: string }[] = []
-  if (txnIds.length > 0) {
-    const { data } = await supabase
-      .from('transaction_items')
-      .select('product_id')
-      .in('transaction_id', txnIds)
-    recentItems = data ?? []
-  }
-
-  const productFreq: Record<string, number> = {}
-  for (const item of recentItems) {
-    productFreq[item.product_id] = (productFreq[item.product_id] ?? 0) + 1
-  }
-
-  const topIds = Object.entries(productFreq)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 20)
-    .map(([id]) => id)
-
-  let topProducts: TopProduct[] = []
-  if (topIds.length > 0) {
-    const { data } = await supabase
-      .from('products')
-      .select('id, name, unit')
-      .in('id', topIds)
-      .eq('store_id', storeId)
-    topProducts = data ?? []
-  }
-
-  // Fetch last-5 extraction corrections for this store
+): Promise<RawExtraction> {
   const { data: corrections } = await supabase
     .from('extraction_corrections')
     .select('field_name, original_value, corrected_value')
@@ -86,26 +45,25 @@ export async function extractBillData(
     .limit(5)
 
   const correctionLines = (corrections as Correction[] ?? [])
-    .map(c => `In a previous scan for this store, '${c.original_value}' was corrected to '${c.corrected_value}' (field: ${c.field_name}).`)
+    .map(c => `In a previous scan for this store, '${c.original_value}' was read as '${c.corrected_value}' (field: ${c.field_name}).`)
     .join('\n')
 
-  const productContext = topProducts.length > 0
-    ? `Store catalog (top products by frequency):\n${topProducts.map(p => `- id: ${p.id} | name: ${p.name} | unit: ${p.unit}`).join('\n')}`
-    : 'No catalog products available yet.'
-
-  const systemInstruction = `You are a bill data extraction assistant for Indian retail stores. Extract structured data from bill images.
-
-Return ONLY valid JSON. No preamble, no markdown, no explanation.
+  const systemInstruction = `You are a bill reader for Indian retail stores. READ the bill image into structured JSON. Do NOT try to match products to any catalog. Return ONLY valid JSON, no markdown.
 
 Handle Indian formats: "Rs.", "₹", Devanagari numerals, Dr/Cr columns, "only" suffix, partial dates.
 
-If the image is a single bill/invoice, return document_type: "single_bill".
-If the image is a ledger/account page with multiple entries, return document_type: "ledger_page" - in that case, replace "items" with "transactions" array where each element has the same structure as a single bill.
+For each line item:
+- product_name_raw: the text exactly as written on the bill.
+- normalized_name: a clean English product name (expand common Hindi: chawal->rice, cheeni->sugar, atta->wheat flour, doodh->milk). No size, no numbers.
+- size_token: any pack size on the line ("1kg","500ml","200ml") or null.
+- number_tokens: EVERY number near the line. For each: value, guessed_role ("quantity" | "price" | "total" | "unknown"), has_currency_marker (true if a Rs/rupee symbol touches it), has_multiply_marker (true if an x/@ touches it), confidence ("high"|"medium"|"low").
+  Do not guess a role you are unsure of - use "unknown".
 
-${correctionLines ? `Store-specific corrections learned from past scans:\n${correctionLines}\n` : ''}
-${productContext}
+If the image is a ledger/account page with multiple bills, set document_type "ledger_page" and put each bill's lines in items as well (flatten).
 
-Return this JSON schema:
+${correctionLines ? `Store read corrections:\n${correctionLines}\n` : ''}
+
+Return this JSON:
 {
   "document_type": "single_bill" | "ledger_page",
   "vendor_name": string | null,
@@ -115,18 +73,13 @@ Return this JSON schema:
   "items": [
     {
       "product_name_raw": string,
-      "matched_product_id": string | null,
-      "matched_product_name": string | null,
-      "needs_catalog_add": boolean,
-      "quantity": number,
-      "unit_price": number,
-      "total_price": number,
-      "tax_rate": number | null,
-      "field_confidence": {
-        "quantity": "high" | "medium" | "low",
-        "unit_price": "high" | "medium" | "low",
-        "total_price": "high" | "medium" | "low"
-      }
+      "normalized_name": string,
+      "size_token": string | null,
+      "number_tokens": [
+        { "value": number, "guessed_role": "quantity"|"price"|"total"|"unknown",
+          "has_currency_marker": boolean, "has_multiply_marker": boolean,
+          "confidence": "high"|"medium"|"low" }
+      ]
     }
   ]
 }`
@@ -135,48 +88,40 @@ Return this JSON schema:
   const response = await genAI.models.generateContent({
     model: DEFAULT_GEMINI_MODEL,
     contents: [{
-      role: "user",
+      role: 'user',
       parts: [
         { inlineData: { data: imageBase64, mimeType } },
-        { text: "Extract all data from this bill image." },
+        { text: 'Read all data from this bill image.' },
       ],
     }],
-    config: {
-      systemInstruction,
-      maxOutputTokens: 4096,
-      responseMimeType: "application/json",
-    },
+    config: { systemInstruction, maxOutputTokens: 4096, responseMimeType: 'application/json' },
   })
 
-  let text = (response.text ?? "").trim()
-  // Strip markdown fences as a safety net (responseMimeType should prevent them)
+  let text = (response.text ?? '').trim()
   if (text.startsWith('```')) {
     text = text.replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/, '').trim()
   }
-
   const raw = JSON.parse(text)
 
-  // Normalise to camelCase ExtractionResult
+  const rawItems: RawExtractedItem[] = (raw.items ?? raw.transactions ?? []).map((it: Record<string, unknown>) => ({
+    productNameRaw: String(it.product_name_raw ?? ''),
+    normalizedName: String(it.normalized_name ?? it.product_name_raw ?? ''),
+    sizeToken: (it.size_token as string) ?? null,
+    numberTokens: ((it.number_tokens as Record<string, unknown>[]) ?? []).map((n): NumberToken => ({
+      value: Number(n.value) || 0,
+      guessedRole: (n.guessed_role as NumberToken['guessedRole']) ?? 'unknown',
+      hasCurrencyMarker: Boolean(n.has_currency_marker),
+      hasMultiplyMarker: Boolean(n.has_multiply_marker),
+      confidence: (n.confidence as ConfidenceLevel) ?? 'low',
+    })),
+  }))
+
   return {
-    documentType: raw.document_type,
+    documentType: raw.document_type ?? 'single_bill',
     vendorName: raw.vendor_name ?? undefined,
     date: raw.date ?? undefined,
     totalAmount: raw.total_amount ?? undefined,
-    confidence: raw.confidence,
-    items: (raw.items ?? raw.transactions ?? []).map((item: Record<string, unknown>) => ({
-      productNameRaw: item.product_name_raw as string,
-      matchedProductId: (item.matched_product_id as string) ?? undefined,
-      matchedProductName: (item.matched_product_name as string) ?? undefined,
-      needsCatalogAdd: Boolean(item.needs_catalog_add),
-      quantity: Number(item.quantity),
-      unitPrice: Number(item.unit_price),
-      totalPrice: Number(item.total_price),
-      taxRate: item.tax_rate != null ? Number(item.tax_rate) : undefined,
-      fieldConfidence: {
-        quantity: (item.field_confidence as Record<string, string>)?.quantity ?? 'low',
-        unitPrice: (item.field_confidence as Record<string, string>)?.unit_price ?? 'low',
-        totalPrice: (item.field_confidence as Record<string, string>)?.total_price ?? 'low',
-      },
-    })),
-  } as ExtractionResult
+    confidence: raw.confidence ?? 'low',
+    rawItems,
+  }
 }

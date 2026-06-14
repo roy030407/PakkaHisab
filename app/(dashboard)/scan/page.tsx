@@ -41,12 +41,11 @@ interface ConfirmPayload {
   items: Array<{
     productNameRaw: string
     matchedProductId?: string
-    needsCatalogAdd: boolean
+    addAsNew: boolean
     quantity: number
     unitPrice: number
     totalPrice: number
     taxRate?: number
-    correctedFields?: Record<string, { original: string; corrected: string }>
   }>
 }
 

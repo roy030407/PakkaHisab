@@ -25,13 +25,11 @@ import { updateStock } from '@/lib/inventory/updateStock'
 interface ConfirmItem {
   productNameRaw: string
   matchedProductId?: string
-  needsCatalogAdd: boolean
+  addAsNew: boolean
   quantity: number
   unitPrice: number
   totalPrice: number
   taxRate?: number
-  // Fields the merchant edited (for correction learning)
-  correctedFields?: Record<string, { original: string; corrected: string }>
 }
 
 interface ConfirmPayload {
@@ -110,8 +108,9 @@ export async function POST(request: Request) {
       ? item.matchedProductId
       : null
 
-    // Create placeholder product for unrecognised items
-    if (item.needsCatalogAdd || !productId) {
+    // Create a product ONLY when the merchant explicitly chose "Add as new"
+    // (or there is genuinely no verified match to attach to).
+    if (item.addAsNew || !productId) {
       const { data: newProduct } = await supabase
         .from('products')
         .insert({
@@ -155,18 +154,6 @@ export async function POST(request: Request) {
       unitPrice: item.unitPrice,
     })
 
-    // Store corrections for learning
-    if (item.correctedFields) {
-      for (const [fieldName, { original, corrected }] of Object.entries(item.correctedFields)) {
-        await supabase.from('extraction_corrections').insert({
-          store_id: store.id,
-          document_upload_id: body.documentUploadId,
-          field_name: fieldName,
-          original_value: String(original),
-          corrected_value: String(corrected),
-        })
-      }
-    }
   }
 
   // Mark document upload as confirmed

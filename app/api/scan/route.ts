@@ -19,6 +19,7 @@
 import { NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 import { extractBillData } from '@/lib/anthropic/extraction'
+import { resolveItems } from '@/lib/scan/resolve'
 import { scanRateLimit } from '@/lib/ratelimit'
 import { randomUUID } from 'crypto'
 
@@ -121,11 +122,20 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Failed to record upload' }, { status: 500 })
   }
 
-  // Call Claude Vision extraction
+  // Read the bill with the AI, then resolve items against the catalog in code.
   let extraction
   try {
     const imageBase64 = buffer.toString('base64')
-    extraction = await extractBillData(supabase, store.id, imageBase64, file.type)
+    const raw = await extractBillData(supabase, store.id, imageBase64, file.type)
+    const items = await resolveItems(supabase, store.id, raw.rawItems, 'purchase')
+    extraction = {
+      documentType: raw.documentType,
+      vendorName: raw.vendorName,
+      date: raw.date,
+      totalAmount: raw.totalAmount,
+      confidence: raw.confidence,
+      items,
+    }
   } catch {
     await supabase
       .from('document_uploads')

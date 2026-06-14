@@ -39,7 +39,7 @@ interface Props {
     items: Array<{
       productNameRaw: string
       matchedProductId?: string
-      needsCatalogAdd: boolean
+      addAsNew: boolean
       quantity: number
       unitPrice: number
       totalPrice: number
@@ -80,7 +80,7 @@ export function LedgerReview({ extraction, documentUploadId, onSave }: Props) {
       items: checkedRows.map(r => ({
         productNameRaw: r.productNameRaw,
         matchedProductId: r.matchedProductId,
-        needsCatalogAdd: r.needsCatalogAdd,
+        addAsNew: r.matchState === 'unmatched',
         quantity: 1,
         unitPrice: r.editedAmount,
         totalPrice: r.editedAmount,
