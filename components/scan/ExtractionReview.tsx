@@ -56,9 +56,10 @@ interface Props {
       correction?: { original: string; corrected: string }
     }>
   }) => void
+  onCancel?: () => void
 }
 
-export function ExtractionReview({ extraction, documentUploadId, duplicateWarning, onSave }: Props) {
+export function ExtractionReview({ extraction, documentUploadId, duplicateWarning, onSave, onCancel }: Props) {
   const [items, setItems] = useState<EditableItem[]>(
     extraction.items.map((item: ExtractionItem) => {
       const name = item.matchedProductName ?? item.productNameRaw
@@ -89,6 +90,8 @@ export function ExtractionReview({ extraction, documentUploadId, duplicateWarnin
   }
   const adjustQty = (idx: number, delta: number) =>
     patch(idx, it => ({ ...it, editedQty: Math.max(0, it.editedQty + delta) }))
+  const setQty = (idx: number, v: string) =>
+    patch(idx, it => ({ ...it, editedQty: Math.max(0, Number(v) || 0) }))
   const setPrice = (idx: number, v: string) =>
     patch(idx, it => ({ ...it, editedPrice: Math.max(0, Number(v) || 0) }))
   const setName = (idx: number, v: string) =>
@@ -174,6 +177,13 @@ export function ExtractionReview({ extraction, documentUploadId, duplicateWarnin
           <DuplicateWarning date={duplicateWarning.date} onDismiss={() => setShowDuplicate(false)} />
         )}
 
+        {live.length === 0 && (
+          <div className="mx-4 mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-center">
+            <p className="text-sm font-medium text-amber-800">No items were read from this bill.</p>
+            <p className="text-xs text-amber-700 mt-1">Try a clearer, well-lit photo, or discard and add the entry manually.</p>
+          </div>
+        )}
+
         <div className="mx-4 mt-3 space-y-3">
           {items.map((item, idx) => {
             if (item.removed) return null
@@ -189,11 +199,11 @@ export function ExtractionReview({ extraction, documentUploadId, duplicateWarnin
 
                 {/* State chips / controls */}
                 {item.matchState === 'matched' && !item.needsVerify && (
-                  <p className="mt-1 text-xs font-semibold text-emerald-700">✓ matched</p>
+                  <p className="mt-1 text-xs font-semibold text-emerald-700">✓ matched - read from bill</p>
                 )}
-                {item.matchState === 'matched' && item.needsVerify && (
+                {item.needsVerify && (
                   <p className="mt-1 text-xs font-semibold text-amber-700">
-                    ⚠ {item.fillSource === 'catalog' ? 'price filled from catalog' : 'please check'}
+                    ⚠ We guessed this - please check the quantity{item.fillSource === 'catalog' ? ' (price filled from your catalog)' : ' and price'} and edit if wrong.
                   </p>
                 )}
 
@@ -254,7 +264,9 @@ export function ExtractionReview({ extraction, documentUploadId, duplicateWarnin
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <button onClick={() => adjustQty(idx, -1)} aria-label={`Decrease quantity for ${item.editedName}`}
                       className="btn-lift w-7 h-7 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center text-sm hover:bg-gray-200">−</button>
-                    <span className="text-sm font-bold text-gray-900 min-w-[20px] text-center">{item.editedQty}</span>
+                    <input type="number" min="0" inputMode="numeric" value={item.editedQty}
+                      onChange={e => setQty(idx, e.target.value)} aria-label={`Quantity for ${item.editedName}`}
+                      className="w-12 text-center text-sm font-bold text-gray-900 bg-transparent outline-none border-b border-transparent focus:border-emerald-300" />
                     <button onClick={() => adjustQty(idx, 1)} aria-label={`Increase quantity for ${item.editedName}`}
                       className="btn-lift w-7 h-7 rounded-full bg-emerald-700 text-white flex items-center justify-center text-sm hover:bg-emerald-800">+</button>
                   </div>
@@ -270,7 +282,13 @@ export function ExtractionReview({ extraction, documentUploadId, duplicateWarnin
           className="w-full bg-emerald-700 text-white font-semibold py-3.5 rounded-xl text-sm disabled:opacity-60 hover:bg-emerald-800">
           {saving ? 'Saving...' : unresolved ? 'Resolve highlighted items to save' : `Save purchase · ₹${total.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`}
         </button>
-        <p className="text-center text-xs text-gray-400">Tap any field above to fix it before saving.</p>
+        {onCancel && (
+          <button onClick={onCancel} disabled={saving}
+            className="btn-lift w-full rounded-xl border border-gray-200 bg-white py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-60">
+            Discard this scan
+          </button>
+        )}
+        <p className="text-center text-xs text-gray-400">Check the highlighted guesses, then save.</p>
       </div>
     </div>
   )

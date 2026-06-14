@@ -19,6 +19,7 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 import type { RawExtractedItem, ExtractionItem, TransactionType } from '@/types'
 import { matchItem, type CatalogEntry } from './match'
 import { inferQtyPrice } from './inferQtyPrice'
+import { sizeNumber } from './normalize'
 
 export async function resolveItems(
   supabase: SupabaseClient,
@@ -65,7 +66,13 @@ export async function resolveItems(
   return items.map((raw): ExtractionItem => {
     const m = matchItem({ normalizedName: raw.normalizedName, sizeToken: raw.sizeToken }, catalog)
     const matchedPrice = m.matchedProductId ? catalogById.get(m.matchedProductId)?.unitPrice ?? null : null
-    const qp = inferQtyPrice(raw.numberTokens, matchedPrice)
+    // Drop the pack-size number (e.g. the 600 in "600ml") so it is never read as
+    // a quantity. Keep it only if it is clearly a price.
+    const sizeNum = sizeNumber(raw.sizeToken)
+    const numberTokens = raw.numberTokens.filter(
+      t => !(sizeNum !== null && t.value === sizeNum && t.guessedRole !== 'price' && !t.hasCurrencyMarker)
+    )
+    const qp = inferQtyPrice(numberTokens, matchedPrice)
     return {
       productNameRaw: raw.productNameRaw,
       normalizedName: raw.normalizedName,
@@ -80,7 +87,7 @@ export async function resolveItems(
       fillSource: qp.fillSource,
       needsVerify: qp.needsVerify,
       ambiguousQtyPrice: qp.ambiguousQtyPrice,
-      numberTokens: raw.numberTokens,
+      numberTokens,
     }
   })
 }

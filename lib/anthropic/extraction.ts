@@ -56,7 +56,7 @@ For each line item:
 - product_name_raw: the text exactly as written on the bill.
 - normalized_name: a clean English product name (expand common Hindi: chawal->rice, cheeni->sugar, atta->wheat flour, doodh->milk). No size, no numbers.
 - size_token: any pack size on the line ("1kg","500ml","200ml") or null.
-- number_tokens: EVERY number near the line. For each: value, guessed_role ("quantity" | "price" | "total" | "unknown"), has_currency_marker (true if a Rs/rupee symbol touches it), has_multiply_marker (true if an x/@ touches it), confidence ("high"|"medium"|"low").
+- number_tokens: EVERY number near the line EXCEPT the pack-size number. The number inside size_token (e.g. the 600 in "600ml", the 1 in "1kg") is NOT a quantity and must NEVER appear in number_tokens. For each remaining number: value, guessed_role ("quantity" | "price" | "total" | "unknown"), has_currency_marker (true if a Rs/rupee symbol touches it), has_multiply_marker (true if an x/@ touches it), confidence ("high"|"medium"|"low").
   Do not guess a role you are unsure of - use "unknown".
 
 If the image is a ledger/account page with multiple bills, set document_type "ledger_page" and put each bill's lines in items as well (flatten).

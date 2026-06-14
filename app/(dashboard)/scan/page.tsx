@@ -146,6 +146,7 @@ export default function ScanPage() {
         documentUploadId={reviewData.documentUploadId}
         duplicateWarning={reviewData.duplicateWarning}
         onSave={handleSave}
+        onCancel={() => { setReviewData(null); setState('upload') }}
       />
     )
   }

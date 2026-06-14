@@ -37,3 +37,11 @@ export function stripSize(name: string): string {
 export function baseName(name: string): string {
   return normalizeText(stripSize(name))
 }
+
+// The numeric part of a size token: "600ml" -> 600, "1.5l" -> 1.5, null -> null.
+// Used to stop a pack-size number being mistaken for a quantity.
+export function sizeNumber(sizeToken: string | null): number | null {
+  if (!sizeToken) return null
+  const m = sizeToken.match(/(\d+(?:\.\d+)?)/)
+  return m ? Number(m[1]) : null
+}

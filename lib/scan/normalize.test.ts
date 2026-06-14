@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { normalizeText, parseSizeToken, stripSize, baseName } from '@/lib/scan/normalize'
+import { normalizeText, parseSizeToken, stripSize, baseName, sizeNumber } from '@/lib/scan/normalize'
 
 describe('normalizeText', () => {
   it('lowercases, strips punctuation, collapses spaces', () => {
@@ -14,6 +14,16 @@ describe('parseSizeToken', () => {
   })
   it('returns null when no size', () => {
     expect(parseSizeToken('Basmati Rice')).toBeNull()
+  })
+})
+
+describe('sizeNumber', () => {
+  it('extracts the numeric part of a size token', () => {
+    expect(sizeNumber('600ml')).toBe(600)
+    expect(sizeNumber('1.5l')).toBe(1.5)
+  })
+  it('returns null when there is no size', () => {
+    expect(sizeNumber(null)).toBeNull()
   })
 })
 
