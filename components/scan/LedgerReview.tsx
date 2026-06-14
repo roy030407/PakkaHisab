@@ -44,6 +44,7 @@ interface Props {
       unitPrice: number
       totalPrice: number
       taxRate?: number
+      correction?: { original: string; corrected: string }
     }>
   }) => void
 }

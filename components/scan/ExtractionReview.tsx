@@ -53,6 +53,7 @@ interface Props {
       unitPrice: number
       totalPrice: number
       taxRate?: number
+      correction?: { original: string; corrected: string }
     }>
   }) => void
 }
@@ -129,15 +130,22 @@ export function ExtractionReview({ extraction, documentUploadId, duplicateWarnin
       vendorName: vendorName.trim() || undefined,
       date: date.trim() || undefined,
       totalAmount: total,
-      items: live.filter(i => i.editedQty > 0).map(it => ({
-        productNameRaw: it.editedName.trim() || it.originalName,
-        matchedProductId: it.addAsNew ? undefined : it.matchedProductId,
-        addAsNew: it.addAsNew,
-        quantity: it.editedQty,
-        unitPrice: it.editedPrice,
-        totalPrice: it.editedQty * it.editedPrice,
-        taxRate: it.taxRate,
-      })),
+      items: live.filter(i => i.editedQty > 0).map(it => {
+        const finalName = it.editedName.trim() || it.originalName
+        return {
+          productNameRaw: finalName,
+          matchedProductId: it.addAsNew ? undefined : it.matchedProductId,
+          addAsNew: it.addAsNew,
+          quantity: it.editedQty,
+          unitPrice: it.editedPrice,
+          totalPrice: it.editedQty * it.editedPrice,
+          taxRate: it.taxRate,
+          // Learn the AI's raw read -> the product the merchant actually chose.
+          correction: it.productNameRaw && finalName !== it.productNameRaw
+            ? { original: it.productNameRaw, corrected: finalName }
+            : undefined,
+        }
+      }),
     }
     onSave(payload)
     setSaving(false)

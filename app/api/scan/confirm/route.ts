@@ -30,6 +30,9 @@ interface ConfirmItem {
   unitPrice: number
   totalPrice: number
   taxRate?: number
+  // When the merchant's final product differs from what the AI read, this
+  // pair is stored so future scans of the same handwriting read better.
+  correction?: { original: string; corrected: string }
 }
 
 interface ConfirmPayload {
@@ -154,6 +157,18 @@ export async function POST(request: Request) {
       unitPrice: item.unitPrice,
     })
 
+    // Learn from a match override: store raw bill text -> chosen product name
+    // so the extraction few-shot improves for this store over time.
+    if (item.correction && item.correction.original.trim() &&
+        item.correction.original.trim() !== item.correction.corrected.trim()) {
+      await supabase.from('extraction_corrections').insert({
+        store_id: store.id,
+        document_upload_id: body.documentUploadId,
+        field_name: 'product_name',
+        original_value: item.correction.original.trim(),
+        corrected_value: item.correction.corrected.trim(),
+      })
+    }
   }
 
   // Mark document upload as confirmed

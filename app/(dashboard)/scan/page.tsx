@@ -46,6 +46,7 @@ interface ConfirmPayload {
     unitPrice: number
     totalPrice: number
     taxRate?: number
+    correction?: { original: string; corrected: string }
   }>
 }
 
