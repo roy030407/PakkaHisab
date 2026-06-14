@@ -46,7 +46,7 @@ export function ScanUpload({ onFileSelected }: Props) {
         className="hidden" onChange={handleChange} />
       <input ref={galleryRef} type="file" accept="image/*"
         className="hidden" onChange={handleChange} />
-      <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp,application/pdf"
+      <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp"
         className="hidden" onChange={handleChange} />
 
       <div className="w-full max-w-xs space-y-3 rounded-2xl border-2 border-dashed border-emerald-300 bg-emerald-50/40 hover:bg-emerald-50 transition-colors p-4">

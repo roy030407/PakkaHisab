@@ -1,4 +1,4 @@
--- FILE: supabase/migrations/002_stock_movements_delete_policy.sql
+-- FILE: supabase/migrations/005_stock_movements_delete_policy.sql
 -- WHAT THIS DOES: Adds the missing DELETE policy on stock_movements.
 --   Without it, deleting a transaction (DELETE /api/transactions/[id]) is
 --   blocked by RLS for the stock_movements rows, leaving orphaned stock

@@ -67,6 +67,18 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
   }
 
+  // Defense in depth: only attach the document upload if it belongs to this store.
+  let sourceDocumentId: string | null = null
+  if (body.documentUploadId) {
+    const { data: ownedDoc } = await supabase
+      .from('document_uploads')
+      .select('id')
+      .eq('id', body.documentUploadId)
+      .eq('store_id', store.id)
+      .maybeSingle()
+    sourceDocumentId = ownedDoc ? body.documentUploadId : null
+  }
+
   // Create transaction
   const { data: tx, error: txError } = await supabase
     .from('transactions')
@@ -79,7 +91,7 @@ export async function POST(request: Request) {
       vendor_name: body.vendorName ?? null,
       payment_method: 'cash',
       source: 'bill_scan',
-      source_document_id: body.documentUploadId,
+      source_document_id: sourceDocumentId,
       tax_amount: 0,
     })
     .select('id')
@@ -136,7 +148,7 @@ export async function POST(request: Request) {
     if (!productId) continue
 
     // Insert transaction item
-    await supabase.from('transaction_items').insert({
+    const { error: itemError } = await supabase.from('transaction_items').insert({
       transaction_id: tx.id,
       product_id: productId,
       product_name_raw: item.productNameRaw,
@@ -146,6 +158,10 @@ export async function POST(request: Request) {
       tax_rate: item.taxRate ?? 0,
       is_confirmed: true,
     })
+    if (itemError) {
+      console.error('[scan/confirm] transaction_item insert failed:', itemError.message, { transactionId: tx.id, productId })
+      continue // don't update stock for a line that wasn't recorded
+    }
 
     // Update inventory
     await updateStock(supabase, {
@@ -163,7 +179,7 @@ export async function POST(request: Request) {
         item.correction.original.trim() !== item.correction.corrected.trim()) {
       await supabase.from('extraction_corrections').insert({
         store_id: store.id,
-        document_upload_id: body.documentUploadId,
+        document_upload_id: sourceDocumentId,
         field_name: 'product_name',
         original_value: item.correction.original.trim(),
         corrected_value: item.correction.corrected.trim(),

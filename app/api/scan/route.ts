@@ -23,7 +23,8 @@ import { resolveItems } from '@/lib/scan/resolve'
 import { scanRateLimit } from '@/lib/ratelimit'
 import { randomUUID } from 'crypto'
 
-const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf']
+// Gemini Vision reads images, not PDFs - only accept image types here.
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 const MAX_BYTES = 10 * 1024 * 1024
 
 export async function POST(request: Request) {
@@ -70,7 +71,7 @@ export async function POST(request: Request) {
   // MIME validation (server-side, not trusting client)
   if (!ALLOWED_TYPES.includes(file.type)) {
     return NextResponse.json(
-      { error: 'Invalid file type. Accepted: JPEG, PNG, WebP, PDF.' },
+      { error: 'Invalid file type. Please upload a photo (JPEG, PNG, or WebP).' },
       { status: 400 }
     )
   }
@@ -137,6 +138,8 @@ export async function POST(request: Request) {
       items,
     }
   } catch {
+    // Remove the orphaned storage object so failed scans don't waste quota.
+    await supabase.storage.from('documents').remove([storagePath])
     await supabase
       .from('document_uploads')
       .update({ extraction_status: 'failed' })

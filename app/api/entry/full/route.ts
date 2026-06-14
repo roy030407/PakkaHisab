@@ -42,6 +42,13 @@ export async function POST(request: Request) {
   }
   if (!body.items?.length) return NextResponse.json({ error: 'No items provided' }, { status: 400 })
 
+  // Validate the date format; fall back to today (IST) when not provided.
+  const DATE_RE = /^\d{4}-\d{2}-\d{2}$/
+  if (body.date && !DATE_RE.test(body.date)) {
+    return NextResponse.json({ error: 'Invalid date format. Use YYYY-MM-DD.' }, { status: 400 })
+  }
+  const txDate = body.date || new Date().toISOString().split('T')[0]
+
   const { data: products } = await supabase
     .from('products')
     .select('id, name, tax_rate')
@@ -83,7 +90,7 @@ export async function POST(request: Request) {
     .insert({
       store_id: store.id,
       user_id: user.id,
-      date: body.date,
+      date: txDate,
       type: body.type,
       total_amount: totalAmount,
       customer_id: body.customerId ?? null,

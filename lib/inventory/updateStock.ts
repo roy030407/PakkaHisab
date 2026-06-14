@@ -36,7 +36,7 @@ export async function updateStock(
   const { storeId, productId, delta, transactionId, movementType, unitPrice, reason } = params
 
   // Write movement record
-  await supabase.from('stock_movements').insert({
+  const { error: movementError } = await supabase.from('stock_movements').insert({
     store_id: storeId,
     product_id: productId,
     movement_type: movementType,
@@ -45,6 +45,9 @@ export async function updateStock(
     transaction_id: transactionId,
     reason: reason ?? null,
   })
+  if (movementError) {
+    console.error('[updateStock] stock_movements insert failed:', movementError.message, { storeId, productId, transactionId })
+  }
 
   // Upsert inventory row - increment or decrement current_stock
   const { data: existing } = await supabase
@@ -56,7 +59,7 @@ export async function updateStock(
 
   if (existing) {
     const newStock = Number(existing.current_stock) + delta
-    await supabase
+    const { error: invError } = await supabase
       .from('inventory')
       .update({
         current_stock: newStock,
@@ -64,14 +67,20 @@ export async function updateStock(
         updated_at: new Date().toISOString(),
       })
       .eq('id', existing.id)
+    if (invError) {
+      console.error('[updateStock] inventory update failed:', invError.message, { storeId, productId })
+    }
   } else {
     // First time this product appears in inventory
-    await supabase.from('inventory').insert({
+    const { error: invError } = await supabase.from('inventory').insert({
       store_id: storeId,
       product_id: productId,
       current_stock: Math.max(0, delta),
       reorder_point: 0,
       ...(delta > 0 ? { last_restocked_at: new Date().toISOString() } : {}),
     })
+    if (invError) {
+      console.error('[updateStock] inventory insert failed:', invError.message, { storeId, productId })
+    }
   }
 }
