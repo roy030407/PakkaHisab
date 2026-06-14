@@ -20,7 +20,8 @@
  */
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
 import { LogOut } from 'lucide-react'
 import { createSupabaseBrowserClient } from '@/lib/supabase/browser'
@@ -33,6 +34,10 @@ export function LogoutButton({ variant = 'button' }: Props) {
   const router = useRouter()
   const [busy, setBusy] = useState(false)
   const [confirming, setConfirming] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  // Portal target only exists on the client; wait for mount before rendering it.
+  useEffect(() => { setMounted(true) }, [])
 
   async function handleLogout() {
     if (busy) return
@@ -70,9 +75,9 @@ export function LogoutButton({ variant = 'button' }: Props) {
     <>
       {trigger}
 
-      {confirming && (
+      {confirming && mounted && createPortal(
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 px-4"
           onClick={() => !busy && setConfirming(false)}
         >
           <div
@@ -105,7 +110,8 @@ export function LogoutButton({ variant = 'button' }: Props) {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   )
