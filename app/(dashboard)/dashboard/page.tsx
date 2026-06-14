@@ -27,6 +27,7 @@ import { GreetingHeader } from "@/components/shared/GreetingHeader"
 import { AttentionCard } from "@/components/shared/AttentionCard"
 import { Sparkline } from "@/components/shared/Sparkline"
 import { AnimatedNumber } from "@/components/shared/AnimatedNumber"
+import { PrivacyCard } from "@/components/shared/PrivacyCard"
 import Link from "next/link"
 import { Camera, PenLine, Package, ShoppingCart, HandCoins } from "lucide-react"
 
@@ -244,12 +245,14 @@ export default async function DashboardPage() {
             className="card-lift flex items-center justify-center rounded-xl border border-gray-200 bg-white py-3 text-sm font-medium text-gray-700">
             Ask the AI advisor
           </Link>
+          <PrivacyCard />
         </div>
       </div>
 
       {/* Mobile: insight + links */}
-      <div className="md:hidden mt-4">
+      <div className="md:hidden mt-4 space-y-4">
         <InsightCard />
+        <PrivacyCard />
       </div>
       <div className="md:hidden grid grid-cols-2 gap-3 mt-4 mb-8">
         <Link href="/reports"

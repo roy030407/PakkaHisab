@@ -276,6 +276,26 @@ export default async function LandingPage() {
         </div>
       </section>
 
+      {/* ── Data privacy trust block ── */}
+      <section className="mx-auto max-w-5xl px-5 py-20">
+        <div className="mx-auto max-w-2xl" data-reveal>
+          <ComicCard rotate={-1} className="text-center">
+            <div className="text-4xl">🔒</div>
+            <h2 className="mt-3 text-2xl font-black tracking-tight md:text-3xl">
+              Your shop&apos;s data stays yours
+            </h2>
+            <ul className="mx-auto mt-5 grid max-w-md gap-2 text-left text-sm font-semibold text-stone-700">
+              <li className="flex items-start gap-2"><span className="text-emerald-600">✓</span> Only you can see your books.</li>
+              <li className="flex items-start gap-2"><span className="text-emerald-600">✓</span> We never sell your data.</li>
+              <li className="flex items-start gap-2"><span className="text-emerald-600">✓</span> Your books, backed up safely in the cloud.</li>
+            </ul>
+            <Link href="/privacy" className="mt-6 inline-block text-sm font-extrabold text-emerald-700 hover:text-emerald-800">
+              Read our privacy promise →
+            </Link>
+          </ComicCard>
+        </div>
+      </section>
+
       {/* ── Final CTA ── */}
       <section className="relative overflow-hidden border-t-2 border-stone-900 bg-emerald-700 px-5 py-24 text-center">
         <div aria-hidden className="pointer-events-none absolute inset-0 opacity-20"
@@ -323,6 +343,8 @@ export default async function LandingPage() {
         </div>
         <div className="mx-auto mt-10 max-w-5xl border-t border-amber-50/10 pt-6 text-center text-xs text-amber-50/40">
           Made for Bharat ke dukandaar. © {new Date().getFullYear()} PakkaHisab.
+          {" · "}
+          <Link href="/privacy" className="transition-colors hover:text-amber-50">Privacy</Link>
         </div>
       </footer>
     </div>
