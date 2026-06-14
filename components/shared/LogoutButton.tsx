@@ -9,6 +9,10 @@
  * CHANGES THIS SESSION:
  *   - Initial creation (logout + return-to-home support)
  *   - Added an in-app confirmation modal before signing out
+ *   - Confirm modal now uses the native <dialog> top layer (showModal). The
+ *     top layer always paints above page content, so it no longer mis-layered
+ *     behind dashboard cards on the Home page (z-index / stacking could not
+ *     win there). Backdrop click and Esc close it; both are blocked while busy.
  *
  * WHERE IT FITS:
  *   Mounted in the desktop Sidebar (bottom) and on the Settings page so logout
@@ -20,8 +24,7 @@
  */
 'use client'
 
-import { useState, useEffect } from 'react'
-import { createPortal } from 'react-dom'
+import { useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { LogOut } from 'lucide-react'
 import { createSupabaseBrowserClient } from '@/lib/supabase/browser'
@@ -33,11 +36,16 @@ interface Props {
 export function LogoutButton({ variant = 'button' }: Props) {
   const router = useRouter()
   const [busy, setBusy] = useState(false)
-  const [confirming, setConfirming] = useState(false)
-  const [mounted, setMounted] = useState(false)
+  const dialogRef = useRef<HTMLDialogElement>(null)
 
-  // Portal target only exists on the client; wait for mount before rendering it.
-  useEffect(() => { setMounted(true) }, [])
+  function openConfirm() {
+    dialogRef.current?.showModal()
+  }
+
+  function closeConfirm() {
+    if (busy) return
+    dialogRef.current?.close()
+  }
 
   async function handleLogout() {
     if (busy) return
@@ -55,7 +63,7 @@ export function LogoutButton({ variant = 'button' }: Props) {
   const trigger =
     variant === 'nav' ? (
       <button
-        onClick={() => setConfirming(true)}
+        onClick={openConfirm}
         className="btn-lift flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-500 hover:bg-red-50 hover:text-red-600"
       >
         <LogOut size={18} strokeWidth={1.7} />
@@ -63,7 +71,7 @@ export function LogoutButton({ variant = 'button' }: Props) {
       </button>
     ) : (
       <button
-        onClick={() => setConfirming(true)}
+        onClick={openConfirm}
         className="btn-lift inline-flex items-center gap-2 rounded-xl border border-red-200 bg-white px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50"
       >
         <LogOut size={16} />
@@ -75,44 +83,47 @@ export function LogoutButton({ variant = 'button' }: Props) {
     <>
       {trigger}
 
-      {confirming && mounted && createPortal(
-        <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 px-4"
-          onClick={() => !busy && setConfirming(false)}
-        >
-          <div
-            role="dialog"
-            aria-modal="true"
-            className="w-full max-w-xs rounded-2xl bg-white p-5 shadow-xl"
-            onClick={(e) => e.stopPropagation()}
+      <dialog
+        ref={dialogRef}
+        // A click whose coordinates fall outside the dialog box is a backdrop click.
+        onClick={(e) => {
+          const rect = dialogRef.current?.getBoundingClientRect()
+          if (!rect) return
+          const inside =
+            e.clientX >= rect.left && e.clientX <= rect.right &&
+            e.clientY >= rect.top && e.clientY <= rect.bottom
+          if (!inside) closeConfirm()
+        }}
+        // Esc fires "cancel"; block it while signing out.
+        onCancel={(e) => {
+          if (busy) e.preventDefault()
+        }}
+        className="m-auto w-full max-w-xs rounded-2xl border-0 bg-white p-5 shadow-xl backdrop:bg-black/40"
+      >
+        <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-red-50">
+          <LogOut size={18} className="text-red-600" />
+        </div>
+        <h2 className="text-base font-bold text-gray-900">Logout of PakkaHisab?</h2>
+        <p className="mt-1 text-sm text-gray-500">
+          Aapko dobara login karna padega. Aapka data safe rahega.
+        </p>
+        <div className="mt-5 flex gap-2">
+          <button
+            onClick={closeConfirm}
+            disabled={busy}
+            className="btn-lift flex-1 rounded-xl border border-gray-200 bg-white py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-60"
           >
-            <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-red-50">
-              <LogOut size={18} className="text-red-600" />
-            </div>
-            <h2 className="text-base font-bold text-gray-900">Logout of PakkaHisab?</h2>
-            <p className="mt-1 text-sm text-gray-500">
-              Aapko dobara login karna padega. Aapka data safe rahega.
-            </p>
-            <div className="mt-5 flex gap-2">
-              <button
-                onClick={() => setConfirming(false)}
-                disabled={busy}
-                className="btn-lift flex-1 rounded-xl border border-gray-200 bg-white py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-60"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleLogout}
-                disabled={busy}
-                className="btn-lift flex-1 rounded-xl bg-red-600 py-2.5 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-60"
-              >
-                {busy ? 'Logging out...' : 'Logout'}
-              </button>
-            </div>
-          </div>
-        </div>,
-        document.body
-      )}
+            Cancel
+          </button>
+          <button
+            onClick={handleLogout}
+            disabled={busy}
+            className="btn-lift flex-1 rounded-xl bg-red-600 py-2.5 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-60"
+          >
+            {busy ? 'Logging out...' : 'Logout'}
+          </button>
+        </div>
+      </dialog>
     </>
   )
 }
