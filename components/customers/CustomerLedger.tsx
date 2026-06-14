@@ -4,19 +4,23 @@
  * WHAT THIS DOES:
  *   Per-customer transaction list. Fetches from /api/customers/[id].
  *   Shows all transactions in reverse-chronological order with balance badge.
+ *   Each row can be deleted (with confirm); delete reverses stock + balance via
+ *   DELETE /api/transactions/[id], then the ledger refetches.
  *
  * CHANGES THIS SESSION:
  *   - Initial creation
  *   - Khata Green restyle
+ *   - Added per-row delete with a confirm dialog (native <dialog> top layer)
  *
  * WHERE IT FITS:
  *   Opened by tapping a customer in the customers page.
  *
  * CALLED BY / IMPORTS FROM:
- *   app/(dashboard)/customers/page.tsx
+ *   app/(dashboard)/customers/page.tsx ; DELETE app/api/transactions/[id]/route.ts
  */
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { Trash2 } from 'lucide-react'
 import { CreditBadge } from './CreditBadge'
 
 interface Tx { id: string; date: string; type: string; total_amount: number; payment_method: string; created_at: string }
@@ -28,9 +32,12 @@ export function CustomerLedger({ customerId, onBack }: Props) {
   const [customer, setCustomer] = useState<CustomerDetail | null>(null)
   const [transactions, setTransactions] = useState<Tx[]>([])
   const [loading, setLoading] = useState(true)
+  const [pendingDelete, setPendingDelete] = useState<Tx | null>(null)
+  const [deleting, setDeleting] = useState(false)
+  const dialogRef = useRef<HTMLDialogElement>(null)
 
-  useEffect(() => {
-    fetch(`/api/customers/${customerId}`)
+  const load = useCallback(() => {
+    return fetch(`/api/customers/${customerId}`)
       .then(r => r.json())
       .then(d => {
         setCustomer(d.customer)
@@ -38,6 +45,32 @@ export function CustomerLedger({ customerId, onBack }: Props) {
         setLoading(false)
       })
   }, [customerId])
+
+  useEffect(() => { load() }, [load])
+
+  function askDelete(tx: Tx) {
+    setPendingDelete(tx)
+    dialogRef.current?.showModal()
+  }
+
+  function closeDialog() {
+    if (deleting) return
+    dialogRef.current?.close()
+    setPendingDelete(null)
+  }
+
+  async function confirmDelete() {
+    if (!pendingDelete || deleting) return
+    setDeleting(true)
+    try {
+      await fetch(`/api/transactions/${pendingDelete.id}`, { method: 'DELETE' })
+      await load()
+    } finally {
+      setDeleting(false)
+      dialogRef.current?.close()
+      setPendingDelete(null)
+    }
+  }
 
   if (loading) {
     return (
@@ -69,7 +102,7 @@ export function CustomerLedger({ customerId, onBack }: Props) {
         ) : (
           <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
             {transactions.map(tx => (
-              <div key={tx.id} className="flex items-center px-3 py-3 border-b border-gray-100 last:border-0">
+              <div key={tx.id} className="flex items-center gap-2 px-3 py-3 border-b border-gray-100 last:border-0">
                 <div className="flex-1">
                   <p className="text-sm font-medium text-gray-900 capitalize">{tx.type}</p>
                   <p className="text-xs text-gray-400">
@@ -80,11 +113,56 @@ export function CustomerLedger({ customerId, onBack }: Props) {
                 <p className={`text-sm font-semibold tabular-nums ${tx.type === 'sale' ? 'text-green-700' : 'text-gray-900'}`}>
                   {tx.type === 'sale' ? '+' : '-'}&#8377;{Number(tx.total_amount).toLocaleString('en-IN')}
                 </p>
+                <button
+                  onClick={() => askDelete(tx)}
+                  aria-label="Delete transaction"
+                  className="btn-lift ml-1 text-gray-400 hover:text-red-600 p-1"
+                >
+                  <Trash2 size={16} />
+                </button>
               </div>
             ))}
           </div>
         )}
       </div>
+
+      <dialog
+        ref={dialogRef}
+        onClick={(e) => {
+          const rect = dialogRef.current?.getBoundingClientRect()
+          if (!rect) return
+          const inside = e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom
+          if (!inside) closeDialog()
+        }}
+        onCancel={(e) => { if (deleting) e.preventDefault() }}
+        className="m-auto w-full max-w-xs rounded-2xl border-0 bg-white p-5 shadow-xl backdrop:bg-black/40"
+      >
+        <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-red-50">
+          <Trash2 size={18} className="text-red-600" />
+        </div>
+        <h2 className="text-base font-bold text-gray-900">Delete this transaction?</h2>
+        <p className="mt-1 text-sm text-gray-500">
+          {pendingDelete
+            ? `The ${pendingDelete.type} of ₹${Number(pendingDelete.total_amount).toLocaleString('en-IN')} will be removed. Stock and balance will be reversed. This cannot be undone.`
+            : ''}
+        </p>
+        <div className="mt-5 flex gap-2">
+          <button
+            onClick={closeDialog}
+            disabled={deleting}
+            className="btn-lift flex-1 rounded-xl border border-gray-200 bg-white py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-60"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={confirmDelete}
+            disabled={deleting}
+            className="btn-lift flex-1 rounded-xl bg-red-600 py-2.5 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-60"
+          >
+            {deleting ? 'Deleting...' : 'Delete'}
+          </button>
+        </div>
+      </dialog>
     </div>
   )
 }
