@@ -18,6 +18,8 @@
  */
 import { NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
+import { inventoryReversals, balanceReversalAmount } from '@/lib/transactions/reverse'
+import type { TransactionType } from '@/types'
 
 export async function DELETE(
   _: Request,
@@ -51,35 +53,41 @@ export async function DELETE(
   }
 
   // Reverse inventory using the line items (sale put stock out, purchase brought it in).
-  if (tx.type === 'sale' || tx.type === 'purchase') {
-    const { data: lineItems } = await supabase
-      .from('transaction_items')
-      .select('product_id, quantity')
-      .eq('transaction_id', tx.id)
+  const { data: lineItems } = await supabase
+    .from('transaction_items')
+    .select('product_id, quantity')
+    .eq('transaction_id', tx.id)
 
-    for (const li of lineItems ?? []) {
-      // Deleting a sale adds stock back; deleting a purchase removes it.
-      const reversal = tx.type === 'sale' ? Number(li.quantity) : -Number(li.quantity)
-      const { data: inv } = await supabase
+  const reversals = inventoryReversals(
+    tx.type as TransactionType,
+    (lineItems ?? []).map(li => ({ productId: li.product_id, quantity: Number(li.quantity) }))
+  )
+  for (const r of reversals) {
+    const { data: inv } = await supabase
+      .from('inventory')
+      .select('id, current_stock')
+      .eq('store_id', store.id)
+      .eq('product_id', r.productId)
+      .maybeSingle()
+    if (inv) {
+      await supabase
         .from('inventory')
-        .select('id, current_stock')
-        .eq('store_id', store.id)
-        .eq('product_id', li.product_id)
-        .maybeSingle()
-      if (inv) {
-        await supabase
-          .from('inventory')
-          .update({
-            current_stock: Number(inv.current_stock) + reversal,
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', inv.id)
-      }
+        .update({
+          current_stock: Number(inv.current_stock) + r.delta,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', inv.id)
     }
   }
 
   // Reverse a credit sale's effect on the customer balance.
-  if (tx.customer_id && tx.payment_method === 'credit' && tx.type === 'sale') {
+  const balanceDelta = balanceReversalAmount({
+    type: tx.type as TransactionType,
+    paymentMethod: tx.payment_method,
+    customerId: tx.customer_id,
+    totalAmount: Number(tx.total_amount),
+  })
+  if (balanceDelta > 0 && tx.customer_id) {
     const { data: customer } = await supabase
       .from('customers')
       .select('current_balance')
@@ -89,7 +97,7 @@ export async function DELETE(
     if (customer) {
       await supabase
         .from('customers')
-        .update({ current_balance: Number(customer.current_balance) - Number(tx.total_amount) })
+        .update({ current_balance: Number(customer.current_balance) - balanceDelta })
         .eq('id', tx.customer_id)
         .eq('store_id', store.id)
     }
