@@ -49,9 +49,13 @@
   .safe-bottom {
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
-  /* Smooth page entry */
+  /* Smooth page entry.
+     Use "backwards" (not "both") so the start state is applied before the
+     animation runs but NO transform lingers afterwards. A residual transform
+     keeps a stacking context / fixed-positioning containing block on the
+     dashboard root, which made the logout overlay mis-layer on Home only. */
   .page-enter {
-    animation: page-fade-up 0.2s ease-out both;
+    animation: page-fade-up 0.2s ease-out backwards;
   }
   /* Interactive card hover lift */
   .card-lift {
