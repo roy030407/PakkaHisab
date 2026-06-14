@@ -17,7 +17,8 @@
  *   components/entry/FullEntryForm.tsx
  */
 'use client'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
+import Fuse from 'fuse.js'
 import type { Product } from '@/types'
 
 interface Props {
@@ -29,12 +30,18 @@ interface Props {
 export function ProductSearch({ products, onSelect, placeholder = 'Search products...' }: Props) {
   const [query, setQuery] = useState('')
 
-  const filtered = query.length < 1 ? [] : products.filter(p => {
-    const q = query.toLowerCase()
-    return p.name.toLowerCase().includes(q) ||
-      (p.brand ?? '').toLowerCase().includes(q) ||
-      String(p.item_number).includes(q)
-  })
+  // Typo-tolerant search (same engine the bill scanner uses) over name, brand,
+  // and item number, so "bsmti" still finds "Basmati Rice".
+  const fuse = useMemo(
+    () => new Fuse(products, {
+      keys: ['name', 'brand', 'item_number'],
+      threshold: 0.4,
+      ignoreLocation: true,
+    }),
+    [products]
+  )
+
+  const filtered = query.length < 1 ? [] : fuse.search(query).map(r => r.item)
 
   return (
     <div className="relative">
