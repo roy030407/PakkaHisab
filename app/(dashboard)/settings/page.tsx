@@ -38,6 +38,7 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { LoadingState } from "@/components/shared/LoadingState";
 import { LogoutButton } from "@/components/shared/LogoutButton";
+import { DEFAULT_REMINDER_TEMPLATE } from "@/lib/collections/reminder";
 
 type FixedCost = {
   id: string;
@@ -333,6 +334,9 @@ export default function SettingsPage() {
 
       {/* Import Wizard */}
       <ImportWizard />
+
+      {/* WhatsApp reminder message */}
+      <ReminderTemplateSection />
 
       {/* Account */}
       <section>
@@ -681,4 +685,82 @@ function ImportWizard() {
       )}
     </section>
   )
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// WHATSAPP REMINDER TEMPLATE
+// ─────────────────────────────────────────────────────────────────────────────
+
+function ReminderTemplateSection() {
+  const [value, setValue] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/stores")
+      .then((r) => r.json())
+      .then((d) => {
+        setValue(d.store?.reminder_template ?? "");
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
+
+  async function save() {
+    setSaving(true);
+    setSaved(false);
+    setError(null);
+    const res = await fetch("/api/stores", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reminderTemplate: value }),
+    });
+    if (res.ok) {
+      setSaved(true);
+    } else {
+      const d = await res.json().catch(() => ({}));
+      setError(d.error ?? "Failed to save.");
+    }
+    setSaving(false);
+  }
+
+  return (
+    <section>
+      <PageHeader
+        title="WhatsApp Reminder Message"
+        subtitle="The message pre-filled when you remind a customer about udhaar. You review it before sending."
+      />
+      {loading ? (
+        <LoadingState message="Loading message..." />
+      ) : (
+        <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm space-y-3">
+          <textarea
+            value={value}
+            onChange={(e) => {
+              setValue(e.target.value);
+              setSaved(false);
+            }}
+            rows={4}
+            placeholder={DEFAULT_REMINDER_TEMPLATE}
+            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-300"
+          />
+          <p className="text-xs text-gray-400">
+            Placeholders:{" "}
+            <code className="rounded bg-gray-100 px-1">{"{name}"}</code>{" "}
+            <code className="rounded bg-gray-100 px-1">{"{amount}"}</code>{" "}
+            <code className="rounded bg-gray-100 px-1">{"{shop}"}</code>. Leave blank to use the default.
+          </p>
+          <div className="flex items-center gap-3">
+            <Button size="sm" onClick={save} disabled={saving}>
+              {saving ? "Saving..." : "Save message"}
+            </Button>
+            {saved && <span className="text-sm text-emerald-700 font-medium">Saved.</span>}
+            {error && <span className="text-sm text-red-600">{error}</span>}
+          </div>
+        </div>
+      )}
+    </section>
+  );
 }

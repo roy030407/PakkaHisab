@@ -11,6 +11,7 @@
  *   - Initial creation
  *   - Khata Green restyle
  *   - Added per-row delete with a confirm dialog (native <dialog> top layer)
+ *   - Slice A: payment rows render green; Receive payment + WhatsApp remind actions
  *
  * WHERE IT FITS:
  *   Opened by tapping a customer in the customers page.
@@ -22,6 +23,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { Trash2 } from 'lucide-react'
 import { CreditBadge } from './CreditBadge'
+import { ReceivePaymentSheet } from './ReceivePaymentSheet'
+import { RemindButton } from './RemindButton'
 
 interface Tx { id: string; date: string; type: string; total_amount: number; payment_method: string; created_at: string }
 interface CustomerDetail { id: string; name: string; phone?: string; type: string; current_balance: number }
@@ -34,6 +37,8 @@ export function CustomerLedger({ customerId, onBack }: Props) {
   const [loading, setLoading] = useState(true)
   const [pendingDelete, setPendingDelete] = useState<Tx | null>(null)
   const [deleting, setDeleting] = useState(false)
+  const [shop, setShop] = useState<{ name: string; reminderTemplate: string | null }>({ name: '', reminderTemplate: null })
+  const [showPay, setShowPay] = useState(false)
   const dialogRef = useRef<HTMLDialogElement>(null)
 
   const load = useCallback(() => {
@@ -47,6 +52,13 @@ export function CustomerLedger({ customerId, onBack }: Props) {
   }, [customerId])
 
   useEffect(() => { load() }, [load])
+
+  useEffect(() => {
+    fetch('/api/stores')
+      .then(r => r.json())
+      .then(d => setShop({ name: d.store?.name ?? '', reminderTemplate: d.store?.reminder_template ?? null }))
+      .catch(() => {})
+  }, [])
 
   function askDelete(tx: Tx) {
     setPendingDelete(tx)
@@ -92,6 +104,21 @@ export function CustomerLedger({ customerId, onBack }: Props) {
           </div>
           <CreditBadge balance={customer.current_balance} />
         </div>
+        <div className="mt-3 flex items-center gap-2">
+          <button
+            onClick={() => setShowPay(true)}
+            className="btn-lift inline-flex items-center gap-1 rounded-lg bg-emerald-700 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-800"
+          >
+            + Receive payment
+          </button>
+          <RemindButton
+            customerName={customer.name}
+            phone={customer.phone}
+            balance={Number(customer.current_balance)}
+            shopName={shop.name}
+            template={shop.reminderTemplate}
+          />
+        </div>
       </div>
 
       <div className="flex-1 px-4 py-3">
@@ -110,8 +137,10 @@ export function CustomerLedger({ customerId, onBack }: Props) {
                     &nbsp;&middot;&nbsp;{tx.payment_method}
                   </p>
                 </div>
-                <p className={`text-sm font-semibold tabular-nums ${tx.type === 'sale' ? 'text-green-700' : 'text-gray-900'}`}>
-                  {tx.type === 'sale' ? '+' : '-'}&#8377;{Number(tx.total_amount).toLocaleString('en-IN')}
+                <p className={`text-sm font-semibold tabular-nums ${tx.type === 'payment' ? 'text-emerald-700' : tx.type === 'sale' ? 'text-green-700' : 'text-gray-900'}`}>
+                  {tx.type === 'payment'
+                    ? `Payment received +₹${Number(tx.total_amount).toLocaleString('en-IN')}`
+                    : `${tx.type === 'sale' ? '+' : '-'}₹${Number(tx.total_amount).toLocaleString('en-IN')}`}
                 </p>
                 <button
                   onClick={() => askDelete(tx)}
@@ -125,6 +154,16 @@ export function CustomerLedger({ customerId, onBack }: Props) {
           </div>
         )}
       </div>
+
+      {showPay && (
+        <ReceivePaymentSheet
+          customerId={customerId}
+          customerName={customer.name}
+          currentBalance={Number(customer.current_balance)}
+          onClose={() => setShowPay(false)}
+          onSaved={() => { setShowPay(false); load() }}
+        />
+      )}
 
       <dialog
         ref={dialogRef}

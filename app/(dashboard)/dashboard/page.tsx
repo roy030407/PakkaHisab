@@ -213,7 +213,7 @@ export default async function DashboardPage() {
               sublabel={`${txCountToday} transaction${txCountToday === 1 ? "" : "s"}`}
               icon={ShoppingCart}
             />
-            <Link href="/customers" className="contents">
+            <Link href="/customers?tab=udhaar" className="contents">
               <StatCard
                 label="Udhaar due"
                 value={formatINR(Math.round(outstandingReceivables))}
