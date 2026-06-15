@@ -28,6 +28,7 @@ model Store {
   gstNumber         String?  @map("gst_number")
   preferredLanguage String   @default("en") @map("preferred_language")
   isInterstate      Boolean  @default(false) @map("is_interstate")
+  reminderTemplate  String?  @map("reminder_template")
   createdAt         DateTime @default(now()) @map("created_at")
 
   products             Product[]
