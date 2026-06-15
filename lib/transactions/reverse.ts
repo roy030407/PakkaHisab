@@ -8,6 +8,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation (extracted from DELETE /api/transactions/[id])
+ *   - balanceReversalAmount now reverses 'payment' rows (re-adds to balance)
  *
  * WHERE IT FITS:
  *   Used by app/api/transactions/[id]/route.ts.
@@ -41,8 +42,10 @@ export function inventoryReversals(
 }
 
 /**
- * A credit sale increased the customer's outstanding balance, so deleting it
- * must subtract that amount. Everything else leaves the balance untouched.
+ * Deleting a transaction may need to undo its effect on the customer balance.
+ * A credit sale increased the balance, so we subtract (positive reversal). A
+ * payment decreased the balance, so we re-add (negative reversal). Everything
+ * else leaves the balance untouched. The caller applies: balance -= reversal.
  */
 export function balanceReversalAmount(tx: {
   type: TransactionType
@@ -50,8 +53,14 @@ export function balanceReversalAmount(tx: {
   customerId: string | null
   totalAmount: number
 }): number {
-  if (tx.customerId && tx.paymentMethod === 'credit' && tx.type === 'sale') {
+  if (!tx.customerId) return 0
+  // A credit sale increased the balance, so deleting it subtracts (positive reversal).
+  if (tx.type === 'sale' && tx.paymentMethod === 'credit') {
     return Number(tx.totalAmount) || 0
+  }
+  // A payment decreased the balance, so deleting it re-adds (negative reversal).
+  if (tx.type === 'payment') {
+    return -(Number(tx.totalAmount) || 0)
   }
   return 0
 }

@@ -65,6 +65,7 @@ export function QuickEntry({ onSaved, onSwitchFull }: Props) {
     purchase: { label: 'Purchase', hint: 'buying stock' },
     expense: { label: 'Expense', hint: 'a cost, no stock' },
     income: { label: 'Income', hint: 'other money in' },
+    payment: { label: 'Payment', hint: 'customer paying off credit' },
   }
 
   function chooseType(t: TransactionType) {

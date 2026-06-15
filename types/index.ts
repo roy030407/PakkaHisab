@@ -145,7 +145,7 @@ export interface FixedCost {
 
 // ─── TRANSACTIONS ─────────────────────────────────────────────────────────────
 
-export type TransactionType = "sale" | "purchase" | "expense" | "income";
+export type TransactionType = "sale" | "purchase" | "expense" | "income" | "payment";
 export type TransactionSource =
   | "manual_quick"
   | "manual_full"

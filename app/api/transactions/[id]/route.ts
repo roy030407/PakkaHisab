@@ -9,6 +9,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation (delete a wrongly-saved transaction from the ledger)
+ *   - Reverse 'payment' rows on delete (re-adds the amount to the balance)
  *
  * WHERE IT FITS:
  *   Called by components/customers/CustomerLedger.tsx (delete control per row).
@@ -80,14 +81,15 @@ export async function DELETE(
     }
   }
 
-  // Reverse a credit sale's effect on the customer balance.
+  // Undo this transaction's effect on the customer balance. A credit sale gave a
+  // positive reversal (subtract); a payment gives a negative reversal (re-add).
   const balanceDelta = balanceReversalAmount({
     type: tx.type as TransactionType,
     paymentMethod: tx.payment_method,
     customerId: tx.customer_id,
     totalAmount: Number(tx.total_amount),
   })
-  if (balanceDelta > 0 && tx.customer_id) {
+  if (balanceDelta !== 0 && tx.customer_id) {
     const { data: customer } = await supabase
       .from('customers')
       .select('current_balance')
