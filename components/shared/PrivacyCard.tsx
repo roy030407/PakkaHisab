@@ -8,6 +8,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation (Model A: honest cloud-privacy messaging)
+ *   - Link passes ?from=dashboard so the privacy page returns to the dashboard
  *
  * WHERE IT FITS:
  *   Rendered on the dashboard home (right rail on desktop, inline on mobile).
@@ -62,7 +63,7 @@ export function PrivacyCard() {
         We never sell your data.
       </p>
       <Link
-        href="/privacy"
+        href="/privacy?from=dashboard"
         className="mt-2 inline-block text-xs font-semibold text-emerald-700 hover:text-emerald-800"
       >
         How we handle your data →

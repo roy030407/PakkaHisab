@@ -8,6 +8,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation (Model A: honest cloud-privacy messaging)
+ *   - Back link follows ?from=dashboard (returns to dashboard vs home)
  *
  * IMPORTANT - truthfulness:
  *   Claims here must stay accurate for the current stack (Supabase cloud + a
@@ -37,7 +38,17 @@ function Item({ title, children }: { title: string; children: React.ReactNode })
   )
 }
 
-export default function PrivacyPage() {
+export default function PrivacyPage({
+  searchParams,
+}: {
+  searchParams: { from?: string }
+}) {
+  // Merchants who open this from the dashboard card should land back on the
+  // dashboard; everyone else (landing page, footer, direct visit) goes home.
+  const fromDashboard = searchParams?.from === "dashboard"
+  const backHref = fromDashboard ? "/dashboard" : "/"
+  const backLabel = fromDashboard ? "← Dashboard" : "← Home"
+
   return (
     <div className="min-h-screen bg-stone-50 font-sans text-stone-900">
       <header className="mx-auto flex max-w-2xl items-center justify-between px-5 py-4">
@@ -45,7 +56,7 @@ export default function PrivacyPage() {
           <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 font-extrabold text-white">₹</span>
           <span className="text-lg font-extrabold tracking-tight">PakkaHisab</span>
         </Link>
-        <Link href="/" className="text-sm font-semibold text-emerald-700 hover:text-emerald-800">← Home</Link>
+        <Link href={backHref} className="text-sm font-semibold text-emerald-700 hover:text-emerald-800">{backLabel}</Link>
       </header>
 
       <main className="mx-auto max-w-2xl px-5 pb-20 pt-6">
