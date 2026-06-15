@@ -7,6 +7,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation
+ *   - GET also returns oldest_credit_at + last_payment_at per customer (udhaar aging)
  *
  * WHERE IT FITS:
  *   Called by CustomerSheet (both GET and POST) and customers page (GET).
@@ -31,7 +32,46 @@ export async function GET() {
     .eq('store_id', store.id)
     .order('name')
 
-  return NextResponse.json({ customers: customers ?? [] })
+  // Oldest credit sale per customer (ascending so the first seen per id is oldest).
+  const { data: creditSales } = await supabase
+    .from('transactions')
+    .select('customer_id, created_at')
+    .eq('store_id', store.id)
+    .eq('type', 'sale')
+    .eq('payment_method', 'credit')
+    .not('customer_id', 'is', null)
+    .order('created_at', { ascending: true })
+
+  const oldestCreditAt = new Map<string, string>()
+  for (const row of creditSales ?? []) {
+    if (row.customer_id && !oldestCreditAt.has(row.customer_id)) {
+      oldestCreditAt.set(row.customer_id, row.created_at)
+    }
+  }
+
+  // Most recent payment per customer (descending so the first seen per id is latest).
+  const { data: payments } = await supabase
+    .from('transactions')
+    .select('customer_id, created_at')
+    .eq('store_id', store.id)
+    .eq('type', 'payment')
+    .not('customer_id', 'is', null)
+    .order('created_at', { ascending: false })
+
+  const lastPaymentAt = new Map<string, string>()
+  for (const row of payments ?? []) {
+    if (row.customer_id && !lastPaymentAt.has(row.customer_id)) {
+      lastPaymentAt.set(row.customer_id, row.created_at)
+    }
+  }
+
+  const enriched = (customers ?? []).map(c => ({
+    ...c,
+    oldest_credit_at: oldestCreditAt.get(c.id) ?? null,
+    last_payment_at: lastPaymentAt.get(c.id) ?? null,
+  }))
+
+  return NextResponse.json({ customers: enriched })
 }
 
 export async function POST(request: Request) {

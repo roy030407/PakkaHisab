@@ -9,6 +9,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation - replaces old /api/businesses route
+ *   - GET returns reminder_template; PATCH saves it (Slice A WhatsApp reminders)
  *
  * WHERE IT FITS:
  *   Called by the onboarding page on submit, and by the dashboard layout
@@ -36,7 +37,7 @@ export async function GET() {
   const { data, error } = await supabase
     .from("stores")
     .select(
-      "id, name, type, owner_name, city, gst_number, preferred_language, is_interstate, created_at"
+      "id, name, type, owner_name, city, gst_number, preferred_language, is_interstate, reminder_template, created_at"
     )
     .eq("owner_id", user.id)
     .maybeSingle();
@@ -112,4 +113,47 @@ export async function POST(request: Request) {
   // wantsSampleStore flag is stored and seed is triggered when seed data is ready
 
   return NextResponse.json({ store: data }, { status: 201 });
+}
+
+export async function PATCH(request: Request) {
+  const supabase = createSupabaseServerClient();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  let body: { reminderTemplate?: unknown };
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+  }
+
+  const allowed: Record<string, unknown> = {};
+  if (body.reminderTemplate !== undefined) {
+    // Empty string resets to the seeded default (stored as NULL).
+    const t = typeof body.reminderTemplate === "string" ? body.reminderTemplate.trim() : "";
+    allowed.reminder_template = t === "" ? null : t;
+  }
+
+  if (Object.keys(allowed).length === 0) {
+    return NextResponse.json({ error: "Nothing to update" }, { status: 400 });
+  }
+
+  const { data, error } = await supabase
+    .from("stores")
+    .update(allowed)
+    .eq("owner_id", user.id)
+    .select("id, reminder_template")
+    .single();
+
+  if (error) {
+    return NextResponse.json({ error: "Failed to update store" }, { status: 500 });
+  }
+
+  return NextResponse.json({ store: data });
 }
