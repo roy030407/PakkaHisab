@@ -15,6 +15,7 @@
  *     "Recording something else?" toggle. Hover lift on action buttons.
  *   - Expense is no longer a product list: it shows an amount + category +
  *     note form (rent, electricity, etc. are not catalog products).
+ *   - Slice B1: after a sale saves, offer a WhatsApp receipt share
  *
  * WHERE IT FITS:
  *   Default mode on /entry page.
@@ -28,6 +29,7 @@ import { toast } from 'sonner'
 import type { Product, TransactionType, PaymentMethod } from '@/types'
 import { CustomerSheet } from './CustomerSheet'
 import { AnimatedNumber } from '@/components/shared/AnimatedNumber'
+import { ShareReceiptButton } from '@/components/share/ShareReceiptButton'
 
 interface LineItem { productId: string; productName: string; unitPrice: number; quantity: number }
 interface Props {
@@ -44,6 +46,8 @@ export function QuickEntry({ onSaved, onSwitchFull }: Props) {
   const [showCustomer, setShowCustomer] = useState(false)
   const [showTypeOptions, setShowTypeOptions] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [shopName, setShopName] = useState('')
+  const [savedSale, setSavedSale] = useState<{ id: string; total: number } | null>(null)
 
   // Expense form state (only used when type === 'expense')
   const [expenseAmount, setExpenseAmount] = useState('')
@@ -77,6 +81,10 @@ export function QuickEntry({ onSaved, onSwitchFull }: Props) {
     fetch('/api/products').then(r => r.json()).then(d => setProducts(d.products ?? []))
   }, [])
 
+  useEffect(() => {
+    fetch('/api/stores').then(r => r.json()).then(d => setShopName(d.store?.name ?? '')).catch(() => {})
+  }, [])
+
   function getPrice(p: Product) {
     return type === 'sale' ? Number(p.selling_price) : Number(p.purchase_price)
   }
@@ -105,13 +113,18 @@ export function QuickEntry({ onSaved, onSwitchFull }: Props) {
           type, paymentMethod, customerId,
           items: Array.from(qtys.entries()).map(([productId, quantity]) => ({ productId, quantity })),
         }
-    await fetch('/api/entry/quick', {
+    const res = await fetch('/api/entry/quick', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     })
     setSaving(false)
     toast.success(`${TYPE_META[type].label} saved`)
-    onSaved()
+    const data = await res.json().catch(() => ({}))
+    if (type === 'sale' && data?.transactionId) {
+      setSavedSale({ id: data.transactionId, total })
+    } else {
+      onSaved()
+    }
   }
 
   function buildLineItems(): LineItem[] {
@@ -124,6 +137,29 @@ export function QuickEntry({ onSaved, onSwitchFull }: Props) {
   const sorted = [...products].sort((a, b) =>
     (b.is_pinned ? 1 : 0) - (a.is_pinned ? 1 : 0) || a.name.localeCompare(b.name)
   )
+
+  if (savedSale) {
+    return (
+      <div className="flex flex-col min-h-screen bg-gray-50 items-center justify-center px-6 text-center">
+        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-2xl font-bold text-emerald-700">
+          &#10003;
+        </div>
+        <p className="text-lg font-semibold text-gray-900">Sale saved</p>
+        <p className="mt-1 text-sm text-gray-500">
+          &#8377;{savedSale.total.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
+        </p>
+        <div className="mt-6 w-full max-w-xs space-y-2">
+          <ShareReceiptButton transactionId={savedSale.id} shopName={shopName} variant="prominent" />
+          <button
+            onClick={() => { setSavedSale(null); onSaved() }}
+            className="btn-lift w-full rounded-xl border border-gray-200 bg-white py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          >
+            Done
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">

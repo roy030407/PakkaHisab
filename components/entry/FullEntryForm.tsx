@@ -10,6 +10,7 @@
  *   - Initial creation
  *   - Bug fix: updated p.sellingPrice/p.purchasePrice to snake_case
  *   - Khata Green restyle
+ *   - Slice B1: after a sale saves, offer a WhatsApp receipt share
  *
  * WHERE IT FITS:
  *   "Full entry" mode on /entry page.
@@ -23,6 +24,7 @@ import { toast } from 'sonner'
 import type { Product, TransactionType, PaymentMethod, FullEntryItem } from '@/types'
 import { ProductSearch } from './ProductSearch'
 import { CustomerSheet } from './CustomerSheet'
+import { ShareReceiptButton } from '@/components/share/ShareReceiptButton'
 
 interface LineItem extends FullEntryItem { productName: string }
 interface Props {
@@ -42,9 +44,15 @@ export function FullEntryForm({ initialItems, onSaved, onSwitchQuick }: Props) {
   const [notes, setNotes] = useState('')
   const [showCustomer, setShowCustomer] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [shopName, setShopName] = useState('')
+  const [savedSale, setSavedSale] = useState<{ id: string; total: number } | null>(null)
 
   useEffect(() => {
     fetch('/api/products').then(r => r.json()).then(d => setProducts(d.products ?? []))
+  }, [])
+
+  useEffect(() => {
+    fetch('/api/stores').then(r => r.json()).then(d => setShopName(d.store?.name ?? '')).catch(() => {})
   }, [])
 
   function addProduct(p: Product) {
@@ -71,7 +79,7 @@ export function FullEntryForm({ initialItems, onSaved, onSwitchQuick }: Props) {
   async function handleSave() {
     if (!items.length) return
     setSaving(true)
-    await fetch('/api/entry/full', {
+    const res = await fetch('/api/entry/full', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         date, type, paymentMethod, customerId,
@@ -82,7 +90,35 @@ export function FullEntryForm({ initialItems, onSaved, onSwitchQuick }: Props) {
     })
     setSaving(false)
     toast.success(`${type.charAt(0).toUpperCase() + type.slice(1)} saved`)
-    onSaved()
+    const data = await res.json().catch(() => ({}))
+    if (type === 'sale' && data?.transactionId) {
+      setSavedSale({ id: data.transactionId, total })
+    } else {
+      onSaved()
+    }
+  }
+
+  if (savedSale) {
+    return (
+      <div className="flex flex-col min-h-screen bg-gray-50 items-center justify-center px-6 text-center">
+        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-2xl font-bold text-emerald-700">
+          &#10003;
+        </div>
+        <p className="text-lg font-semibold text-gray-900">Sale saved</p>
+        <p className="mt-1 text-sm text-gray-500">
+          &#8377;{savedSale.total.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
+        </p>
+        <div className="mt-6 w-full max-w-xs space-y-2">
+          <ShareReceiptButton transactionId={savedSale.id} shopName={shopName} variant="prominent" />
+          <button
+            onClick={() => { setSavedSale(null); onSaved() }}
+            className="btn-lift w-full rounded-xl border border-gray-200 bg-white py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          >
+            Done
+          </button>
+        </div>
+      </div>
+    )
   }
 
   return (
