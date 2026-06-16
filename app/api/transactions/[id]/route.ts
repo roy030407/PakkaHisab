@@ -10,6 +10,7 @@
  * CHANGES THIS SESSION:
  *   - Initial creation (delete a wrongly-saved transaction from the ledger)
  *   - Reverse 'payment' rows on delete (re-adds the amount to the balance)
+ *   - GET returns a transaction + its items + customer (for receipt sharing)
  *
  * WHERE IT FITS:
  *   Called by components/customers/CustomerLedger.tsx (delete control per row).
@@ -120,4 +121,46 @@ export async function DELETE(
   }
 
   return NextResponse.json({ deleted: true })
+}
+
+export async function GET(
+  _: Request,
+  { params }: { params: { id: string } }
+) {
+  const supabase = createSupabaseServerClient()
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  if (authError || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const { data: store } = await supabase
+    .from('stores')
+    .select('id')
+    .eq('owner_id', user.id)
+    .maybeSingle()
+  if (!store) return NextResponse.json({ error: 'Store not found' }, { status: 404 })
+
+  const { data: transaction } = await supabase
+    .from('transactions')
+    .select('id, date, type, total_amount, payment_method, customer_id, vendor_name')
+    .eq('id', params.id)
+    .eq('store_id', store.id)
+    .maybeSingle()
+  if (!transaction) return NextResponse.json({ error: 'Transaction not found' }, { status: 404 })
+
+  const { data: items } = await supabase
+    .from('transaction_items')
+    .select('product_name_raw, quantity, unit_price, total_price')
+    .eq('transaction_id', transaction.id)
+
+  let customer: { name: string; phone: string | null; current_balance: number } | null = null
+  if (transaction.customer_id) {
+    const { data: c } = await supabase
+      .from('customers')
+      .select('name, phone, current_balance')
+      .eq('id', transaction.customer_id)
+      .eq('store_id', store.id)
+      .maybeSingle()
+    customer = c ?? null
+  }
+
+  return NextResponse.json({ transaction, items: items ?? [], customer })
 }
