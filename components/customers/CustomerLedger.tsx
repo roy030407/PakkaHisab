@@ -12,6 +12,7 @@
  *   - Khata Green restyle
  *   - Added per-row delete with a confirm dialog (native <dialog> top layer)
  *   - Slice A: payment rows render green; Receive payment + WhatsApp remind actions
+ *   - Slice B1: compact WhatsApp receipt share on sale rows
  *
  * WHERE IT FITS:
  *   Opened by tapping a customer in the customers page.
@@ -25,6 +26,7 @@ import { Trash2 } from 'lucide-react'
 import { CreditBadge } from './CreditBadge'
 import { ReceivePaymentSheet } from './ReceivePaymentSheet'
 import { RemindButton } from './RemindButton'
+import { ShareReceiptButton } from '@/components/share/ShareReceiptButton'
 
 interface Tx { id: string; date: string; type: string; total_amount: number; payment_method: string; created_at: string }
 interface CustomerDetail { id: string; name: string; phone?: string; type: string; current_balance: number }
@@ -142,6 +144,9 @@ export function CustomerLedger({ customerId, onBack }: Props) {
                     ? `Payment received +₹${Number(tx.total_amount).toLocaleString('en-IN')}`
                     : `${tx.type === 'sale' ? '+' : '-'}₹${Number(tx.total_amount).toLocaleString('en-IN')}`}
                 </p>
+                {tx.type === 'sale' && (
+                  <ShareReceiptButton transactionId={tx.id} shopName={shop.name} variant="compact" />
+                )}
                 <button
                   onClick={() => askDelete(tx)}
                   aria-label="Delete transaction"
