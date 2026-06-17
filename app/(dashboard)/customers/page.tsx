@@ -27,6 +27,7 @@ import { CustomerLedger } from '@/components/customers/CustomerLedger'
 import { ReceivePaymentSheet } from '@/components/customers/ReceivePaymentSheet'
 import { RemindButton } from '@/components/customers/RemindButton'
 import { ListPageSkeleton } from '@/components/shared/PageSkeleton'
+import { ErrorState } from '@/components/shared/ErrorState'
 import { customerAge } from '@/lib/collections/aging'
 
 interface CustomerRow {
@@ -58,9 +59,11 @@ function CustomersInner() {
   const [tab, setTab] = useState<'all' | 'udhaar'>(searchParams.get('tab') === 'udhaar' ? 'udhaar' : 'all')
   const [shop, setShop] = useState<{ name: string; reminderTemplate: string | null }>({ name: '', reminderTemplate: null })
   const [payFor, setPayFor] = useState<CustomerRow | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   const load = useCallback(() => {
     setLoading(true)
+    setError(null)
     return fetch('/api/customers')
       .then(r => r.json())
       .then(d => {
@@ -76,6 +79,7 @@ function CustomersInner() {
         setCustomers(rows)
         setLoading(false)
       })
+      .catch(() => { setError('Could not load customers. Please try again.'); setLoading(false) })
   }, [])
 
   useEffect(() => { load() }, [load])
@@ -129,7 +133,9 @@ function CustomersInner() {
       </div>
 
       <div className="flex-1 px-4 py-3">
-        {loading ? (
+        {error ? (
+          <ErrorState message={error} onRetry={load} />
+        ) : loading ? (
           <ListPageSkeleton rows={5} />
         ) : tab === 'all' ? (
           allFiltered.length === 0 ? (

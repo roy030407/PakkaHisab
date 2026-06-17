@@ -17,7 +17,8 @@
  *   dashboard "Din ka hisab" card ; GET/POST /api/reconciliation
  */
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { ErrorState } from '@/components/shared/ErrorState'
 
 const inr = (n: number) => `₹${Number(n || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 })}`
 
@@ -41,7 +42,9 @@ export default function ReconcilePage() {
   const [savedMsg, setSavedMsg] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
+  const load = useCallback(() => {
+    setLoading(true)
+    setError(null)
     fetch('/api/reconciliation')
       .then(r => r.json())
       .then((d: Position) => {
@@ -56,6 +59,8 @@ export default function ReconcilePage() {
       .catch(() => { setError('Could not load the day. Please try again.'); setLoading(false) })
   }, [])
 
+  useEffect(() => { load() }, [load])
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-16">
@@ -64,7 +69,11 @@ export default function ReconcilePage() {
     )
   }
   if (!pos) {
-    return <div className="px-4 py-16 text-center text-sm text-gray-500">{error ?? 'Something went wrong.'}</div>
+    return (
+      <div className="px-4 py-16">
+        <ErrorState message={error ?? 'Could not load the day.'} onRetry={load} />
+      </div>
+    )
   }
 
   const openingNum = Number(opening) || 0
@@ -79,11 +88,18 @@ export default function ReconcilePage() {
     setSaving(true)
     setError(null)
     setSavedMsg(false)
-    const res = await fetch('/api/reconciliation', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ date: pos.date, openingCash: openingNum, countedCash: countedNum, note: note.trim() || undefined }),
-    })
+    let res: Response
+    try {
+      res = await fetch('/api/reconciliation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ date: pos.date, openingCash: openingNum, countedCash: countedNum, note: note.trim() || undefined }),
+      })
+    } catch {
+      setError('Could not save - check your connection and try again.')
+      setSaving(false)
+      return
+    }
     if (res.ok) {
       setSavedMsg(true)
     } else {

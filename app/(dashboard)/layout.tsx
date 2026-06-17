@@ -10,6 +10,8 @@
  *   - Updated: businesses → stores table query
  *   - Added BottomNav import and wrapper layout with pb-16 content padding
  *   - Added desktop Sidebar (md+), BottomNav hidden md+, content takes remaining width
+ *   - Wrapped page content in AppErrorBoundary so a client render crash on any
+ *     dashboard screen shows a friendly retry instead of a white screen
  *
  * WHERE IT FITS:
  *   Wraps all pages under (dashboard)/*. The single point of auth
@@ -23,6 +25,7 @@ import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { BottomNav } from "@/components/shared/BottomNav";
 import { Sidebar } from "@/components/shared/Sidebar";
+import { AppErrorBoundary } from "@/components/shared/AppErrorBoundary";
 
 export default async function DashboardLayout({
   children,
@@ -52,7 +55,9 @@ export default async function DashboardLayout({
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar />
       <div className="flex flex-col flex-1 min-w-0">
-        <main className="flex-1 pb-16 md:pb-0">{children}</main>
+        <main className="flex-1 pb-16 md:pb-0">
+          <AppErrorBoundary>{children}</AppErrorBoundary>
+        </main>
         <BottomNav />
       </div>
     </div>

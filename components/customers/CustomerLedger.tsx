@@ -27,6 +27,7 @@ import { CreditBadge } from './CreditBadge'
 import { ReceivePaymentSheet } from './ReceivePaymentSheet'
 import { RemindButton } from './RemindButton'
 import { ShareReceiptButton } from '@/components/share/ShareReceiptButton'
+import { ErrorState } from '@/components/shared/ErrorState'
 
 interface Tx { id: string; date: string; type: string; total_amount: number; payment_method: string; created_at: string }
 interface CustomerDetail { id: string; name: string; phone?: string; type: string; current_balance: number }
@@ -41,9 +42,12 @@ export function CustomerLedger({ customerId, onBack }: Props) {
   const [deleting, setDeleting] = useState(false)
   const [shop, setShop] = useState<{ name: string; reminderTemplate: string | null }>({ name: '', reminderTemplate: null })
   const [showPay, setShowPay] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const dialogRef = useRef<HTMLDialogElement>(null)
 
   const load = useCallback(() => {
+    setLoading(true)
+    setError(null)
     return fetch(`/api/customers/${customerId}`)
       .then(r => r.json())
       .then(d => {
@@ -51,6 +55,7 @@ export function CustomerLedger({ customerId, onBack }: Props) {
         setTransactions(d.transactions ?? [])
         setLoading(false)
       })
+      .catch(() => { setError('Could not load this customer. Please try again.'); setLoading(false) })
   }, [customerId])
 
   useEffect(() => { load() }, [load])
@@ -93,7 +98,18 @@ export function CustomerLedger({ customerId, onBack }: Props) {
       </div>
     )
   }
-  if (!customer) return null
+  if (!customer) {
+    return (
+      <div className="flex flex-col min-h-screen bg-gray-50">
+        <div className="bg-white px-4 py-4 border-b border-gray-200">
+          <button onClick={onBack} className="text-sm text-emerald-700">&larr; Back</button>
+        </div>
+        <div className="px-4 py-16">
+          <ErrorState message={error ?? 'Could not load this customer.'} onRetry={load} />
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">

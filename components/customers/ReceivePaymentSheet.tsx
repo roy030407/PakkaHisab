@@ -46,11 +46,18 @@ export function ReceivePaymentSheet({ customerId, customerName, currentBalance, 
     }
     setSaving(true)
     setError(null)
-    const res = await fetch(`/api/customers/${customerId}/payment`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ amount: n, date, note: note.trim() || undefined }),
-    })
+    let res: Response
+    try {
+      res = await fetch(`/api/customers/${customerId}/payment`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount: n, date, note: note.trim() || undefined }),
+      })
+    } catch {
+      setError('Could not save - check your connection and try again.')
+      setSaving(false)
+      return
+    }
     if (res.ok) {
       const d = await res.json()
       onSaved(Number(d.newBalance))

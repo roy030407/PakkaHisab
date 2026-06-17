@@ -12,6 +12,7 @@
  *   - Rebuilt for hybrid matching: row states, variant/suggestion pills,
  *     qty/price toggle, per-row remove, save gating.
  *   - Slice B2: Purchase/Sale toggle; in Sale mode pick a customer + payment method
+ *   - Re-added ConfidenceBadge as an at-a-glance flag on low/medium rows
  *
  * WHERE IT FITS:
  *   Shown when scan state = 'review' and documentType = 'single_bill'.
@@ -24,6 +25,7 @@ import { useState } from 'react'
 import type { ExtractionResult, ExtractionItem, MatchCandidate } from '@/types'
 import { DuplicateWarning } from './DuplicateWarning'
 import { CustomerSheet } from '@/components/entry/CustomerSheet'
+import { ConfidenceBadge } from './ConfidenceBadge'
 
 type QtyPriceMode = 'unset' | 'quantity' | 'price'
 
@@ -218,11 +220,19 @@ export function ExtractionReview({ extraction, documentUploadId, duplicateWarnin
           {items.map((item, idx) => {
             if (item.removed) return null
             const warn = item.needsVerify || item.matchState !== 'matched'
+            // At-a-glance confidence flag: high (clean match) renders nothing,
+            // medium (we filled/guessed a field), low (unmatched/needs a choice).
+            const badgeLevel = item.matchState === 'matched' && !item.needsVerify
+              ? 'high'
+              : item.needsVerify
+                ? 'medium'
+                : 'low'
             return (
               <div key={idx} className={`rounded-xl border p-3 ${warn ? 'border-amber-200 bg-amber-50' : 'border-gray-200 bg-white'}`}>
                 <div className="flex items-start justify-between gap-2">
                   <input value={item.editedName} onChange={e => setName(idx, e.target.value)} aria-label="Product name"
                     className="flex-1 rounded-md border border-transparent bg-transparent px-1 py-0.5 text-sm font-semibold text-gray-900 outline-none hover:border-gray-200 focus:border-emerald-300 focus:bg-white" />
+                  <ConfidenceBadge level={badgeLevel} />
                   <button onClick={() => removeRow(idx)} aria-label="Remove item"
                     className="btn-lift text-gray-400 hover:text-red-600 px-1">✕</button>
                 </div>

@@ -79,16 +79,27 @@ export function FullEntryForm({ initialItems, onSaved, onSwitchQuick }: Props) {
   async function handleSave() {
     if (!items.length) return
     setSaving(true)
-    const res = await fetch('/api/entry/full', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        date, type, paymentMethod, customerId,
-        vendorName: vendorName || undefined,
-        notes: notes || undefined,
-        items,
-      }),
-    })
+    let res: Response
+    try {
+      res = await fetch('/api/entry/full', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          date, type, paymentMethod, customerId,
+          vendorName: vendorName || undefined,
+          notes: notes || undefined,
+          items,
+        }),
+      })
+    } catch {
+      setSaving(false)
+      toast.error('Could not save - check your connection and try again.')
+      return
+    }
     setSaving(false)
+    if (!res.ok) {
+      toast.error('Could not save. Please try again.')
+      return
+    }
     toast.success(`${type.charAt(0).toUpperCase() + type.slice(1)} saved`)
     const data = await res.json().catch(() => ({}))
     if (type === 'sale' && data?.transactionId) {

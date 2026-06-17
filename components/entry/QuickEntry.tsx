@@ -113,11 +113,22 @@ export function QuickEntry({ onSaved, onSwitchFull }: Props) {
           type, paymentMethod, customerId,
           items: Array.from(qtys.entries()).map(([productId, quantity]) => ({ productId, quantity })),
         }
-    const res = await fetch('/api/entry/quick', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    })
+    let res: Response
+    try {
+      res = await fetch('/api/entry/quick', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      })
+    } catch {
+      setSaving(false)
+      toast.error('Could not save - check your connection and try again.')
+      return
+    }
     setSaving(false)
+    if (!res.ok) {
+      toast.error('Could not save. Please try again.')
+      return
+    }
     toast.success(`${TYPE_META[type].label} saved`)
     const data = await res.json().catch(() => ({}))
     if (type === 'sale' && data?.transactionId) {
