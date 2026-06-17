@@ -11,6 +11,7 @@
  * CHANGES THIS SESSION:
  *   - Rebuilt for hybrid matching: row states, variant/suggestion pills,
  *     qty/price toggle, per-row remove, save gating.
+ *   - Slice B2: Purchase/Sale toggle; in Sale mode pick a customer + payment method
  *
  * WHERE IT FITS:
  *   Shown when scan state = 'review' and documentType = 'single_bill'.
@@ -22,6 +23,7 @@
 import { useState } from 'react'
 import type { ExtractionResult, ExtractionItem, MatchCandidate } from '@/types'
 import { DuplicateWarning } from './DuplicateWarning'
+import { CustomerSheet } from '@/components/entry/CustomerSheet'
 
 type QtyPriceMode = 'unset' | 'quantity' | 'price'
 
@@ -42,7 +44,10 @@ interface Props {
   duplicateWarning?: { date: string; id: string } | null
   onSave: (payload: {
     documentUploadId: string
+    type: 'purchase' | 'sale'
     vendorName?: string
+    customerId?: string
+    paymentMethod?: 'cash' | 'upi' | 'credit'
     date?: string
     totalAmount: number
     items: Array<{
@@ -81,6 +86,10 @@ export function ExtractionReview({ extraction, documentUploadId, duplicateWarnin
   const [date, setDate] = useState(extraction.date ?? '')
   const [showDuplicate, setShowDuplicate] = useState(!!duplicateWarning)
   const [saving, setSaving] = useState(false)
+  const [txType, setTxType] = useState<'purchase' | 'sale'>('purchase')
+  const [customerId, setCustomerId] = useState<string | undefined>()
+  const [paymentMethod, setPaymentMethod] = useState<'cash' | 'upi' | 'credit'>('cash')
+  const [showCustomer, setShowCustomer] = useState(false)
 
   const live = items.filter(i => !i.removed)
   const total = live.reduce((s, i) => s + i.editedQty * i.editedPrice, 0)
@@ -130,7 +139,10 @@ export function ExtractionReview({ extraction, documentUploadId, duplicateWarnin
     setSaving(true)
     const payload = {
       documentUploadId,
-      vendorName: vendorName.trim() || undefined,
+      type: txType,
+      vendorName: txType === 'purchase' ? (vendorName.trim() || undefined) : undefined,
+      customerId: txType === 'sale' ? customerId : undefined,
+      paymentMethod: txType === 'sale' ? paymentMethod : undefined,
       date: date.trim() || undefined,
       totalAmount: total,
       items: live.filter(i => i.editedQty > 0).map(it => {
@@ -157,12 +169,30 @@ export function ExtractionReview({ extraction, documentUploadId, duplicateWarnin
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <div className="sticky top-0 z-10 bg-emerald-700 px-4 py-4">
+        <div className="mb-2 inline-flex rounded-lg bg-emerald-800/40 p-0.5">
+          {(['purchase', 'sale'] as const).map(t => (
+            <button key={t} onClick={() => setTxType(t)}
+              className={`btn-lift rounded-md px-3 py-1 text-xs font-semibold ${txType === t ? 'bg-white text-emerald-800' : 'text-emerald-100'}`}>
+              {t === 'purchase' ? 'Purchase' : 'Sale'}
+            </button>
+          ))}
+        </div>
         <div className="grid grid-cols-2 gap-2">
-          <div>
-            <label className="text-[10px] uppercase tracking-wide text-emerald-200">Vendor</label>
-            <input value={vendorName} onChange={e => setVendorName(e.target.value)} placeholder="Unknown vendor"
-              className="mt-0.5 w-full rounded-md border border-emerald-500/60 bg-emerald-800/40 px-2 py-1.5 text-sm font-semibold text-white placeholder-emerald-300 outline-none focus:border-emerald-300" />
-          </div>
+          {txType === 'purchase' ? (
+            <div>
+              <label className="text-[10px] uppercase tracking-wide text-emerald-200">Vendor</label>
+              <input value={vendorName} onChange={e => setVendorName(e.target.value)} placeholder="Unknown vendor"
+                className="mt-0.5 w-full rounded-md border border-emerald-500/60 bg-emerald-800/40 px-2 py-1.5 text-sm font-semibold text-white placeholder-emerald-300 outline-none focus:border-emerald-300" />
+            </div>
+          ) : (
+            <div>
+              <label className="text-[10px] uppercase tracking-wide text-emerald-200">Customer</label>
+              <button onClick={() => setShowCustomer(true)}
+                className="btn-lift mt-0.5 w-full rounded-md border border-emerald-500/60 bg-emerald-800/40 px-2 py-1.5 text-left text-sm font-semibold text-white outline-none focus:border-emerald-300">
+                {customerId ? '✓ Customer added' : '+ Add customer (optional)'}
+              </button>
+            </div>
+          )}
           <div>
             <label className="text-[10px] uppercase tracking-wide text-emerald-200">Date</label>
             <input value={date} onChange={e => setDate(e.target.value)} placeholder="Not detected"
@@ -280,7 +310,7 @@ export function ExtractionReview({ extraction, documentUploadId, duplicateWarnin
       <div className="fixed bottom-0 left-0 right-0 px-4 pb-8 pt-3 bg-white border-t border-gray-100 space-y-2">
         <button onClick={handleSave} disabled={saving || unresolved || live.filter(i => i.editedQty > 0).length === 0}
           className="w-full bg-emerald-700 text-white font-semibold py-3.5 rounded-xl text-sm disabled:opacity-60 hover:bg-emerald-800">
-          {saving ? 'Saving...' : unresolved ? 'Resolve highlighted items to save' : `Save purchase · ₹${total.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`}
+          {saving ? 'Saving...' : unresolved ? 'Resolve highlighted items to save' : `Save ${txType} · ₹${total.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`}
         </button>
         {onCancel && (
           <button onClick={onCancel} disabled={saving}
@@ -290,6 +320,12 @@ export function ExtractionReview({ extraction, documentUploadId, duplicateWarnin
         )}
         <p className="text-center text-xs text-gray-400">Check the highlighted guesses, then save.</p>
       </div>
+
+      <CustomerSheet
+        open={showCustomer}
+        onClose={() => setShowCustomer(false)}
+        onSelect={(id, pm) => { setCustomerId(id); setPaymentMethod(pm); setShowCustomer(false) }}
+      />
     </div>
   )
 }
