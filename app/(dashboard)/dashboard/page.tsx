@@ -11,6 +11,7 @@
  *   - Redesign: two-column desktop layout, quick actions with Lucide icons,
  *     trend arrow on profit card, page-enter animation
  *   - Khata Green redesign: greeting header, hero sparkline + trend pill, AttentionCard
+ *   - Slice C: "Din ka hisab" card links to the cash reconciliation screen
  *
  * WHERE IT FITS:
  *   First page a merchant sees after logging in. Uses server-side fetch
@@ -232,6 +233,16 @@ export default async function DashboardPage() {
 
           {/* Consolidated alerts */}
           <AttentionCard lowStockCount={lowStockCount} expiryCount={expiryCount} />
+
+          {/* Din ka hisab */}
+          <Link href="/reconcile"
+            className="card-lift flex items-center justify-between rounded-xl border border-gray-200 bg-white px-4 py-3.5">
+            <div>
+              <p className="text-sm font-semibold text-gray-900">Din ka hisab</p>
+              <p className="text-xs text-gray-400">Close the day - count the cash drawer</p>
+            </div>
+            <span className="text-emerald-700">&rarr;</span>
+          </Link>
         </div>
 
         {/* Right rail (desktop) */}
