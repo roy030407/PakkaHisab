@@ -36,6 +36,7 @@ model Store {
   stockMovements       StockMovement[]
   customers            Customer[]
   fixedCosts           FixedCost[]
+  cashReconciliations  CashReconciliation[]
   transactions         Transaction[]
   documentUploads      DocumentUpload[]
   extractionCorrections ExtractionCorrection[]
@@ -150,6 +151,27 @@ model FixedCost {
   store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
 
   @@map("fixed_costs")
+}
+
+model CashReconciliation {
+  id           String   @id @default(uuid())
+  storeId      String   @map("store_id")
+  date         DateTime @db.Date
+  openingCash  Decimal  @default(0) @db.Decimal(12, 2) @map("opening_cash")
+  cashIn       Decimal  @default(0) @db.Decimal(12, 2) @map("cash_in")
+  cashOut      Decimal  @default(0) @db.Decimal(12, 2) @map("cash_out")
+  expectedCash Decimal  @default(0) @db.Decimal(12, 2) @map("expected_cash")
+  countedCash  Decimal  @default(0) @db.Decimal(12, 2) @map("counted_cash")
+  upiTotal     Decimal  @default(0) @db.Decimal(12, 2) @map("upi_total")
+  difference   Decimal  @default(0) @db.Decimal(12, 2) @map("difference")
+  note         String?
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
+
+  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@unique([storeId, date])
+  @@map("cash_reconciliations")
 }
 
 // ─── TRANSACTIONS ─────────────────────────────────────────────────────────────
