@@ -9,6 +9,7 @@
  * CHANGES THIS SESSION:
  *   - Initial creation
  *   - Khata Green restyle
+ *   - Slice B2: after a scanned SALE, offer a WhatsApp receipt share
  *
  * WHERE IT FITS:
  *   Route /scan. Accessible from BottomNav.
@@ -17,12 +18,13 @@
  *   BottomNav, direct navigation
  */
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { ScanUpload } from '@/components/scan/ScanUpload'
 import { ScanLoading } from '@/components/scan/ScanLoading'
 import { ExtractionReview } from '@/components/scan/ExtractionReview'
 import { LedgerReview } from '@/components/scan/LedgerReview'
+import { ShareReceiptButton } from '@/components/share/ShareReceiptButton'
 import type { ExtractionResult } from '@/types'
 
 type ScanState = 'upload' | 'loading' | 'review' | 'error'
@@ -35,7 +37,10 @@ interface ReviewData {
 
 interface ConfirmPayload {
   documentUploadId: string
+  type?: 'purchase' | 'sale'
   vendorName?: string
+  customerId?: string
+  paymentMethod?: 'cash' | 'upi' | 'credit'
   date?: string
   totalAmount: number
   items: Array<{
@@ -55,6 +60,12 @@ export default function ScanPage() {
   const [state, setState] = useState<ScanState>('upload')
   const [reviewData, setReviewData] = useState<ReviewData | null>(null)
   const [errorMessage, setErrorMessage] = useState('')
+  const [shopName, setShopName] = useState('')
+  const [savedSale, setSavedSale] = useState<{ id: string; total: number } | null>(null)
+
+  useEffect(() => {
+    fetch('/api/stores').then(r => r.json()).then(d => setShopName(d.store?.name ?? '')).catch(() => {})
+  }, [])
 
   async function handleFileSelected(file: File) {
     setState('loading')
@@ -98,6 +109,11 @@ export default function ScanPage() {
       body: JSON.stringify(payload),
     })
     if (res.ok) {
+      const data = await res.json().catch(() => ({}))
+      if (payload.type === 'sale' && data?.transactionId) {
+        setSavedSale({ id: data.transactionId, total: payload.totalAmount })
+        return
+      }
       router.push('/dashboard')
       router.refresh()
     } else {
@@ -105,6 +121,29 @@ export default function ScanPage() {
       setErrorMessage(data.error ?? 'Failed to save. Please try again.')
       setState('error')
     }
+  }
+
+  if (savedSale) {
+    return (
+      <div className="flex flex-col min-h-screen bg-gray-50 items-center justify-center px-6 text-center">
+        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-2xl font-bold text-emerald-700">
+          &#10003;
+        </div>
+        <p className="text-lg font-semibold text-gray-900">Sale saved</p>
+        <p className="mt-1 text-sm text-gray-500">
+          &#8377;{savedSale.total.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
+        </p>
+        <div className="mt-6 w-full max-w-xs space-y-2">
+          <ShareReceiptButton transactionId={savedSale.id} shopName={shopName} variant="prominent" />
+          <button
+            onClick={() => { router.push('/dashboard'); router.refresh() }}
+            className="btn-lift w-full rounded-xl border border-gray-200 bg-white py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          >
+            Done
+          </button>
+        </div>
+      </div>
+    )
   }
 
   if (state === 'upload') {
