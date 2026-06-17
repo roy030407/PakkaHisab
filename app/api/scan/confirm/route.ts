@@ -11,6 +11,7 @@
  *   - Initial creation
  *   - Security: verify matchedProductId store ownership before use
  *   - Security: try/catch on request.json()
+ *   - Slice B2: can save a scan as a sale (stock out + credit balance), not only a purchase
  *
  * WHERE IT FITS:
  *   Called by ExtractionReview "Save" button after merchant confirms items.
@@ -37,7 +38,10 @@ interface ConfirmItem {
 
 interface ConfirmPayload {
   documentUploadId: string
+  type?: 'purchase' | 'sale'
   vendorName?: string
+  customerId?: string
+  paymentMethod?: 'cash' | 'upi' | 'credit'
   date?: string
   totalAmount: number
   items: ConfirmItem[]
@@ -79,6 +83,22 @@ export async function POST(request: Request) {
     sourceDocumentId = ownedDoc ? body.documentUploadId : null
   }
 
+  const isSale = body.type === 'sale'
+
+  // Sale only: verify the customer belongs to this store before attaching it.
+  let verifiedCustomerId: string | null = null
+  if (isSale && body.customerId) {
+    const { data: c } = await supabase
+      .from('customers')
+      .select('id')
+      .eq('id', body.customerId)
+      .eq('store_id', store.id)
+      .maybeSingle()
+    verifiedCustomerId = c ? body.customerId : null
+  }
+
+  const paymentMethod = isSale ? (body.paymentMethod ?? 'cash') : 'cash'
+
   // Create transaction
   const { data: tx, error: txError } = await supabase
     .from('transactions')
@@ -86,10 +106,11 @@ export async function POST(request: Request) {
       store_id: store.id,
       user_id: user.id,
       date: body.date ?? new Date().toISOString().split('T')[0],
-      type: 'purchase',
+      type: isSale ? 'sale' : 'purchase',
       total_amount: body.totalAmount,
-      vendor_name: body.vendorName ?? null,
-      payment_method: 'cash',
+      vendor_name: isSale ? null : (body.vendorName ?? null),
+      customer_id: verifiedCustomerId,
+      payment_method: paymentMethod,
       source: 'bill_scan',
       source_document_id: sourceDocumentId,
       tax_amount: 0,
@@ -163,13 +184,13 @@ export async function POST(request: Request) {
       continue // don't update stock for a line that wasn't recorded
     }
 
-    // Update inventory
+    // Sale moves stock out (-qty); purchase brings it in (+qty).
     await updateStock(supabase, {
       storeId: store.id,
       productId,
-      delta: item.quantity,
+      delta: isSale ? -item.quantity : item.quantity,
       transactionId: tx.id,
-      movementType: 'purchase',
+      movementType: isSale ? 'sale' : 'purchase',
       unitPrice: item.unitPrice,
     })
 
@@ -184,6 +205,23 @@ export async function POST(request: Request) {
         original_value: item.correction.original.trim(),
         corrected_value: item.correction.corrected.trim(),
       })
+    }
+  }
+
+  // A credit sale increases what the customer owes (mirrors entry/quick).
+  if (isSale && verifiedCustomerId && paymentMethod === 'credit') {
+    const { data: customer } = await supabase
+      .from('customers')
+      .select('current_balance')
+      .eq('id', verifiedCustomerId)
+      .eq('store_id', store.id)
+      .single()
+    if (customer) {
+      await supabase
+        .from('customers')
+        .update({ current_balance: Number(customer.current_balance) + Number(body.totalAmount) })
+        .eq('id', verifiedCustomerId)
+        .eq('store_id', store.id)
     }
   }
 
