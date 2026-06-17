@@ -12,6 +12,7 @@
  *     trend arrow on profit card, page-enter animation
  *   - Khata Green redesign: greeting header, hero sparkline + trend pill, AttentionCard
  *   - Slice C: "Din ka hisab" card links to the cash reconciliation screen
+ *   - POC: "Scan your khata" card links to the ledger capture -> day total screen
  *
  * WHERE IT FITS:
  *   First page a merchant sees after logging in. Uses server-side fetch
@@ -233,6 +234,16 @@ export default async function DashboardPage() {
 
           {/* Consolidated alerts */}
           <AttentionCard lowStockCount={lowStockCount} expiryCount={expiryCount} />
+
+          {/* Scan your khata (ledger -> day total) */}
+          <Link href="/ledger"
+            className="card-lift flex items-center justify-between rounded-xl border border-emerald-200 bg-emerald-50/60 px-4 py-3.5">
+            <div>
+              <p className="text-sm font-semibold text-emerald-900">Scan your khata</p>
+              <p className="text-xs text-emerald-700/80">Photo your ledger page - see entries + day total</p>
+            </div>
+            <span className="text-emerald-700">&rarr;</span>
+          </Link>
 
           {/* Din ka hisab */}
           <Link href="/reconcile"
