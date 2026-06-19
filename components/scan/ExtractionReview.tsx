@@ -255,7 +255,7 @@ export function ExtractionReview({ extraction, documentUploadId, duplicateWarnin
 
                 {item.matchState === 'variant_choice' && (
                   <div className="mt-2">
-                    <p className="text-xs text-gray-500 mb-1">Which size?</p>
+                    <p className="text-xs text-gray-500 mb-1">Which size? Or add the size on the bill as a new one.</p>
                     <div className="flex flex-wrap gap-2">
                       {item.candidates.map(c => (
                         <button key={c.productId} onClick={() => chooseCandidate(idx, c)}
@@ -263,6 +263,10 @@ export function ExtractionReview({ extraction, documentUploadId, duplicateWarnin
                           {c.sizeToken ? `${c.sizeToken} · ₹${c.unitPrice}` : `${c.name} · ₹${c.unitPrice}`}
                         </button>
                       ))}
+                      <button onClick={() => markAddNew(idx)}
+                        className="btn-lift rounded-lg border border-dashed border-emerald-300 bg-white px-3 py-1.5 text-sm font-medium text-emerald-700 hover:border-emerald-400">
+                        + Add &ldquo;{item.editedName}&rdquo; as new
+                      </button>
                     </div>
                   </div>
                 )}

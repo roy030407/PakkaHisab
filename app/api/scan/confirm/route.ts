@@ -12,6 +12,7 @@
  *   - Security: verify matchedProductId store ownership before use
  *   - Security: try/catch on request.json()
  *   - Slice B2: can save a scan as a sale (stock out + credit balance), not only a purchase
+ *   - Add-as-new products are now created is_active=true so they match the next scan
  *
  * WHERE IT FITS:
  *   Called by ExtractionReview "Save" button after merchant confirms items.
@@ -157,7 +158,9 @@ export async function POST(request: Request) {
           purchase_price: item.unitPrice,
           selling_price: item.unitPrice,
           tax_rate: item.taxRate ?? 0,
-          is_active: false,
+          // Active so the new product is a real catalog item: it matches on the
+          // NEXT scan and shows in Stock/Products (was false = invisible/no rematch).
+          is_active: true,
           is_pinned: false,
         })
         .select('id')

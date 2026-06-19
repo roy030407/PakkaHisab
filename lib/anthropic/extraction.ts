@@ -9,6 +9,7 @@
  * CHANGES THIS SESSION:
  *   - Read-only output (normalizedName, sizeToken, numberTokens); matching moved
  *     to lib/scan/match.ts + resolve.ts.
+ *   - Clearer, directional wording for per-store read corrections in the prompt.
  *
  * WHERE IT FITS:
  *   Called by app/api/scan/route.ts; its output is fed to resolveItems().
@@ -45,7 +46,7 @@ export async function extractBillData(
     .limit(5)
 
   const correctionLines = (corrections as Correction[] ?? [])
-    .map(c => `In a previous scan for this store, '${c.original_value}' was read as '${c.corrected_value}' (field: ${c.field_name}).`)
+    .map(c => `For this store's bills, handwriting that looks like '${c.original_value}' usually means '${c.corrected_value}' - prefer reading it as '${c.corrected_value}'.`)
     .join('\n')
 
   const systemInstruction = `You are a bill reader for Indian retail stores. READ the bill image into structured JSON. Do NOT try to match products to any catalog. Return ONLY valid JSON, no markdown.
