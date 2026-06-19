@@ -3,51 +3,49 @@
  *
  * WHAT THIS DOES:
  *   The voice-first sales session screen. Tap the mic to listen, speak items in
- *   Hinglish, watch them land in a live cart (pause-segmented + Gemini-parsed +
- *   catalog-matched), then Save the cart as a cash sale. Honest mic-denied /
- *   offline / error states. Voice commands are surfaced as transcript only in
- *   Layer 1; their handlers arrive in Layer 2.
+ *   Hinglish, watch them land in a live cart, and drive the session by voice:
+ *   "agla" saves and keeps selling, "khatam" saves and ends, "balance batao"
+ *   reads the total aloud. Every command has an on-screen button equivalent.
  *
  * CHANGES THIS SESSION:
  *   - Initial creation (Voice Layer 1)
  *   - Disabled Save button no longer lifts on hover
+ *   - Layer 2: voice commands (agla/next, khatam/close, balance read-aloud),
+ *     Save & agla / Khatam / speaker buttons, command dispatch via refs
  *
  * WHERE IT FITS:
  *   Reached from the Sidebar (desktop) and the VoiceFab (mobile).
  *
  * CALLED BY / IMPORTS FROM:
  *   Next.js App Router ; uses hooks/useVoiceSession.ts, components/voice/VoiceCart.tsx,
- *   lib/voice/cart.ts, and POST /api/entry/quick
+ *   lib/voice/cart.ts, lib/voice/command.ts, lib/voice/speak.ts, and POST /api/entry/quick
  */
 'use client'
-import { useCallback, useState } from 'react'
-import { Mic, Square, Loader2 } from 'lucide-react'
+import { useCallback, useRef, useState } from 'react'
+import { Mic, Square, Loader2, Volume2 } from 'lucide-react'
 import { useVoiceSession } from '@/hooks/useVoiceSession'
 import { VoiceCart } from '@/components/voice/VoiceCart'
 import { addRowsToCart, setRowQuantity, cartTotal } from '@/lib/voice/cart'
-import type { VoiceCartRow, VoiceParseResponse } from '@/lib/voice/types'
+import { decideCommandAction, buildBalanceSpeech } from '@/lib/voice/command'
+import { speak } from '@/lib/voice/speak'
+import type { VoiceCartRow, VoiceParseResponse, VoiceCommand } from '@/lib/voice/types'
 
 export default function VoicePage() {
   const [rows, setRows] = useState<VoiceCartRow[]>([])
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
 
-  const onResult = useCallback((r: VoiceParseResponse) => {
-    if (r.kind === 'items' && r.cartItems.length > 0) {
-      setRows((prev) => addRowsToCart(prev, r.cartItems))
-    }
-    // Layer 1: a command result only shows its transcript (handled by the hook).
-  }, [])
+  // The hook holds onResult by identity, so command handling reads the latest
+  // cart + saving flag through a ref rather than a stale closure.
+  const stateRef = useRef<{ rows: VoiceCartRow[]; saving: boolean }>({ rows, saving })
+  stateRef.current = { rows, saving }
 
-  const { status, lastTranscript, start, stop } = useVoiceSession(onResult)
-  const listening = status === 'listening' || status === 'thinking'
+  // stop comes from the hook below; onResult (defined first) reaches it via a ref.
+  const stopRef = useRef<() => void>(() => {})
 
-  function setQty(productId: string, quantity: number) {
-    setRows((prev) => setRowQuantity(prev, productId, quantity))
-  }
-
-  async function save() {
-    if (rows.length === 0 || saving) return
+  const saveCart = useCallback(async () => {
+    const cart = stateRef.current.rows
+    if (cart.length === 0 || stateRef.current.saving) return
     setSaving(true)
     setSaveError(null)
     try {
@@ -57,7 +55,7 @@ export default function VoicePage() {
         body: JSON.stringify({
           type: 'sale',
           paymentMethod: 'cash',
-          items: rows.map((r) => ({ productId: r.productId, quantity: r.quantity })),
+          items: cart.map((r) => ({ productId: r.productId, quantity: r.quantity })),
         }),
       })
       if (!res.ok) { setSaveError('Could not save. Check your connection and try again.'); return }
@@ -67,13 +65,41 @@ export default function VoicePage() {
     } finally {
       setSaving(false)
     }
+  }, [])
+
+  const runCommand = useCallback((command: VoiceCommand) => {
+    const cart = stateRef.current.rows
+    const action = decideCommandAction(command, cart.length)
+    if (action.speakTotal) speak(buildBalanceSpeech(cartTotal(cart)))
+    if (action.save) void saveCart()
+    if (action.closeSession) stopRef.current()
+  }, [saveCart])
+
+  const onResult = useCallback((r: VoiceParseResponse) => {
+    if (r.kind === 'items' && r.cartItems.length > 0) {
+      setRows((prev) => addRowsToCart(prev, r.cartItems))
+      return
+    }
+    if (r.kind === 'command' && r.command) runCommand(r.command)
+  }, [runCommand])
+
+  const { status, lastTranscript, start, stop } = useVoiceSession(onResult)
+  stopRef.current = stop
+  const listening = status === 'listening' || status === 'thinking'
+
+  function setQty(productId: string, quantity: number) {
+    setRows((prev) => setRowQuantity(prev, productId, quantity))
   }
+
+  const total = cartTotal(rows)
+  const canSave = rows.length > 0 && !saving
+  const canClose = listening || rows.length > 0
 
   return (
     <div className="mx-auto max-w-lg px-4 py-6 space-y-5">
       <header>
         <h1 className="text-xl font-bold text-gray-900">Bolकर बेचो</h1>
-        <p className="text-sm text-gray-500">Tap the mic and speak what is selling.</p>
+        <p className="text-sm text-gray-500">Tap the mic and speak. Say &ldquo;agla&rdquo; to save, &ldquo;khatam&rdquo; to finish.</p>
       </header>
 
       {/* Mic + status */}
@@ -108,21 +134,43 @@ export default function VoicePage() {
 
       <VoiceCart rows={rows} onSetQty={setQty} />
 
+      {/* Speaker: read the running total aloud (voice equivalent: "balance batao") */}
+      <div className="flex justify-end">
+        <button
+          type="button"
+          onClick={() => speak(buildBalanceSpeech(total))}
+          className="btn-lift inline-flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 cursor-pointer"
+          aria-label="Read the total aloud"
+        >
+          <Volume2 size={15} /> Total batao
+        </button>
+      </div>
+
       {saveError && <p className="text-sm text-rose-600">{saveError}</p>}
 
-      {/* Footer: on-screen Save (button equivalent for the voice "next"/"close") */}
-      <button
-        type="button"
-        onClick={save}
-        disabled={rows.length === 0 || saving}
-        className={`w-full rounded-xl py-3.5 text-base font-semibold text-white ${
-          rows.length === 0 || saving
-            ? 'bg-gray-300 cursor-not-allowed'
-            : 'btn-lift bg-emerald-600 cursor-pointer'
-        }`}
-      >
-        {saving ? 'Saving...' : `Save sale (cash) - ₹${cartTotal(rows)}`}
-      </button>
+      {/* Footer: button equivalents for the voice commands. */}
+      <div className="flex gap-3">
+        <button
+          type="button"
+          onClick={() => { void saveCart() }}
+          disabled={!canSave}
+          className={`flex-1 rounded-xl py-3.5 text-base font-semibold text-white ${
+            canSave ? 'btn-lift bg-emerald-600 cursor-pointer' : 'bg-gray-300 cursor-not-allowed'
+          }`}
+        >
+          {saving ? 'Saving...' : `Save & agla - ₹${total}`}
+        </button>
+        <button
+          type="button"
+          onClick={() => { void saveCart(); stop() }}
+          disabled={!canClose}
+          className={`rounded-xl px-5 py-3.5 text-base font-semibold ${
+            canClose ? 'btn-lift bg-gray-900 text-white cursor-pointer' : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+          }`}
+        >
+          Khatam
+        </button>
+      </div>
     </div>
   )
 }
