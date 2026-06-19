@@ -10,6 +10,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation (Voice Layer 1)
+ *   - Disabled Save button no longer lifts on hover
  *
  * WHERE IT FITS:
  *   Reached from the Sidebar (desktop) and the VoiceFab (mobile).
@@ -114,10 +115,10 @@ export default function VoicePage() {
         type="button"
         onClick={save}
         disabled={rows.length === 0 || saving}
-        className={`btn-lift w-full rounded-xl py-3.5 text-base font-semibold text-white ${
+        className={`w-full rounded-xl py-3.5 text-base font-semibold text-white ${
           rows.length === 0 || saving
             ? 'bg-gray-300 cursor-not-allowed'
-            : 'bg-emerald-600 cursor-pointer'
+            : 'btn-lift bg-emerald-600 cursor-pointer'
         }`}
       >
         {saving ? 'Saving...' : `Save sale (cash) - ₹${cartTotal(rows)}`}

@@ -9,6 +9,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation (Voice Layer 1)
+ *   - Guard: no send/POST after stop() (stoppedRef)
  *
  * WHERE IT FITS:
  *   Used by app/(dashboard)/voice/page.tsx behind the mic button.
@@ -38,8 +39,10 @@ export function useVoiceSession(onResult: (r: VoiceParseResponse) => void) {
   const vadRef = useRef<VadState>(initVadState())
   const loopRef = useRef<number | null>(null)
   const bufRef = useRef<Float32Array | null>(null)
+  const stoppedRef = useRef<boolean>(false)
 
   const send = useCallback(async (blob: Blob) => {
+    if (stoppedRef.current) return
     if (blob.size < MIN_CLIP_BYTES) { setStatus('listening'); return }
     if (typeof navigator !== 'undefined' && !navigator.onLine) { setStatus('offline'); return }
     setStatus('thinking')
@@ -63,6 +66,7 @@ export function useVoiceSession(onResult: (r: VoiceParseResponse) => void) {
     chunksRef.current = []
     rec.ondataavailable = (e) => { if (e.data.size) chunksRef.current.push(e.data) }
     rec.onstop = () => {
+      if (stoppedRef.current) { recorderRef.current = null; return }
       const blob = new Blob(chunksRef.current, { type: 'audio/webm' })
       recorderRef.current = null
       void send(blob)
@@ -87,6 +91,7 @@ export function useVoiceSession(onResult: (r: VoiceParseResponse) => void) {
   }, [startRecorder])
 
   const start = useCallback(async () => {
+    stoppedRef.current = false
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
       streamRef.current = stream
@@ -108,6 +113,7 @@ export function useVoiceSession(onResult: (r: VoiceParseResponse) => void) {
   }, [tick])
 
   const stop = useCallback(() => {
+    stoppedRef.current = true
     if (loopRef.current !== null) { clearInterval(loopRef.current); loopRef.current = null }
     if (recorderRef.current && recorderRef.current.state !== 'inactive') recorderRef.current.stop()
     recorderRef.current = null
