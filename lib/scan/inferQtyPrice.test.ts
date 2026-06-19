@@ -42,8 +42,18 @@ describe('inferQtyPrice', () => {
     expect(r).toMatchObject({ quantity: 5, unitPrice: 60 })
   })
 
-  it('returns zeros + ambiguous when there are no numbers and no catalog price', () => {
+  it('does NOT ask qty-vs-price when there are no numbers (qty 1, price 0, not ambiguous)', () => {
     const r = inferQtyPrice([], null)
-    expect(r).toMatchObject({ quantity: 0, unitPrice: 0, ambiguousQtyPrice: true })
+    expect(r).toMatchObject({ quantity: 1, unitPrice: 0, ambiguousQtyPrice: false })
+  })
+
+  it('does NOT ask qty-vs-price for a bare ZERO (nothing to disambiguate)', () => {
+    const r = inferQtyPrice([tok(0)], null)
+    expect(r).toMatchObject({ ambiguousQtyPrice: false })
+  })
+
+  it('fills the catalog price when there are no usable numbers', () => {
+    const r = inferQtyPrice([], 60)
+    expect(r).toMatchObject({ quantity: 1, unitPrice: 60, fillSource: 'catalog', ambiguousQtyPrice: false })
   })
 })

@@ -12,6 +12,7 @@
  *   - Initial creation for Phase 1d (fixed costs) + 1e (tax config display)
  *   - Added Phase 6: template loader and CSV/Excel import wizard
  *   - Khata Green restyle
+ *   - Fixed costs can now be edited (reuses the form + PATCH /api/fixed-costs/[id])
  *
  * WHERE IT FITS:
  *   Fixed costs feed into profit calculations. Tax config feeds into
@@ -89,6 +90,7 @@ export default function SettingsPage() {
   const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState({ ...emptyForm });
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   const fetchCosts = useCallback(async () => {
     setLoading(true);
@@ -116,26 +118,49 @@ export default function SettingsPage() {
     setSaving(true);
     setError(null);
 
-    const res = await fetch("/api/fixed-costs", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: form.name.trim(),
-        amount: parseFloat(form.amount),
-        frequency: form.frequency,
-        category: form.category,
-      }),
-    });
+    const res = await fetch(
+      editingId ? `/api/fixed-costs/${editingId}` : "/api/fixed-costs",
+      {
+        method: editingId ? "PATCH" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name.trim(),
+          amount: parseFloat(form.amount),
+          frequency: form.frequency,
+          category: form.category,
+        }),
+      }
+    );
 
     if (res.ok) {
       setShowForm(false);
       setForm({ ...emptyForm });
+      setEditingId(null);
       fetchCosts();
     } else {
       const data = await res.json();
       setError(data.error ?? "Failed to save.");
     }
     setSaving(false);
+  }
+
+  function startEdit(cost: FixedCost) {
+    setForm({
+      name: cost.name,
+      amount: String(cost.amount),
+      frequency: cost.frequency,
+      category: cost.category,
+    });
+    setEditingId(cost.id);
+    setError(null);
+    setShowForm(true);
+  }
+
+  function cancelForm() {
+    setShowForm(false);
+    setEditingId(null);
+    setForm({ ...emptyForm });
+    setError(null);
   }
 
   async function handleDelete(id: string) {
@@ -159,7 +184,7 @@ export default function SettingsPage() {
             title="Fixed Costs"
             subtitle="Recurring business expenses used in profit calculations."
           />
-          <Button size="sm" onClick={() => setShowForm((v) => !v)}>
+          <Button size="sm" onClick={() => { setEditingId(null); setForm({ ...emptyForm }); setError(null); setShowForm((v) => !v); }}>
             + Add cost
           </Button>
         </div>
@@ -240,12 +265,12 @@ export default function SettingsPage() {
 
               <div className="flex gap-3">
                 <Button type="submit" disabled={saving}>
-                  {saving ? "Saving..." : "Add cost"}
+                  {saving ? "Saving..." : editingId ? "Save changes" : "Add cost"}
                 </Button>
                 <Button
                   type="button"
                   variant="ghost"
-                  onClick={() => setShowForm(false)}
+                  onClick={cancelForm}
                 >
                   Cancel
                 </Button>
@@ -287,6 +312,12 @@ export default function SettingsPage() {
                   <p className="text-sm text-gray-400">
                     ≈ ₹{dailyCost(cost).toFixed(0)}/day
                   </p>
+                  <button
+                    onClick={() => startEdit(cost)}
+                    className="text-xs text-emerald-700 hover:underline"
+                  >
+                    Edit
+                  </button>
                   {confirmDelete === cost.id ? (
                     <div className="flex gap-2">
                       <button

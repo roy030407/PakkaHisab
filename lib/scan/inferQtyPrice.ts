@@ -9,6 +9,8 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation for smart bill matching
+ *   - Only flag ambiguousQtyPrice for a real positive bare number; never ask
+ *     "is 0 the quantity or the price?" when there is no number to disambiguate
  *
  * WHERE IT FITS:
  *   Called per item by lib/scan/resolve.ts.
@@ -67,7 +69,7 @@ export function inferQtyPrice(
 
   // A single bare unknown number: lean on the catalog price to disambiguate.
   const bare = tokens.filter(t => t.guessedRole === 'unknown' || t.guessedRole === 'total')
-  if (bare.length === 1) {
+  if (bare.length === 1 && bare[0].value > 0) {
     const n = bare[0].value
     if (catalogPrice != null && catalogPrice > 0) {
       const near = Math.abs(n - catalogPrice) / catalogPrice <= PRICE_BAND
@@ -77,15 +79,17 @@ export function inferQtyPrice(
       // Far from the price -> read as a quantity, autofill the price.
       return { quantity: n, unitPrice: catalogPrice, fillSource: 'catalog', needsVerify: true, ambiguousQtyPrice: false }
     }
-    // No catalog price to compare -> we cannot tell. Ask.
+    // A real number but no catalog price to compare -> we cannot tell. Ask.
     return { quantity: 0, unitPrice: 0, fillSource: 'inferred', needsVerify: true, ambiguousQtyPrice: true }
   }
 
-  // Nothing usable.
+  // Nothing usable to read (no number, or a zero/garbage number). Do NOT ask
+  // "is 0 the quantity or the price?" - there is nothing to disambiguate. Fill
+  // the catalog price if we have it, else leave qty 1 / price 0 for a hand edit.
   if (catalogPrice != null) {
     return { quantity: 1, unitPrice: catalogPrice, fillSource: 'catalog', needsVerify: true, ambiguousQtyPrice: false }
   }
-  return { quantity: 0, unitPrice: 0, fillSource: 'inferred', needsVerify: true, ambiguousQtyPrice: true }
+  return { quantity: 1, unitPrice: 0, fillSource: 'inferred', needsVerify: true, ambiguousQtyPrice: false }
 }
 
 function round2(n: number): number {

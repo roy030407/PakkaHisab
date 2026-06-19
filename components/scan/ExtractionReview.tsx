@@ -13,6 +13,9 @@
  *     qty/price toggle, per-row remove, save gating.
  *   - Slice B2: Purchase/Sale toggle; in Sale mode pick a customer + payment method
  *   - Re-added ConfidenceBadge as an at-a-glance flag on low/medium rows
+ *   - Sale-first (default + first toggle); date defaults to today via a calendar
+ *     picker; more bottom padding so the qty/price stepper is never hidden; the
+ *     "is X qty or price?" prompt only shows for a real number and gained a Neither
  *
  * WHERE IT FITS:
  *   Shown when scan state = 'review' and documentType = 'single_bill'.
@@ -27,7 +30,7 @@ import { DuplicateWarning } from './DuplicateWarning'
 import { CustomerSheet } from '@/components/entry/CustomerSheet'
 import { ConfidenceBadge } from './ConfidenceBadge'
 
-type QtyPriceMode = 'unset' | 'quantity' | 'price'
+type QtyPriceMode = 'unset' | 'quantity' | 'price' | 'skip'
 
 interface EditableItem extends ExtractionItem {
   editedName: string
@@ -85,10 +88,11 @@ export function ExtractionReview({ extraction, documentUploadId, duplicateWarnin
     })
   )
   const [vendorName, setVendorName] = useState(extraction.vendorName ?? '')
-  const [date, setDate] = useState(extraction.date ?? '')
+  // Default to today when the bill date was not detected.
+  const [date, setDate] = useState(extraction.date || new Date().toISOString().slice(0, 10))
   const [showDuplicate, setShowDuplicate] = useState(!!duplicateWarning)
   const [saving, setSaving] = useState(false)
-  const [txType, setTxType] = useState<'purchase' | 'sale'>('purchase')
+  const [txType, setTxType] = useState<'purchase' | 'sale'>('sale')
   const [customerId, setCustomerId] = useState<string | undefined>()
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'upi' | 'credit'>('cash')
   const [showCustomer, setShowCustomer] = useState(false)
@@ -129,12 +133,14 @@ export function ExtractionReview({ extraction, documentUploadId, duplicateWarnin
     patch(idx, it => {
       if (mode === 'quantity') return { ...it, qtyPriceMode: mode, editedQty: it.bareNumber, ambiguousQtyPrice: false }
       if (mode === 'price') return { ...it, qtyPriceMode: mode, editedPrice: it.bareNumber, editedQty: it.editedQty || 1, ambiguousQtyPrice: false }
+      // 'skip' = neither; clear the prompt and let the merchant edit qty/price by hand.
+      if (mode === 'skip') return { ...it, qtyPriceMode: mode, editedQty: it.editedQty || 1, ambiguousQtyPrice: false }
       return { ...it, qtyPriceMode: mode }
     })
 
   // Save is blocked while any live row is still unresolved.
   const unresolved = live.some(
-    i => (i.matchState === 'variant_choice') || (i.ambiguousQtyPrice && i.qtyPriceMode === 'unset')
+    i => (i.matchState === 'variant_choice') || (i.ambiguousQtyPrice && i.qtyPriceMode === 'unset' && i.bareNumber > 0)
   )
 
   async function handleSave() {
@@ -172,7 +178,7 @@ export function ExtractionReview({ extraction, documentUploadId, duplicateWarnin
     <div className="flex flex-col min-h-screen bg-gray-50">
       <div className="sticky top-0 z-10 bg-emerald-700 px-4 py-4">
         <div className="mb-2 inline-flex rounded-lg bg-emerald-800/40 p-0.5">
-          {(['purchase', 'sale'] as const).map(t => (
+          {(['sale', 'purchase'] as const).map(t => (
             <button key={t} onClick={() => setTxType(t)}
               className={`btn-lift rounded-md px-3 py-1 text-xs font-semibold ${txType === t ? 'bg-white text-emerald-800' : 'text-emerald-100'}`}>
               {t === 'purchase' ? 'Purchase' : 'Sale'}
@@ -197,14 +203,14 @@ export function ExtractionReview({ extraction, documentUploadId, duplicateWarnin
           )}
           <div>
             <label className="text-[10px] uppercase tracking-wide text-emerald-200">Date</label>
-            <input value={date} onChange={e => setDate(e.target.value)} placeholder="Not detected"
-              className="mt-0.5 w-full rounded-md border border-emerald-500/60 bg-emerald-800/40 px-2 py-1.5 text-sm text-white placeholder-emerald-300 outline-none focus:border-emerald-300" />
+            <input type="date" value={date} onChange={e => setDate(e.target.value)}
+              className="mt-0.5 w-full rounded-md border border-emerald-500/60 bg-emerald-800/40 px-2 py-1.5 text-sm text-white outline-none focus:border-emerald-300 [color-scheme:dark]" />
           </div>
         </div>
         <p className="text-3xl font-bold text-white mt-3">₹{total.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</p>
       </div>
 
-      <div className="flex-1 pb-32">
+      <div className="flex-1 pb-48">
         {showDuplicate && duplicateWarning && (
           <DuplicateWarning date={duplicateWarning.date} onDismiss={() => setShowDuplicate(false)} />
         )}
@@ -283,12 +289,13 @@ export function ExtractionReview({ extraction, documentUploadId, duplicateWarnin
                   <p className="mt-1 text-xs text-gray-500">Will be added as a new product.</p>
                 )}
 
-                {item.ambiguousQtyPrice && item.qtyPriceMode === 'unset' && (
+                {item.ambiguousQtyPrice && item.qtyPriceMode === 'unset' && item.bareNumber > 0 && (
                   <div className="mt-2">
                     <p className="text-xs text-gray-500 mb-1">Is <b>{item.bareNumber}</b> the quantity or the price?</p>
                     <div className="inline-flex rounded-lg border border-gray-300 overflow-hidden">
                       <button onClick={() => setQtyPriceMode(idx, 'quantity')} className="px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50">Quantity ({item.bareNumber})</button>
                       <button onClick={() => setQtyPriceMode(idx, 'price')} className="px-3 py-1.5 text-sm font-medium text-gray-700 border-l border-gray-300 hover:bg-gray-50">Price (₹{item.bareNumber})</button>
+                      <button onClick={() => setQtyPriceMode(idx, 'skip')} className="px-3 py-1.5 text-sm font-medium text-gray-500 border-l border-gray-300 hover:bg-gray-50">Neither</button>
                     </div>
                   </div>
                 )}
