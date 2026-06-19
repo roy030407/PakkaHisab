@@ -12,6 +12,7 @@
  *   - Added desktop Sidebar (md+), BottomNav hidden md+, content takes remaining width
  *   - Wrapped page content in AppErrorBoundary so a client render crash on any
  *     dashboard screen shows a friendly retry instead of a white screen
+ *   - Mounted VoiceFab (mobile mic shortcut to /voice)
  *
  * WHERE IT FITS:
  *   Wraps all pages under (dashboard)/*. The single point of auth
@@ -26,6 +27,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { BottomNav } from "@/components/shared/BottomNav";
 import { Sidebar } from "@/components/shared/Sidebar";
 import { AppErrorBoundary } from "@/components/shared/AppErrorBoundary";
+import { VoiceFab } from "@/components/voice/VoiceFab";
 
 export default async function DashboardLayout({
   children,
@@ -59,6 +61,7 @@ export default async function DashboardLayout({
           <AppErrorBoundary>{children}</AppErrorBoundary>
         </main>
         <BottomNav />
+        <VoiceFab />
       </div>
     </div>
   );
