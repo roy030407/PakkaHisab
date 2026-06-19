@@ -39,7 +39,9 @@ export default function LedgerPage() {
   const [rows, setRows] = useState<Row[]>([])
   const [error, setError] = useState('')
 
-  async function handleFile(file: File) {
+  async function handleFile(files: File[]) {
+    const file = files[0]
+    if (!file) return
     setState('loading')
     setError('')
     try {

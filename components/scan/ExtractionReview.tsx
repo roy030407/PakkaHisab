@@ -67,9 +67,10 @@ interface Props {
     }>
   }) => void
   onCancel?: () => void
+  batchLabel?: string
 }
 
-export function ExtractionReview({ extraction, documentUploadId, duplicateWarning, onSave, onCancel }: Props) {
+export function ExtractionReview({ extraction, documentUploadId, duplicateWarning, onSave, onCancel, batchLabel }: Props) {
   const [items, setItems] = useState<EditableItem[]>(
     extraction.items.map((item: ExtractionItem) => {
       const name = item.matchedProductName ?? item.productNameRaw
@@ -177,6 +178,7 @@ export function ExtractionReview({ extraction, documentUploadId, duplicateWarnin
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <div className="sticky top-0 z-10 bg-emerald-700 px-4 py-4">
+        {batchLabel && <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-emerald-200">{batchLabel}</p>}
         <div className="mb-2 inline-flex rounded-lg bg-emerald-800/40 p-0.5">
           {(['sale', 'purchase'] as const).map(t => (
             <button key={t} onClick={() => setTxType(t)}

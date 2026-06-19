@@ -62,12 +62,22 @@ export default function ScanPage() {
   const [errorMessage, setErrorMessage] = useState('')
   const [shopName, setShopName] = useState('')
   const [savedSale, setSavedSale] = useState<{ id: string; total: number } | null>(null)
+  // Batch: a queue of gallery photos, reviewed/saved one at a time.
+  const [queue, setQueue] = useState<File[]>([])
+  const [queuePos, setQueuePos] = useState(0)
 
   useEffect(() => {
     fetch('/api/stores').then(r => r.json()).then(d => setShopName(d.store?.name ?? '')).catch(() => {})
   }, [])
 
-  async function handleFileSelected(file: File) {
+  function handleFilesSelected(files: File[]) {
+    if (files.length === 0) return
+    setQueue(files)
+    setQueuePos(0)
+    processFile(files[0])
+  }
+
+  async function processFile(file: File) {
     setState('loading')
     try {
       // Dynamic import to avoid SSR issues with browser-image-compression
@@ -110,16 +120,41 @@ export default function ScanPage() {
     })
     if (res.ok) {
       const data = await res.json().catch(() => ({}))
-      if (payload.type === 'sale' && data?.transactionId) {
+      // In a batch, advance to the next photo instead of leaving the flow.
+      if (queuePos + 1 < queue.length) {
+        const next = queuePos + 1
+        setQueuePos(next)
+        setReviewData(null)
+        processFile(queue[next])
+        return
+      }
+      // Single sale: offer the WhatsApp receipt. (Skipped during a batch.)
+      if (queue.length <= 1 && payload.type === 'sale' && data?.transactionId) {
         setSavedSale({ id: data.transactionId, total: payload.totalAmount })
         return
       }
+      setQueue([])
+      setQueuePos(0)
       router.push('/dashboard')
       router.refresh()
     } else {
       const data = await res.json()
       setErrorMessage(data.error ?? 'Failed to save. Please try again.')
       setState('error')
+    }
+  }
+
+  // Discard the current bill: in a batch, skip to the next; otherwise go back.
+  function skipOrBack() {
+    setReviewData(null)
+    if (queuePos + 1 < queue.length) {
+      const next = queuePos + 1
+      setQueuePos(next)
+      processFile(queue[next])
+    } else {
+      setQueue([])
+      setQueuePos(0)
+      setState('upload')
     }
   }
 
@@ -147,7 +182,7 @@ export default function ScanPage() {
   }
 
   if (state === 'upload') {
-    return <ScanUpload onFileSelected={handleFileSelected} />
+    return <ScanUpload onFileSelected={handleFilesSelected} />
   }
 
   if (state === 'loading') {
@@ -160,7 +195,7 @@ export default function ScanPage() {
         <p className="text-base font-semibold text-red-700 mb-2">Something went wrong</p>
         <p className="text-sm text-gray-500 mb-6">{errorMessage}</p>
         <button
-          onClick={() => setState('upload')}
+          onClick={() => { setQueue([]); setQueuePos(0); setState('upload') }}
           className="bg-emerald-700 text-white px-6 py-2.5 rounded-xl text-sm font-medium"
         >
           Try again
@@ -185,7 +220,8 @@ export default function ScanPage() {
         documentUploadId={reviewData.documentUploadId}
         duplicateWarning={reviewData.duplicateWarning}
         onSave={handleSave}
-        onCancel={() => { setReviewData(null); setState('upload') }}
+        onCancel={skipOrBack}
+        batchLabel={queue.length > 1 ? `Bill ${queuePos + 1} of ${queue.length}` : undefined}
       />
     )
   }

@@ -8,6 +8,7 @@
  * CHANGES THIS SESSION:
  *   - Initial creation
  *   - Khata Green restyle
+ *   - Gallery supports multi-select (batch); onFileSelected now takes File[]
  *
  * WHERE IT FITS:
  *   First screen of the scan flow. Shown when scan state = 'upload'.
@@ -19,7 +20,7 @@
 import { useRef } from 'react'
 
 interface Props {
-  onFileSelected: (file: File) => void
+  onFileSelected: (files: File[]) => void
 }
 
 export function ScanUpload({ onFileSelected }: Props) {
@@ -28,8 +29,8 @@ export function ScanUpload({ onFileSelected }: Props) {
   const fileRef = useRef<HTMLInputElement>(null)
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (file) onFileSelected(file)
+    const files = Array.from(e.target.files ?? [])
+    if (files.length > 0) onFileSelected(files)
     e.target.value = ''
   }
 
@@ -44,7 +45,7 @@ export function ScanUpload({ onFileSelected }: Props) {
       {/* Hidden inputs */}
       <input ref={cameraRef} type="file" accept="image/*" capture="environment"
         className="hidden" onChange={handleChange} />
-      <input ref={galleryRef} type="file" accept="image/*"
+      <input ref={galleryRef} type="file" accept="image/*" multiple
         className="hidden" onChange={handleChange} />
       <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp"
         className="hidden" onChange={handleChange} />
