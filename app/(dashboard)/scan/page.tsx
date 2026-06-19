@@ -83,8 +83,10 @@ export default function ScanPage() {
       // Dynamic import to avoid SSR issues with browser-image-compression
       const imageCompression = (await import('browser-image-compression')).default
       const compressed = await imageCompression(file, {
-        maxSizeMB: 2,
-        maxWidthOrHeight: 1920,
+        // Smaller upload = faster on patchy 4G. 1280px is still legible for
+        // bill text; Gemini reads it fine.
+        maxSizeMB: 1.5,
+        maxWidthOrHeight: 1280,
         useWebWorker: true,
       })
 

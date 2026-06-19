@@ -20,18 +20,23 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
+import dynamic from "next/dynamic"
 import { Download, Share2, ShoppingCart, Package, TrendingUp, Landmark } from "lucide-react"
 import { toast } from "sonner"
 import { PeriodToggle } from "@/components/reports/PeriodToggle"
 import { StatCard, formatINR } from "@/components/reports/StatCard"
 import { ProfitCard } from "@/components/reports/ProfitCard"
 import { TaxSummary } from "@/components/reports/TaxSummary"
-import { CashFlowChart } from "@/components/reports/CashFlowChart"
-import { SalesPurchasesChart } from "@/components/reports/SalesPurchasesChart"
-import { TopProductsChart } from "@/components/reports/TopProductsChart"
 import { ItemsSoldCard } from "@/components/reports/ItemsSoldCard"
 import { ReportSkeleton } from "@/components/shared/PageSkeleton"
 import type { ReportPeriod, PeriodReport } from "@/types"
+
+// Charts pull in recharts (heavy). Lazy-load them client-side so the rest of the
+// Reports page - and every other route sharing the bundle - loads faster.
+const ChartFallback = () => <div className="h-56 rounded-2xl border border-gray-100 bg-gray-50 animate-pulse" />
+const CashFlowChart = dynamic(() => import("@/components/reports/CashFlowChart").then(m => m.CashFlowChart), { ssr: false, loading: ChartFallback })
+const SalesPurchasesChart = dynamic(() => import("@/components/reports/SalesPurchasesChart").then(m => m.SalesPurchasesChart), { ssr: false, loading: ChartFallback })
+const TopProductsChart = dynamic(() => import("@/components/reports/TopProductsChart").then(m => m.TopProductsChart), { ssr: false, loading: ChartFallback })
 
 export default function ReportsPage() {
   const [period, setPeriod] = useState<ReportPeriod>("monthly")

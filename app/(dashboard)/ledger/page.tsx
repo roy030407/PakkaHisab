@@ -47,8 +47,9 @@ export default function LedgerPage() {
     try {
       const imageCompression = (await import('browser-image-compression')).default
       const compressed = await imageCompression(file, {
-        maxSizeMB: 2,
-        maxWidthOrHeight: 1920,
+        // Smaller upload = faster on patchy 4G; 1280px stays legible for ledger text.
+        maxSizeMB: 1.5,
+        maxWidthOrHeight: 1280,
         useWebWorker: true,
       })
       const fd = new FormData()
