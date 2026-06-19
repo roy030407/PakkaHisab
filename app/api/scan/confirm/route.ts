@@ -13,6 +13,8 @@
  *   - Security: try/catch on request.json()
  *   - Slice B2: can save a scan as a sale (stock out + credit balance), not only a purchase
  *   - Add-as-new products are now created is_active=true so they match the next scan
+ *   - Perf: resolve products in parallel, batch-insert items + corrections, and
+ *     aggregate stock updates per product (was ~40 sequential awaits per bill)
  *
  * WHERE IT FITS:
  *   Called by ExtractionReview "Save" button after merchant confirms items.
@@ -138,77 +140,93 @@ export async function POST(request: Request) {
     for (const p of owned ?? []) verifiedProductIds.add(p.id)
   }
 
-  // Process each item
-  for (const item of body.items) {
-    // Only use matchedProductId if it was verified as belonging to this store
+  // Resolve a product id per line in parallel. "Add as new" creates an active
+  // product so it matches the next scan. (Was a sequential per-item loop of ~40
+  // awaits for a 10-item bill; this batches the work to cut save latency.)
+  const storeId = store.id
+  async function resolveLine(item: ConfirmItem): Promise<{ item: ConfirmItem; productId: string } | null> {
     let productId = (item.matchedProductId && verifiedProductIds.has(item.matchedProductId))
       ? item.matchedProductId
       : null
-
-    // Create a product ONLY when the merchant explicitly chose "Add as new"
-    // (or there is genuinely no verified match to attach to).
     if (item.addAsNew || !productId) {
       const { data: newProduct } = await supabase
         .from('products')
         .insert({
-          store_id: store.id,
+          store_id: storeId,
           name: item.productNameRaw,
           category: 'Uncategorised',
           unit: 'piece',
           purchase_price: item.unitPrice,
           selling_price: item.unitPrice,
           tax_rate: item.taxRate ?? 0,
-          // Active so the new product is a real catalog item: it matches on the
-          // NEXT scan and shows in Stock/Products (was false = invisible/no rematch).
           is_active: true,
           is_pinned: false,
         })
         .select('id')
         .single()
-
-      if (newProduct) productId = newProduct.id
+      productId = newProduct?.id ?? null
     }
+    return productId ? { item, productId } : null
+  }
 
-    if (!productId) continue
+  const resolved = (await Promise.all(body.items.map(resolveLine)))
+    .filter((r): r is { item: ConfirmItem; productId: string } => r !== null)
 
-    // Insert transaction item
-    const { error: itemError } = await supabase.from('transaction_items').insert({
-      transaction_id: tx.id,
-      product_id: productId,
-      product_name_raw: item.productNameRaw,
-      quantity: item.quantity,
-      unit_price: item.unitPrice,
-      total_price: item.totalPrice,
-      tax_rate: item.taxRate ?? 0,
-      is_confirmed: true,
-    })
-    if (itemError) {
-      console.error('[scan/confirm] transaction_item insert failed:', itemError.message, { transactionId: tx.id, productId })
-      continue // don't update stock for a line that wasn't recorded
+  // One batch insert for all transaction items.
+  if (resolved.length > 0) {
+    const { error: itemsError } = await supabase.from('transaction_items').insert(
+      resolved.map(({ item, productId }) => ({
+        transaction_id: tx.id,
+        product_id: productId,
+        product_name_raw: item.productNameRaw,
+        quantity: item.quantity,
+        unit_price: item.unitPrice,
+        total_price: item.totalPrice,
+        tax_rate: item.taxRate ?? 0,
+        is_confirmed: true,
+      }))
+    )
+    if (itemsError) {
+      console.error('[scan/confirm] transaction_items batch insert failed:', itemsError.message, { transactionId: tx.id })
     }
+  }
 
-    // Sale moves stock out (-qty); purchase brings it in (+qty).
-    await updateStock(supabase, {
-      storeId: store.id,
-      productId,
-      delta: isSale ? -item.quantity : item.quantity,
-      transactionId: tx.id,
-      movementType: isSale ? 'sale' : 'purchase',
+  // Aggregate the stock movement per product (one update each), in parallel.
+  // Sale moves stock out (-qty); purchase brings it in (+qty).
+  const stockByProduct = new Map<string, { delta: number; unitPrice: number }>()
+  for (const { item, productId } of resolved) {
+    const prev = stockByProduct.get(productId)?.delta ?? 0
+    stockByProduct.set(productId, {
+      delta: prev + (isSale ? -item.quantity : item.quantity),
       unitPrice: item.unitPrice,
     })
-
-    // Learn from a match override: store raw bill text -> chosen product name
-    // so the extraction few-shot improves for this store over time.
-    if (item.correction && item.correction.original.trim() &&
-        item.correction.original.trim() !== item.correction.corrected.trim()) {
-      await supabase.from('extraction_corrections').insert({
-        store_id: store.id,
-        document_upload_id: sourceDocumentId,
-        field_name: 'product_name',
-        original_value: item.correction.original.trim(),
-        corrected_value: item.correction.corrected.trim(),
+  }
+  await Promise.all(
+    Array.from(stockByProduct.entries()).map(([productId, { delta, unitPrice }]) =>
+      updateStock(supabase, {
+        storeId,
+        productId,
+        delta,
+        transactionId: tx.id,
+        movementType: isSale ? 'sale' : 'purchase',
+        unitPrice,
       })
-    }
+    )
+  )
+
+  // One batch insert for the learned corrections (raw bill text -> chosen name).
+  const correctionRows = body.items
+    .filter(item => item.correction && item.correction.original.trim() &&
+      item.correction.original.trim() !== item.correction.corrected.trim())
+    .map(item => ({
+      store_id: store.id,
+      document_upload_id: sourceDocumentId,
+      field_name: 'product_name',
+      original_value: item.correction!.original.trim(),
+      corrected_value: item.correction!.corrected.trim(),
+    }))
+  if (correctionRows.length > 0) {
+    await supabase.from('extraction_corrections').insert(correctionRows)
   }
 
   // A credit sale increases what the customer owes (mirrors entry/quick).
