@@ -8,6 +8,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation (Voice Layer 1)
+ *   - Layer 3: removeLastRow + setLastRowQuantity (voice corrections)
  *
  * WHERE IT FITS:
  *   Used by app/(dashboard)/voice/page.tsx to keep the live cart in sync as
@@ -35,4 +36,17 @@ export function setRowQuantity(cart: VoiceCartRow[], productId: string, quantity
 
 export function cartTotal(cart: VoiceCartRow[]): number {
   return cart.reduce((sum, r) => sum + r.unitPrice * r.quantity, 0)
+}
+
+// Drop the most recently added row (voice: "aakhri hata do"). Empty-safe.
+export function removeLastRow(cart: VoiceCartRow[]): VoiceCartRow[] {
+  return cart.slice(0, -1)
+}
+
+// Set the last row's quantity (voice: "teen kar do"). Reuses setRowQuantity, so
+// a quantity of 0 or below removes that row. No-op on an empty cart.
+export function setLastRowQuantity(cart: VoiceCartRow[], quantity: number): VoiceCartRow[] {
+  if (cart.length === 0) return cart
+  const last = cart[cart.length - 1]
+  return setRowQuantity(cart, last.productId, quantity)
 }

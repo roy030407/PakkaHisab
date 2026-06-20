@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { addRowsToCart, setRowQuantity, cartTotal } from '@/lib/voice/cart'
+import { addRowsToCart, setRowQuantity, cartTotal, removeLastRow, setLastRowQuantity } from '@/lib/voice/cart'
 import type { VoiceCartRow } from '@/lib/voice/types'
 
 const row = (productId: string, quantity: number, unitPrice: number): VoiceCartRow =>
@@ -39,5 +39,36 @@ describe('cartTotal', () => {
 
   it('is zero for an empty cart', () => {
     expect(cartTotal([])).toBe(0)
+  })
+})
+
+describe('removeLastRow', () => {
+  it('drops the last row', () => {
+    const next = removeLastRow([row('a', 1, 10), row('b', 2, 20)])
+    expect(next.map((r) => r.productId)).toEqual(['a'])
+  })
+
+  it('is empty-safe and does not mutate the input', () => {
+    expect(removeLastRow([])).toEqual([])
+    const cart = [row('a', 1, 10)]
+    removeLastRow(cart)
+    expect(cart).toHaveLength(1)
+  })
+})
+
+describe('setLastRowQuantity', () => {
+  it('sets the quantity of the last row only', () => {
+    const next = setLastRowQuantity([row('a', 1, 10), row('b', 2, 20)], 5)
+    expect(next.find((r) => r.productId === 'b')!.quantity).toBe(5)
+    expect(next.find((r) => r.productId === 'a')!.quantity).toBe(1)
+  })
+
+  it('removes the last row when the quantity is zero or below', () => {
+    const next = setLastRowQuantity([row('a', 1, 10), row('b', 2, 20)], 0)
+    expect(next.map((r) => r.productId)).toEqual(['a'])
+  })
+
+  it('is a no-op on an empty cart', () => {
+    expect(setLastRowQuantity([], 3)).toEqual([])
   })
 })
