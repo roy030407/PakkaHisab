@@ -17,15 +17,34 @@
  */
 
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Inter } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
+const umamiWebsiteId = process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID;
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "PakkaHisab - Your AI CFO",
-  description: "Scan bills, understand your business, get paid faster.",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://pakkahisab.com"),
+  title: {
+    default: "PakkaHisab - Your AI CFO",
+    template: "%s - PakkaHisab",
+  },
+  description: "Scan bills, track inventory, manage udhaar, understand profit. AI-powered business management for Indian SME owners.",
+  openGraph: {
+    title: "PakkaHisab - Your AI CFO",
+    description: "Scan bills, track inventory, manage udhaar, understand profit. Built for Bharat ke dukandaar.",
+    siteName: "PakkaHisab",
+    locale: "en_IN",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "PakkaHisab - Your AI CFO",
+    description: "Scan bills, track inventory, manage udhaar, understand profit. Built for Bharat ke dukandaar.",
+  },
 };
 
 export default function RootLayout({
@@ -35,6 +54,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {umamiWebsiteId && (
+          <Script
+            defer
+            src="https://cloud.umami.is/script.js"
+            data-website-id={umamiWebsiteId}
+            strategy="afterInteractive"
+          />
+        )}
+      </head>
       <body className={`${inter.className} antialiased`}>
         {children}
         <Toaster />

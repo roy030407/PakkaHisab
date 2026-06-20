@@ -89,10 +89,12 @@ export default function PrivacyPage({
           items and amounts for you. This is only used to read your bill.
         </Item>
 
-        {/* TODO(privacy): replace [CONTACT_PLACEHOLDER] with a real support contact before launch. */}
         <Item title="Your control">
-          Want a copy of your data, or want it deleted? Contact us at [CONTACT_PLACEHOLDER] and we
-          will take care of it.
+          Want a copy of your data, or want it deleted? Contact us at{" "}
+          <a href="mailto:harwaniroy@gmail.com" className="font-semibold text-emerald-700 underline hover:text-emerald-800">
+            harwaniroy@gmail.com
+          </a>{" "}
+          and we will take care of it.
         </Item>
 
         <p className="mt-10 border-t border-stone-200 pt-4 text-xs text-stone-400">

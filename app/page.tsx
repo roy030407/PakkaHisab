@@ -90,7 +90,7 @@ export default async function LandingPage() {
       <LandingReveal />
 
       {/* Header */}
-      <header className="mx-auto flex max-w-5xl items-center justify-between px-5 py-4">
+      <header className="mx-auto flex max-w-5xl items-center justify-between px-5 py-4" role="banner">
         <div className="flex items-center gap-2">
           <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 font-extrabold text-white">₹</span>
           <span className="text-lg font-extrabold tracking-tight">PakkaHisab</span>
@@ -103,6 +103,7 @@ export default async function LandingPage() {
         </Link>
       </header>
 
+      <main>
       {/* ── Hero ── */}
       <section className="relative mx-auto max-w-5xl px-5 pb-20 pt-10 text-center md:pt-16">
         {FLOATERS.map((f, i) => (
@@ -139,11 +140,11 @@ export default async function LandingPage() {
         >
           Shuru karo - FREE
         </Link>
-        <p className="mt-3 text-xs text-stone-400">No card needed · 2 minute setup</p>
+        <p className="mt-3 text-xs text-stone-500">No card needed · 2 minute setup</p>
 
         <div className="mx-auto mt-12 max-w-xs" data-reveal style={{ "--reveal-rot": "-3deg", "--reveal-rot-final": "-1deg" } as React.CSSProperties}>
           <ComicCard rotate={0}>
-            <p className="text-left text-[10px] font-bold tracking-wide text-stone-400">📷 SCAN → ✓ DONE</p>
+            <p className="text-left text-[10px] font-bold tracking-wide text-stone-500">📷 SCAN → ✓ DONE</p>
             <p className="mt-1 text-left text-lg font-extrabold text-emerald-700">14 items in 8 seconds</p>
             <p className="text-left text-xs text-stone-500">Sharma ji ka aaj ka bill ✓</p>
           </ComicCard>
@@ -228,7 +229,7 @@ export default async function LandingPage() {
       <section className="px-5 pb-20">
         <div className="mx-auto max-w-md" data-reveal>
           <ComicCard rotate={-1}>
-            <p className="text-[10px] font-bold tracking-wide text-stone-400">✨ AAJ KI SALAH</p>
+            <p className="text-[10px] font-bold tracking-wide text-stone-500">✨ AAJ KI SALAH</p>
             <div className="mt-3 space-y-2">
               <div className="ml-auto w-fit max-w-[85%] rounded-2xl rounded-br-md bg-emerald-700 px-3.5 py-2 text-sm text-white">
                 Is hafte kya order karu?
@@ -263,7 +264,7 @@ export default async function LandingPage() {
                   </p>
                   <div className="mt-4 border-t-2 border-dashed border-stone-200 pt-3">
                     <p className="text-sm font-extrabold text-stone-900">{t.name}</p>
-                    <p className="text-xs text-stone-400">{t.role}</p>
+                    <p className="text-xs text-stone-500">{t.role}</p>
                   </div>
                 </ComicCard>
               </div>
@@ -303,7 +304,7 @@ export default async function LandingPage() {
         <h2 className="relative text-3xl font-black tracking-tight text-white md:text-5xl" data-reveal>
           Aaj se hisab pakka. 🎉
         </h2>
-        <p className="relative mx-auto mt-3 max-w-sm text-sm text-emerald-100" data-reveal style={{ "--reveal-delay": "0.08s" } as React.CSSProperties}>
+        <p className="relative mx-auto mt-3 max-w-sm text-sm text-emerald-50" data-reveal style={{ "--reveal-delay": "0.08s" } as React.CSSProperties}>
           Ek photo se shuru karo. Baaki sab PakkaHisab sambhal lega.
         </p>
         <div className="relative" data-reveal style={{ "--reveal-delay": "0.15s" } as React.CSSProperties}>
@@ -313,9 +314,11 @@ export default async function LandingPage() {
           >
             Shuru karo - FREE 🚀
           </Link>
-          <p className="mt-3 text-xs text-emerald-200">2 minute mein setup. Koi card nahi chahiye.</p>
+          <p className="mt-3 text-xs text-emerald-100">2 minute mein setup. Koi card nahi chahiye.</p>
         </div>
       </section>
+
+      </main>
 
       {/* ── Footer ── */}
       <footer className="bg-stone-900 px-5 py-12 text-amber-50/70">
@@ -330,21 +333,27 @@ export default async function LandingPage() {
             </p>
           </div>
           <div>
-            <p className="text-xs font-bold uppercase tracking-wider text-amber-50/50">Product</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-amber-50/70">Product</p>
             <ul className="mt-3 space-y-2 text-sm">
               <li><Link href="/signup" className="transition-colors hover:text-amber-50">Shuru karo</Link></li>
               <li><Link href="/login" className="transition-colors hover:text-amber-50">Login</Link></li>
             </ul>
           </div>
           <div>
-            <p className="text-xs font-bold uppercase tracking-wider text-amber-50/50">Bhasha</p>
-            <p className="mt-3 text-sm">Hindi · English · Telugu · Tamil · Marathi</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-amber-50/70">Support</p>
+            <ul className="mt-3 space-y-2 text-sm">
+              <li><a href="mailto:harwaniroy@gmail.com" className="transition-colors hover:text-amber-50">harwaniroy@gmail.com</a></li>
+            </ul>
+            <p className="mt-4 text-xs font-bold uppercase tracking-wider text-amber-50/70">Bhasha</p>
+            <p className="mt-2 text-sm">Hindi · English · Telugu · Tamil · Marathi</p>
           </div>
         </div>
-        <div className="mx-auto mt-10 max-w-5xl border-t border-amber-50/10 pt-6 text-center text-xs text-amber-50/40">
+        <div className="mx-auto mt-10 max-w-5xl border-t border-amber-50/10 pt-6 text-center text-xs text-amber-50/60">
           Made for Bharat ke dukandaar. © {new Date().getFullYear()} PakkaHisab.
           {" · "}
           <Link href="/privacy" className="transition-colors hover:text-amber-50">Privacy</Link>
+          {" · "}
+          <Link href="/terms" className="transition-colors hover:text-amber-50">Terms</Link>
         </div>
       </footer>
     </div>
