@@ -10,6 +10,8 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation (Voice Layer 1)
+ *   - Layer 4: resolve a customer (fuzzy, store-scoped) for attach_customer /
+ *     customer_balance and return it in the response
  *
  * WHERE IT FITS:
  *   Called by hooks/useVoiceSession.ts once per VAD-finalized segment.
@@ -25,7 +27,8 @@ import { aiRateLimit } from '@/lib/ratelimit'
 import { parseVoiceAudio } from '@/lib/anthropic/voiceParse'
 import { matchItem, type CatalogEntry } from '@/lib/scan/match'
 import { buildPendingRow } from '@/lib/voice/buildCartRow'
-import type { VoiceCartRow, VoiceParseResponse } from '@/lib/voice/types'
+import { matchCustomer, type CustomerEntry } from '@/lib/voice/customer'
+import type { VoiceCartRow, VoiceParseResponse, VoiceCustomerMatch } from '@/lib/voice/types'
 
 const ALLOWED_TYPES = ['audio/webm', 'audio/ogg', 'audio/mp4', 'audio/mpeg', 'audio/wav']
 const MAX_BYTES = 5 * 1024 * 1024
@@ -83,14 +86,23 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'voice_parse_failed' }, { status: 422 })
   }
 
-  // Command: nothing to match - hand the classification back to the client.
+  // Command: resolve a customer for udhaar / balance-by-name; else hand back as-is.
   if (parsed.kind === 'command') {
+    let customer: VoiceCustomerMatch | null = null
+    if (
+      (parsed.command === 'attach_customer' || parsed.command === 'customer_balance') &&
+      parsed.args.customerName
+    ) {
+      const customers = await loadCustomers(supabase, store.id)
+      customer = matchCustomer(parsed.args.customerName, customers)
+    }
     const res: VoiceParseResponse = {
       transcript: parsed.transcript,
       kind: 'command',
       cartItems: [],
       command: parsed.command,
       args: parsed.args,
+      customer,
     }
     return NextResponse.json(res)
   }
@@ -181,5 +193,19 @@ async function loadCatalog(supabase: SupabaseClient, storeId: string): Promise<C
     parentId: p.parent_product_id ?? null,
     unitPrice: Number(p.selling_price) || 0,
     freq: freq[p.id] ?? 0,
+  }))
+}
+
+// Store customers (id, name, balance) for fuzzy name matching. Store-scoped,
+// named columns, snake_case normalized at the boundary.
+async function loadCustomers(supabase: SupabaseClient, storeId: string): Promise<CustomerEntry[]> {
+  const { data: customers } = await supabase
+    .from('customers')
+    .select('id, name, current_balance')
+    .eq('store_id', storeId)
+  return (customers ?? []).map((c: { id: string; name: string; current_balance: number }) => ({
+    id: c.id,
+    name: c.name,
+    currentBalance: Number(c.current_balance) || 0,
   }))
 }
