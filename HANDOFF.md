@@ -17,12 +17,14 @@
   milestone = "V1 in merchant's hands").
 - Everything below the line "Built & live" is **done, committed to `main`, pushed,
   and verified** (tsc + 63 vitest tests + production build all green).
-- **Voice-first sales session: Layers 1 + 2 are BUILT** on branch
-  `voice-layer-1` (pushed to origin; tsc + 93 vitest tests + production build
-  green; NOT yet device-tested, NOT merged to `main`). Layer 1 = core session;
-  Layer 2 = voice commands (agla/next, khatam/close, balance read-aloud) + their
-  buttons. **THE NEXT BUILD = Voice Layer 3** (corrections: remove_last /
-  set_qty). **Begin there** (see "Next").
+- **Voice-first sales session: Layers 1 + 2 + 3 are BUILT** (tsc + 102 vitest
+  tests + production build green; NOT yet device-tested, NOT merged to `main`).
+  Layers 1+2 are on branch `voice-layer-1` (pushed); **Layer 3 is on branch
+  `voice-layer-3` off it** (corrections: remove_last / set_qty). Layer 1 = core
+  session; Layer 2 = commands (agla/next, khatam/close, balance read-aloud);
+  Layer 3 = voice corrections (drop last row, set last row qty). **THE NEXT BUILD
+  = Voice Layer 4** (udhaar by voice + balance-by-name). **Begin there** (see
+  "Next").
 
 ---
 
@@ -52,7 +54,7 @@
 
 ---
 
-## NEXT: device-test Layers 1+2, merge, then Voice Layer 3
+## NEXT: device-test Layers 1-3, merge, then Voice Layer 4
 
 The merchant **explicitly asked** to log sales by speaking, mid-rush ("ek doodh, 1
 bread, 5 Parle-G..."). This is validated, not inference.
@@ -60,28 +62,32 @@ bread, 5 Parle-G..."). This is validated, not inference.
 - **Spec:** `docs/superpowers/specs/2026-06-19-voice-first-session-design.md`
 - **Plans (done):**
   `docs/superpowers/plans/2026-06-19-voice-first-session-layer1.md`,
-  `docs/superpowers/plans/2026-06-20-voice-first-session-layer2.md`
-- **Branch state:** all voice work is on **`voice-layer-1`** (pushed to origin,
-  gets a Vercel **preview** deploy). `main` is untouched (production = the
-  merchant's live app), so nothing voice-related is live yet.
+  `docs/superpowers/plans/2026-06-20-voice-first-session-layer2.md`,
+  `docs/superpowers/plans/2026-06-20-voice-first-session-layer3.md`
+- **Branch topology (all off `main`, so production is untouched):**
+  `voice-layer-1` = Layers 1+2 (pushed, independently mergeable).
+  `voice-layer-3` = Layers 1+2+3 stacked (branched off `voice-layer-1`; corrections
+  on top). Each pushed branch gets its own Vercel **preview** deploy.
 - **Outstanding before merge:**
   1. **Real-device manual test (the spec's required pass, NOT yet done)** on the
      preview URL: speak 5+ Hinglish items with shop noise, confirm cart + saved
-     cash sale + stock; run each command ("agla", "khatam", "balance batao") and
-     its button; test mic-denied / offline. Tune `VAD_SILENCE_THRESHOLD` /
-     `VAD_SILENCE_MS` in `lib/voice/vad.ts` on-device (the one thing tests cannot
-     cover).
-  2. **Merge `voice-layer-1` -> `main`** (open the PR:
-     `https://github.com/roy030407/PakkaHisab/pull/new/voice-layer-1`) once the
-     device test passes. Merging to `main` auto-deploys to production.
-- **Voice Layer 3 (the next build):** corrections - `remove_last / aakhri hata do`
-  (drop the last cart row) and `set_qty / "teen kar do"` (set the last row's
-  quantity). The parse route already returns these command kinds; the
-  `decideCommandAction` decider (`lib/voice/command.ts`) currently no-ops them.
-  Layer 4 (stretch): udhaar by voice (attach customer + credit) + balance-by-name.
-- **Carry-over refinement for Layer 3:** the Khatam path fires `saveCart()` then
-  `stop()` without awaiting (cart is preserved on save failure, so no data loss,
-  but consider awaiting a successful save before ending the session).
+     cash sale + stock; run every command ("agla", "khatam", "balance batao",
+     "aakhri hata do", "teen kar do") and its on-screen equivalent; test mic-denied
+     / offline. Tune `VAD_SILENCE_THRESHOLD` / `VAD_SILENCE_MS` in
+     `lib/voice/vad.ts` on-device (the one thing tests cannot cover).
+  2. **Merge to `main`.** Either merge `voice-layer-3` (ships Layers 1-3 together)
+     or merge `voice-layer-1` first (Layers 1+2), then `voice-layer-3`. Merging to
+     `main` auto-deploys to production.
+- **Voice Layer 4 (the next build):** udhaar by voice - `attach_customer`
+  ("Sharma ji udhaar" -> match the customer by name, attach + mark the cart credit)
+  and balance-by-name ("Sharma ji ka kitna baaki" -> look up + TTS that customer's
+  outstanding). `decideCommandAction` currently no-ops `attach_customer`; the Gemini
+  prompt will need to emit it with `args.customerName`, and the save path will need
+  a credit + customer-pick branch (reuse the customer match + credit logic the
+  collections + scan-as-sale features already use).
+- **Carry-over refinement (noted for Layer 4):** the Khatam / `close` path fires
+  `saveCart()` then `stop()` without awaiting (cart is preserved on save failure, so
+  no data loss, but consider awaiting a successful save before ending the session).
 - **Honest risks (from the spec):** noisy shop + other voices can mis-parse;
   ~1-2s latency + free-tier rate limits; VAD tuning needs real-device work; needs
   internet (no offline voice).
@@ -111,8 +117,15 @@ UX fixes -> ledger capture -> resilience -> Slice C -> Slice B -> Slice A.
     equivalent (Save & agla, Khatam, speaker). Pure logic in `lib/voice/command.ts`;
     TTS wrapper in `lib/voice/speak.ts`; command dispatch wired in the `/voice`
     page via refs. NO server change (Layer 1 route already classifies commands).
+  - **Layer 3 (CORRECTIONS) - on branch `voice-layer-3`:** voice `remove_last`
+    ("aakhri hata do" / "galat") drops the last cart row; `set_qty` ("teen kar do"
+    / "make it 3") sets the last row's quantity (number flows via `args.quantity`).
+    Pure ops `removeLastRow` + `setLastRowQuantity` in `lib/voice/cart.ts`;
+    `decideCommandAction` extended (5-field action + args); Gemini prompt in
+    `lib/anthropic/voiceParse.ts` now classifies both. Button equivalents are the
+    existing per-row trash / +/- in `VoiceCart`. NO new UI.
   - Pure logic unit-tested (`lib/voice/`: parseGemini, cart, buildCartRow, vad,
-    command - **93 tests total**); browser shells are tsc/build-verified.
+    command - **102 tests total**); browser shells are tsc/build-verified.
   - **Known limitation (intended):** unmatched spoken item -> active product at
     `selling_price 0`, so that line saves at ₹0 (cart shows "No price set").
   - **VAD thresholds in `lib/voice/vad.ts` need on-device tuning.**
