@@ -65,7 +65,7 @@ export async function GET(request: Request) {
     txRows.filter((t: { customer_id: string | null }) => t.customer_id).map((t: { customer_id: string | null }) => t.customer_id!)
   ))
 
-  let customerMap: Record<string, string> = {}
+  const customerMap: Record<string, string> = {}
   if (customerIds.length > 0) {
     const { data: customers } = await supabase
       .from('customers')
