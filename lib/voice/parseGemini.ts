@@ -24,7 +24,7 @@ import type {
 } from './types'
 
 const COMMANDS: readonly VoiceCommand[] = [
-  'next', 'close', 'read_balance', 'remove_last', 'set_qty', 'attach_customer',
+  'next', 'close', 'read_balance', 'remove_last', 'set_qty', 'attach_customer', 'customer_balance',
 ]
 
 export function normalizeVoiceParse(raw: unknown): VoiceParseResult {

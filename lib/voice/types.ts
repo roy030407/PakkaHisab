@@ -8,6 +8,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation (Voice Layer 1)
+ *   - Layer 4: customer_balance command, VoiceCustomerMatch, VoiceParseResponse.customer
  *
  * WHERE IT FITS:
  *   Imported by lib/voice/*, lib/anthropic/voiceParse.ts,
@@ -24,6 +25,7 @@ export type VoiceCommand =
   | 'remove_last'
   | 'set_qty'
   | 'attach_customer'
+  | 'customer_balance'
 
 export interface VoiceParseItem {
   name: string
@@ -55,6 +57,13 @@ export interface VoiceCartRow {
   addedAsNew: boolean
 }
 
+// A customer resolved server-side from a spoken name (udhaar / balance-by-name).
+export interface VoiceCustomerMatch {
+  id: string
+  name: string
+  currentBalance: number
+}
+
 // Response body from POST /api/voice/parse.
 export interface VoiceParseResponse {
   transcript: string
@@ -62,4 +71,5 @@ export interface VoiceParseResponse {
   cartItems: VoiceCartRow[]
   command: VoiceCommand | null
   args: VoiceParseArgs
+  customer?: VoiceCustomerMatch | null
 }

@@ -54,4 +54,15 @@ describe('normalizeVoiceParse', () => {
     const r = normalizeVoiceParse({ command: 'set_qty', args: { quantity: 3, customerName: '  Sharma ji  ' } })
     expect(r.args).toEqual({ quantity: 3, customerName: 'Sharma ji' })
   })
+
+  it('recognizes customer_balance and keeps the customerName arg', () => {
+    const r = normalizeVoiceParse({
+      command: 'customer_balance',
+      args: { customerName: 'Sharma Ji' },
+      items: [],
+    })
+    expect(r.kind).toBe('command')
+    expect(r.command).toBe('customer_balance')
+    expect(r.args.customerName).toBe('Sharma Ji')
+  })
 })
