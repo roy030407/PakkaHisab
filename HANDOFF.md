@@ -196,6 +196,16 @@ UX fixes -> ledger capture -> resilience -> Slice C -> Slice B -> Slice A.
 
 ## Open threads / backlog (not blocking, pick up anytime)
 
+- **HIGH: atomic customer-balance increment.** `app/api/entry/quick/route.ts`
+  (and `app/api/scan/confirm/route.ts`) update `customers.current_balance` with a
+  read-modify-write (`read current_balance` then `update set = old + amount`). Two
+  concurrent credit sales for the same customer can interleave and lose an
+  increment (under-count a receivable). Pre-existing (predates voice), but the
+  voice udhaar flow (Layer 4) is the first feature to drive credit sales fast and
+  repeatedly, so it is now a realistic money-loss path. Fix: do the add DB-side
+  atomically (a Postgres RPC `current_balance = current_balance + $1`, or a
+  trigger). This is its own focused PR on `main` (shared money logic), NOT part of
+  the voice branches. Surfaced by the Layer 4 final review.
 - **Run migrations 006 + 007** in the Supabase SQL editor if not already (reminder
   template + cash_reconciliations). User said 006/007 were run.
 - **Demo data for the panel** (untracked, ready to use):
