@@ -12,6 +12,8 @@
  *   - Disabled Save button no longer lifts on hover
  *   - Layer 2: voice commands (agla/next, khatam/close, balance read-aloud),
  *     Save & agla / Khatam / speaker buttons, command dispatch via refs
+ *   - Layer 3: voice corrections (remove_last drops the last row, set_qty sets
+ *     the last row's quantity); runCommand now receives args
  *
  * WHERE IT FITS:
  *   Reached from the Sidebar (desktop) and the VoiceFab (mobile).
@@ -25,10 +27,10 @@ import { useCallback, useRef, useState } from 'react'
 import { Mic, Square, Loader2, Volume2 } from 'lucide-react'
 import { useVoiceSession } from '@/hooks/useVoiceSession'
 import { VoiceCart } from '@/components/voice/VoiceCart'
-import { addRowsToCart, setRowQuantity, cartTotal } from '@/lib/voice/cart'
+import { addRowsToCart, setRowQuantity, cartTotal, removeLastRow, setLastRowQuantity } from '@/lib/voice/cart'
 import { decideCommandAction, buildBalanceSpeech } from '@/lib/voice/command'
 import { speak } from '@/lib/voice/speak'
-import type { VoiceCartRow, VoiceParseResponse, VoiceCommand } from '@/lib/voice/types'
+import type { VoiceCartRow, VoiceParseResponse, VoiceCommand, VoiceParseArgs } from '@/lib/voice/types'
 
 export default function VoicePage() {
   const [rows, setRows] = useState<VoiceCartRow[]>([])
@@ -67,10 +69,15 @@ export default function VoicePage() {
     }
   }, [])
 
-  const runCommand = useCallback((command: VoiceCommand) => {
+  const runCommand = useCallback((command: VoiceCommand, args: VoiceParseArgs) => {
     const cart = stateRef.current.rows
-    const action = decideCommandAction(command, cart.length)
+    const action = decideCommandAction(command, cart.length, args)
     if (action.speakTotal) speak(buildBalanceSpeech(cartTotal(cart)))
+    if (action.removeLast) setRows((prev) => removeLastRow(prev))
+    if (action.setQty !== null) {
+      const qty = action.setQty
+      setRows((prev) => setLastRowQuantity(prev, qty))
+    }
     if (action.save) void saveCart()
     if (action.closeSession) stopRef.current()
   }, [saveCart])
@@ -80,7 +87,7 @@ export default function VoicePage() {
       setRows((prev) => addRowsToCart(prev, r.cartItems))
       return
     }
-    if (r.kind === 'command' && r.command) runCommand(r.command)
+    if (r.kind === 'command' && r.command) runCommand(r.command, r.args)
   }, [runCommand])
 
   const { status, lastTranscript, start, stop } = useVoiceSession(onResult)
