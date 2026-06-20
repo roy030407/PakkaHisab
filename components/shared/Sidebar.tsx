@@ -11,6 +11,7 @@
  *   - Khata Green: emerald brand mark + emerald active pill states
  *   - Added Logout row at the bottom (returns to landing page)
  *   - Nav items lift on hover (btn-lift)
+ *   - Added Voice (/voice) nav item
  *
  * WHERE IT FITS:
  *   Mounted in app/(dashboard)/layout.tsx. Visible md+, hidden on mobile.
@@ -22,7 +23,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
-  Home, Camera, PenLine, Package, Users,
+  Home, Camera, Mic, PenLine, Package, Users,
   BarChart2, Bot, Settings,
 } from 'lucide-react'
 import { LogoutButton } from './LogoutButton'
@@ -30,6 +31,7 @@ import { LogoutButton } from './LogoutButton'
 const PRIMARY_NAV = [
   { href: '/dashboard', label: 'Home',      Icon: Home      },
   { href: '/scan',      label: 'Scan Bill', Icon: Camera    },
+  { href: '/voice',     label: 'Voice',     Icon: Mic       },
   { href: '/entry',     label: 'Entry',     Icon: PenLine   },
   { href: '/inventory', label: 'Stock',     Icon: Package   },
   { href: '/customers', label: 'Customers', Icon: Users     },
