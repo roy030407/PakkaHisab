@@ -17,14 +17,15 @@
   milestone = "V1 in merchant's hands").
 - Everything below the line "Built & live" is **done, committed to `main`, pushed,
   and verified** (tsc + 63 vitest tests + production build all green).
-- **Voice-first sales session: Layers 1 + 2 + 3 are BUILT** (tsc + 102 vitest
-  tests + production build green; NOT yet device-tested, NOT merged to `main`).
-  Layers 1+2 are on branch `voice-layer-1` (pushed); **Layer 3 is on branch
-  `voice-layer-3` off it** (corrections: remove_last / set_qty). Layer 1 = core
-  session; Layer 2 = commands (agla/next, khatam/close, balance read-aloud);
-  Layer 3 = voice corrections (drop last row, set last row qty). **THE NEXT BUILD
-  = Voice Layer 4** (udhaar by voice + balance-by-name). **Begin there** (see
-  "Next").
+- **Voice-first sales session: Layers 1 + 2 + 3 + 4 are BUILT** (the full
+  spec, CORE + all STRETCH; tsc + 110 vitest tests + production build green; NOT
+  yet device-tested, NOT merged to `main`). Branch stack off `main`:
+  `voice-layer-1` (L1+2), `voice-layer-3` (L1-3), **`voice-layer-4` (L1-4, latest,
+  pushed)**. Layer 1 = core session; Layer 2 = commands (agla/next, khatam/close,
+  balance read-aloud); Layer 3 = corrections (drop last row, set last row qty);
+  Layer 4 = udhaar by voice (attach customer + credit sale) + balance-by-name.
+  **No further voice layers planned** - next is the device test + merge. **Begin
+  there** (see "Next").
 
 ---
 
@@ -54,40 +55,38 @@
 
 ---
 
-## NEXT: device-test Layers 1-3, merge, then Voice Layer 4
+## NEXT: device-test the full voice feature (Layers 1-4), then merge
 
 The merchant **explicitly asked** to log sales by speaking, mid-rush ("ek doodh, 1
-bread, 5 Parle-G..."). This is validated, not inference.
+bread, 5 Parle-G..."). This is validated, not inference. **The voice feature is
+now fully built (all 4 layers); only the device pass + merge remain.**
 
 - **Spec:** `docs/superpowers/specs/2026-06-19-voice-first-session-design.md`
-- **Plans (done):**
-  `docs/superpowers/plans/2026-06-19-voice-first-session-layer1.md`,
-  `docs/superpowers/plans/2026-06-20-voice-first-session-layer2.md`,
-  `docs/superpowers/plans/2026-06-20-voice-first-session-layer3.md`
+- **Plans (all done):** `docs/superpowers/plans/2026-06-19-voice-first-session-layer1.md`
+  and `...-layer2.md`, `...-layer3.md`, `...-layer4.md`.
 - **Branch topology (all off `main`, so production is untouched):**
-  `voice-layer-1` = Layers 1+2 (pushed, independently mergeable).
-  `voice-layer-3` = Layers 1+2+3 stacked (branched off `voice-layer-1`; corrections
-  on top). Each pushed branch gets its own Vercel **preview** deploy.
+  `voice-layer-1` = L1+2, `voice-layer-3` = L1-3 (off voice-layer-1),
+  **`voice-layer-4` = L1-4 (off voice-layer-3, the complete feature, pushed)**.
+  Each pushed branch gets its own Vercel **preview** deploy.
 - **Outstanding before merge:**
   1. **Real-device manual test (the spec's required pass, NOT yet done)** on the
-     preview URL: speak 5+ Hinglish items with shop noise, confirm cart + saved
-     cash sale + stock; run every command ("agla", "khatam", "balance batao",
-     "aakhri hata do", "teen kar do") and its on-screen equivalent; test mic-denied
-     / offline. Tune `VAD_SILENCE_THRESHOLD` / `VAD_SILENCE_MS` in
-     `lib/voice/vad.ts` on-device (the one thing tests cannot cover).
-  2. **Merge to `main`.** Either merge `voice-layer-3` (ships Layers 1-3 together)
-     or merge `voice-layer-1` first (Layers 1+2), then `voice-layer-3`. Merging to
-     `main` auto-deploys to production.
-- **Voice Layer 4 (the next build):** udhaar by voice - `attach_customer`
-  ("Sharma ji udhaar" -> match the customer by name, attach + mark the cart credit)
-  and balance-by-name ("Sharma ji ka kitna baaki" -> look up + TTS that customer's
-  outstanding). `decideCommandAction` currently no-ops `attach_customer`; the Gemini
-  prompt will need to emit it with `args.customerName`, and the save path will need
-  a credit + customer-pick branch (reuse the customer match + credit logic the
-  collections + scan-as-sale features already use).
-- **Carry-over refinement (noted for Layer 4):** the Khatam / `close` path fires
-  `saveCart()` then `stop()` without awaiting (cart is preserved on save failure, so
-  no data loss, but consider awaiting a successful save before ending the session).
+     `voice-layer-4` preview URL: speak 5+ Hinglish items with shop noise, confirm
+     cart + saved sale + stock; run every command ("agla", "khatam", "balance
+     batao", "aakhri hata do", "teen kar do", "<name> udhaar", "<name> ka kitna
+     baaki") and its on-screen equivalent; include a duplicate-merge case (speak an
+     item already in the cart, then "aakhri hata do"); test mic-denied / offline.
+     Tune `VAD_SILENCE_THRESHOLD` / `VAD_SILENCE_MS` in `lib/voice/vad.ts`
+     on-device (the one thing tests cannot cover).
+  2. **Merge to `main`.** Merge `voice-layer-4` to ship Layers 1-4 together (or
+     merge the earlier branches in order first). Merging to `main` auto-deploys to
+     production.
+- **Voice backlog (nice-to-have, not planned):** a manual on-screen customer
+  picker on `/voice` (for when voice mis-hears a name); new-customer-by-voice;
+  partial-payment by voice; Hinglish/Devanagari number read-aloud (TTS is English
+  now).
+- **Carry-over refinement:** the Khatam / `close` path fires `saveCart()` then
+  `stop()` without awaiting (cart preserved on save failure, so no data loss, but
+  consider awaiting a successful save before ending the session).
 - **Honest risks (from the spec):** noisy shop + other voices can mis-parse;
   ~1-2s latency + free-tier rate limits; VAD tuning needs real-device work; needs
   internet (no offline voice).
@@ -124,8 +123,20 @@ UX fixes -> ledger capture -> resilience -> Slice C -> Slice B -> Slice A.
     `decideCommandAction` extended (5-field action + args); Gemini prompt in
     `lib/anthropic/voiceParse.ts` now classifies both. Button equivalents are the
     existing per-row trash / +/- in `VoiceCart`. NO new UI.
+  - **Layer 4 (UDHAAR BY VOICE) - on branch `voice-layer-4`:** voice
+    `attach_customer` ("Sharma ji udhaar") fuzzy-matches a store customer
+    server-side, attaches a detachable chip, and saves that sale on CREDIT with
+    `customerId` (reuses `/api/entry/quick`, which bumps the customer's balance);
+    `customer_balance` ("Sharma ji ka kitna baaki") looks up + reads the
+    outstanding aloud. Pure `matchCustomer` (Fuse) + `buildBalanceByNameSpeech` in
+    `lib/voice/customer.ts`; customer lookup in `/api/voice/parse` (store-scoped);
+    Gemini prompt classifies both (name in `args.customerName`). Limitation: only
+    EXISTING customers match; no manual on-screen customer picker on `/voice`
+    (misfire safety = visible chip + detach + cash default). NO new-customer or
+    partial-payment by voice.
   - Pure logic unit-tested (`lib/voice/`: parseGemini, cart, buildCartRow, vad,
-    command - **102 tests total**); browser shells are tsc/build-verified.
+    command, customer - **110 tests total**); browser/route shells are
+    tsc/build-verified.
   - **Known limitation (intended):** unmatched spoken item -> active product at
     `selling_price 0`, so that line saves at ₹0 (cart shows "No price set").
   - **VAD thresholds in `lib/voice/vad.ts` need on-device tuning.**
