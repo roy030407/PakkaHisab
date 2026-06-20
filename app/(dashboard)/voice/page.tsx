@@ -14,6 +14,9 @@
  *     Save & agla / Khatam / speaker buttons, command dispatch via refs
  *   - Layer 3: voice corrections (remove_last drops the last row, set_qty sets
  *     the last row's quantity); runCommand now receives args
+ *   - Layer 4: udhaar by voice (attach_customer attaches a customer + saves the
+ *     sale on credit; customer_balance reads a named customer's balance aloud);
+ *     detachable customer chip
  *
  * WHERE IT FITS:
  *   Reached from the Sidebar (desktop) and the VoiceFab (mobile).
@@ -24,23 +27,25 @@
  */
 'use client'
 import { useCallback, useRef, useState } from 'react'
-import { Mic, Square, Loader2, Volume2 } from 'lucide-react'
+import { Mic, Square, Loader2, Volume2, X } from 'lucide-react'
 import { useVoiceSession } from '@/hooks/useVoiceSession'
 import { VoiceCart } from '@/components/voice/VoiceCart'
 import { addRowsToCart, setRowQuantity, cartTotal, removeLastRow, setLastRowQuantity } from '@/lib/voice/cart'
 import { decideCommandAction, buildBalanceSpeech } from '@/lib/voice/command'
 import { speak } from '@/lib/voice/speak'
-import type { VoiceCartRow, VoiceParseResponse, VoiceCommand, VoiceParseArgs } from '@/lib/voice/types'
+import { buildBalanceByNameSpeech } from '@/lib/voice/customer'
+import type { VoiceCartRow, VoiceParseResponse, VoiceCommand, VoiceParseArgs, VoiceCustomerMatch } from '@/lib/voice/types'
 
 export default function VoicePage() {
   const [rows, setRows] = useState<VoiceCartRow[]>([])
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
+  const [customer, setCustomer] = useState<VoiceCustomerMatch | null>(null)
 
   // The hook holds onResult by identity, so command handling reads the latest
-  // cart + saving flag through a ref rather than a stale closure.
-  const stateRef = useRef<{ rows: VoiceCartRow[]; saving: boolean }>({ rows, saving })
-  stateRef.current = { rows, saving }
+  // cart + saving flag + attached customer through a ref, not a stale closure.
+  const stateRef = useRef<{ rows: VoiceCartRow[]; saving: boolean; customer: VoiceCustomerMatch | null }>({ rows, saving, customer })
+  stateRef.current = { rows, saving, customer }
 
   // stop comes from the hook below; onResult (defined first) reaches it via a ref.
   const stopRef = useRef<() => void>(() => {})
@@ -51,17 +56,20 @@ export default function VoicePage() {
     setSaving(true)
     setSaveError(null)
     try {
+      const cust = stateRef.current.customer
       const res = await fetch('/api/entry/quick', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           type: 'sale',
-          paymentMethod: 'cash',
+          paymentMethod: cust ? 'credit' : 'cash',
+          customerId: cust?.id,
           items: cart.map((r) => ({ productId: r.productId, quantity: r.quantity })),
         }),
       })
       if (!res.ok) { setSaveError('Could not save. Check your connection and try again.'); return }
       setRows([])
+      setCustomer(null)
     } catch {
       setSaveError('Could not save. Check your connection and try again.')
     } finally {
@@ -87,7 +95,17 @@ export default function VoicePage() {
       setRows((prev) => addRowsToCart(prev, r.cartItems))
       return
     }
-    if (r.kind === 'command' && r.command) runCommand(r.command, r.args)
+    if (r.kind !== 'command' || !r.command) return
+    if (r.command === 'attach_customer') {
+      if (r.customer) setCustomer(r.customer)
+      else speak('Customer not found.')
+      return
+    }
+    if (r.command === 'customer_balance') {
+      speak(buildBalanceByNameSpeech(r.customer ?? null))
+      return
+    }
+    runCommand(r.command, r.args)
   }, [runCommand])
 
   const { status, lastTranscript, start, stop } = useVoiceSession(onResult)
@@ -141,6 +159,22 @@ export default function VoicePage() {
 
       <VoiceCart rows={rows} onSetQty={setQty} />
 
+      {customer && (
+        <div className="flex items-center justify-between rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
+          <span className="text-sm font-medium text-amber-900">
+            Udhaar: {customer.name} (credit)
+          </span>
+          <button
+            type="button"
+            onClick={() => setCustomer(null)}
+            aria-label="Remove customer from this sale"
+            className="btn-lift flex h-7 w-7 items-center justify-center rounded-lg text-amber-700 cursor-pointer"
+          >
+            <X size={15} />
+          </button>
+        </div>
+      )}
+
       {/* Speaker: read the running total aloud (voice equivalent: "balance batao") */}
       <div className="flex justify-end">
         <button
@@ -165,7 +199,7 @@ export default function VoicePage() {
             canSave ? 'btn-lift bg-emerald-600 cursor-pointer' : 'bg-gray-300 cursor-not-allowed'
           }`}
         >
-          {saving ? 'Saving...' : `Save & agla - ₹${total}`}
+          {saving ? 'Saving...' : `${customer ? 'Save udhaar' : 'Save'} & agla - ₹${total}`}
         </button>
         <button
           type="button"
