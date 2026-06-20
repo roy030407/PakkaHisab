@@ -52,15 +52,17 @@ export default async function DashboardPage() {
   // Last 7 days (inclusive of today), IST
   const today = istDateString(new Date())
   const sevenDaysAgo = istDateString(new Date(Date.now() - 6 * 86400000))
+  const monthStart = today.slice(0, 8) + "01"
 
   let salesToday = 0, purchasesToday = 0, txCountToday = 0
+  let salesMtd = 0, purchasesMtd = 0
   let dailyFixedCost = 0, outstandingReceivables = 0, receivableCustomers = 0
   let lowStockCount = 0, expiryCount = 0
   let profitByDay: number[] = []
   let dayLabels: string[] = []
 
   if (store) {
-    const [txResult, costsResult, customersResult, inventoryResult, expiryResult] =
+    const [txResult, mtdResult, costsResult, customersResult, inventoryResult, expiryResult] =
       await Promise.all([
         supabase
           .from("transactions")
@@ -68,6 +70,13 @@ export default async function DashboardPage() {
           .eq("store_id", store.id)
           .is("voided_at", null)
           .gte("date", sevenDaysAgo)
+          .lte("date", today),
+        supabase
+          .from("transactions")
+          .select("type, total_amount")
+          .eq("store_id", store.id)
+          .is("voided_at", null)
+          .gte("date", monthStart)
           .lte("date", today),
         supabase
           .from("fixed_costs")
@@ -129,6 +138,12 @@ export default async function DashboardPage() {
     purchasesToday = todayBucket.purchases
     txCountToday = todayBucket.count
 
+    for (const tx of mtdResult.data ?? []) {
+      const amt = Number(tx.total_amount) || 0
+      if (tx.type === "sale") salesMtd += amt
+      else if (tx.type === "purchase") purchasesMtd += amt
+    }
+
     outstandingReceivables = (customersResult.data ?? []).reduce(
       (sum, c) => sum + (Number(c.current_balance) || 0), 0
     )
@@ -149,6 +164,11 @@ export default async function DashboardPage() {
       ? Math.round(((netProfitToday - netProfitYesterday) / Math.abs(netProfitYesterday)) * 100)
       : null
 
+  const dayOfMonth = new Date().getDate()
+  const mtdFixedCost = dailyFixedCost * dayOfMonth
+  const netProfitMtd = Math.round(salesMtd - purchasesMtd - mtdFixedCost)
+  const monthName = new Intl.DateTimeFormat("en-IN", { month: "short", timeZone: "Asia/Kolkata" }).format(new Date())
+
   return (
     <div className="page-enter px-4 py-6 md:px-8 md:py-8 max-w-5xl mx-auto">
       <div className="mb-5">
@@ -161,29 +181,70 @@ export default async function DashboardPage() {
       <div className="md:grid md:grid-cols-[1fr_300px] md:gap-6">
         <div className="space-y-4">
 
-          {/* Hero profit card */}
+          {/* Hero sales + profit card */}
           <div className="relative overflow-hidden rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-emerald-100 p-5">
             <div className="pointer-events-none absolute -right-5 -top-5 h-28 w-28 rounded-full bg-emerald-500/[0.08]" />
             <div className="pointer-events-none absolute -bottom-9 right-5 h-20 w-20 rounded-full bg-emerald-500/[0.06]" />
-            <p className="text-[11px] font-bold uppercase tracking-wider text-emerald-700">
-              Net profit today
-            </p>
-            <div className="mt-1 flex items-end gap-2.5">
-              <p className={`text-3xl font-extrabold tracking-tight leading-none ${
-                netProfitToday < 0 ? "text-red-700" : "text-emerald-950"
-              }`}>
-                <AnimatedNumber value={netProfitToday} format="inr" />
-              </p>
-              {trendPct !== null && (
-                <span className={`mb-0.5 rounded-full border px-2 py-0.5 text-[11px] font-bold ${
-                  trendPct >= 0
-                    ? "border-emerald-300 bg-emerald-100 text-emerald-700"
-                    : "border-red-200 bg-red-50 text-red-600"
-                }`}>
-                  {trendPct >= 0 ? "▲" : "▼"} {Math.abs(trendPct)}% vs yesterday
-                </span>
-              )}
+
+            <div className="grid grid-cols-2 gap-4">
+              {/* Today */}
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-wider text-emerald-700">
+                  Today
+                </p>
+                <div className="mt-2 space-y-1">
+                  <div>
+                    <p className="text-[10px] font-medium text-emerald-600/70">Sales</p>
+                    <p className="text-xl font-extrabold tracking-tight leading-none text-emerald-950">
+                      <AnimatedNumber value={Math.round(salesToday)} format="inr" />
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-medium text-emerald-600/70">Profit</p>
+                    <div className="flex items-end gap-1.5">
+                      <p className={`text-xl font-extrabold tracking-tight leading-none ${
+                        netProfitToday < 0 ? "text-red-700" : "text-emerald-950"
+                      }`}>
+                        <AnimatedNumber value={netProfitToday} format="inr" />
+                      </p>
+                      {trendPct !== null && (
+                        <span className={`mb-0.5 rounded-full border px-1.5 py-0.5 text-[9px] font-bold ${
+                          trendPct >= 0
+                            ? "border-emerald-300 bg-emerald-100 text-emerald-700"
+                            : "border-red-200 bg-red-50 text-red-600"
+                        }`}>
+                          {trendPct >= 0 ? "▲" : "▼"} {Math.abs(trendPct)}%
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Month to date */}
+              <div className="border-l border-emerald-200/60 pl-4">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-emerald-700">
+                  {monthName} (1-{dayOfMonth})
+                </p>
+                <div className="mt-2 space-y-1">
+                  <div>
+                    <p className="text-[10px] font-medium text-emerald-600/70">Sales</p>
+                    <p className="text-xl font-extrabold tracking-tight leading-none text-emerald-950">
+                      <AnimatedNumber value={Math.round(salesMtd)} format="inr" />
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-medium text-emerald-600/70">Profit</p>
+                    <p className={`text-xl font-extrabold tracking-tight leading-none ${
+                      netProfitMtd < 0 ? "text-red-700" : "text-emerald-950"
+                    }`}>
+                      <AnimatedNumber value={netProfitMtd} format="inr" />
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
+
             <div className="mt-4">
               <Sparkline values={profitByDay} labels={dayLabels} />
             </div>
