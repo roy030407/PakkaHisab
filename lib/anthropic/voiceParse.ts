@@ -10,6 +10,7 @@
  * CHANGES THIS SESSION:
  *   - Initial creation (Voice Layer 1). Gemini audio, NOT Claude.
  *   - Layer 3: classify remove_last + set_qty (set_qty number in args.quantity)
+ *   - Layer 4: classify attach_customer + customer_balance (name in args.customerName)
  *
  * WHERE IT FITS:
  *   Called by app/api/voice/parse/route.ts with the base64 audio segment.
@@ -32,6 +33,8 @@ Map command phrases to one of these (else it is items):
 - "balance" / "hisab" / "total" / "kitna hua" / "kitne ka" -> "read_balance"
 - "remove last" / "aakhri hata do" / "pichla hata do" / "ye hata do" / "galat" -> "remove_last"
 - "set quantity" / "change quantity" / "teen kar do" / "do kar do" / "make it 3" -> "set_qty" (put the new number in args.quantity)
+- "<name> udhaar" / "<name> ko udhaar" / "udhaar <name>" / "<name> ke naam" -> "attach_customer" (put the person name in args.customerName)
+- "<name> ka kitna baaki" / "<name> ka balance" / "<name> ka hisab" / "<name> kitna dena hai" -> "customer_balance" (put the person name in args.customerName)
 
 For ITEMS, expand common Hindi to clean English product names (doodh->milk, chawal->rice, cheeni->sugar, atta->wheat flour, anda->egg, tel->oil, namak->salt). Keep brand names exactly (Parle-G, Thums Up, Amul, Maggi). Read Hindi/Hinglish numbers (ek=1, do=2, teen=3, chaar=4, paanch=5, das=10, dozen=12). If no number is spoken for an item, use quantity 1.
 
@@ -40,7 +43,7 @@ Return exactly:
   "transcript": string,
   "kind": "items" | "command",
   "items": [ { "name": string, "quantity": number, "unit": string | null } ],
-  "command": "next" | "close" | "read_balance" | "remove_last" | "set_qty" | null,
+  "command": "next" | "close" | "read_balance" | "remove_last" | "set_qty" | "attach_customer" | "customer_balance" | null,
   "args": { "quantity": number | null, "customerName": string | null }
 }`
 
