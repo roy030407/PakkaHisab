@@ -11,6 +11,7 @@
  *   - Initial creation (delete a wrongly-saved transaction from the ledger)
  *   - Reverse 'payment' rows on delete (re-adds the amount to the balance)
  *   - GET returns a transaction + its items + customer (for receipt sharing)
+ *   - PATCH void endpoint: soft-deletes via voided_at, reverses inventory + balance
  *
  * WHERE IT FITS:
  *   Called by components/customers/CustomerLedger.tsx (delete control per row).
@@ -163,4 +164,102 @@ export async function GET(
   }
 
   return NextResponse.json({ transaction, items: items ?? [], customer })
+}
+
+export async function PATCH(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  const supabase = createSupabaseServerClient()
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  if (authError || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  let body: { action?: string }
+  try { body = await request.json() } catch {
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
+  }
+  if (body.action !== 'void') {
+    return NextResponse.json({ error: 'Unsupported action' }, { status: 400 })
+  }
+
+  const { data: store } = await supabase
+    .from('stores')
+    .select('id')
+    .eq('owner_id', user.id)
+    .maybeSingle()
+  if (!store) return NextResponse.json({ error: 'Store not found' }, { status: 404 })
+
+  const { data: tx } = await supabase
+    .from('transactions')
+    .select('id, type, total_amount, customer_id, payment_method, voided_at')
+    .eq('id', params.id)
+    .eq('store_id', store.id)
+    .maybeSingle()
+  if (!tx) return NextResponse.json({ error: 'Transaction not found' }, { status: 404 })
+  if (tx.voided_at) return NextResponse.json({ error: 'Already voided' }, { status: 409 })
+
+  // Reverse inventory
+  const { data: lineItems } = await supabase
+    .from('transaction_items')
+    .select('product_id, quantity')
+    .eq('transaction_id', tx.id)
+
+  const reversals = inventoryReversals(
+    tx.type as TransactionType,
+    (lineItems ?? []).map((li: { product_id: string; quantity: number }) => ({
+      productId: li.product_id,
+      quantity: Number(li.quantity),
+    }))
+  )
+  for (const r of reversals) {
+    const { data: inv } = await supabase
+      .from('inventory')
+      .select('id, current_stock')
+      .eq('store_id', store.id)
+      .eq('product_id', r.productId)
+      .maybeSingle()
+    if (inv) {
+      await supabase
+        .from('inventory')
+        .update({
+          current_stock: Number(inv.current_stock) + r.delta,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', inv.id)
+    }
+  }
+
+  // Reverse customer balance
+  const balanceDelta = balanceReversalAmount({
+    type: tx.type as TransactionType,
+    paymentMethod: tx.payment_method,
+    customerId: tx.customer_id,
+    totalAmount: Number(tx.total_amount),
+  })
+  if (balanceDelta !== 0 && tx.customer_id) {
+    const { data: customer } = await supabase
+      .from('customers')
+      .select('current_balance')
+      .eq('id', tx.customer_id)
+      .eq('store_id', store.id)
+      .maybeSingle()
+    if (customer) {
+      await supabase
+        .from('customers')
+        .update({ current_balance: Number(customer.current_balance) - balanceDelta })
+        .eq('id', tx.customer_id)
+        .eq('store_id', store.id)
+    }
+  }
+
+  // Set voided_at (soft delete)
+  const { error: voidError } = await supabase
+    .from('transactions')
+    .update({ voided_at: new Date().toISOString() })
+    .eq('id', tx.id)
+    .eq('store_id', store.id)
+
+  if (voidError) return NextResponse.json({ error: 'Failed to void transaction' }, { status: 500 })
+
+  return NextResponse.json({ voided: true })
 }

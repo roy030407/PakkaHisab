@@ -191,7 +191,8 @@ model Transaction {
   taxAmount        Decimal  @default(0) @map("tax_amount") @db.Decimal(12, 2)
   taxType          String?  @map("tax_type") // cgst_sgst | igst
   notes            String?
-  createdAt        DateTime @default(now()) @map("created_at")
+  voidedAt         DateTime? @map("voided_at") @db.Timestamptz
+  createdAt        DateTime  @default(now()) @map("created_at")
   updatedAt        DateTime @updatedAt @map("updated_at")
 
   store          Store            @relation(fields: [storeId], references: [id], onDelete: Cascade)

@@ -46,6 +46,7 @@ export async function buildPeriodReport(
       .from('transactions')
       .select('id, type, total_amount, tax_amount, payment_method, date')
       .eq('store_id', storeId)
+      .is('voided_at', null)
       .gte('date', startDate)
       .lte('date', endDate),
     supabase

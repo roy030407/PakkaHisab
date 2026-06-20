@@ -13,6 +13,7 @@
  *   - Khata Green redesign: greeting header, hero sparkline + trend pill, AttentionCard
  *   - Slice C: "Din ka hisab" card links to the cash reconciliation screen
  *   - POC: "Scan your khata" card links to the ledger capture -> day total screen
+ *   - Added RecentTransactions section (transaction history feature)
  *
  * WHERE IT FITS:
  *   First page a merchant sees after logging in. Uses server-side fetch
@@ -32,6 +33,7 @@ import { AnimatedNumber } from "@/components/shared/AnimatedNumber"
 import { PrivacyCard } from "@/components/shared/PrivacyCard"
 import Link from "next/link"
 import { Camera, PenLine, Package, ShoppingCart, HandCoins } from "lucide-react"
+import { RecentTransactions } from "@/components/dashboard/RecentTransactions"
 
 function istDateString(d: Date): string {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata" }).format(d)
@@ -64,6 +66,7 @@ export default async function DashboardPage() {
           .from("transactions")
           .select("type, total_amount, date")
           .eq("store_id", store.id)
+          .is("voided_at", null)
           .gte("date", sevenDaysAgo)
           .lte("date", today),
         supabase
@@ -234,6 +237,9 @@ export default async function DashboardPage() {
 
           {/* Consolidated alerts */}
           <AttentionCard lowStockCount={lowStockCount} expiryCount={expiryCount} />
+
+          {/* Recent transactions */}
+          <RecentTransactions />
 
           {/* Scan your khata (ledger -> day total) */}
           <Link href="/ledger"

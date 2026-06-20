@@ -52,6 +52,7 @@ export async function buildBusinessContext(
         .from("transactions")
         .select("type, total_amount, payment_method, date")
         .eq("store_id", storeId)
+        .is("voided_at", null)
         .gte("date", ago90)
         .lte("date", todayStr),
       supabase

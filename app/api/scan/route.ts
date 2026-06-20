@@ -155,6 +155,7 @@ export async function POST(request: Request) {
       .from('transactions')
       .select('id, created_at')
       .eq('store_id', store.id)
+      .is('voided_at', null)
       .eq('vendor_name', extraction.vendorName)
       .eq('total_amount', extraction.totalAmount)
       .gte('created_at', oneDayAgo)

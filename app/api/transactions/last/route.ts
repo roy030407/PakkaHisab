@@ -29,6 +29,7 @@ export async function GET() {
     .from('transactions')
     .select('created_at')
     .eq('store_id', store.id)
+    .is('voided_at', null)
     .order('created_at', { ascending: false })
     .limit(1)
     .maybeSingle()

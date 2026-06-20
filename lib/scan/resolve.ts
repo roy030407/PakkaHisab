@@ -39,6 +39,7 @@ export async function resolveItems(
     .from('transactions')
     .select('id')
     .eq('store_id', storeId)
+    .is('voided_at', null)
     .gte('date', since)
   const txIds = (recentTx ?? []).map((t: { id: string }) => t.id)
   const freq: Record<string, number> = {}

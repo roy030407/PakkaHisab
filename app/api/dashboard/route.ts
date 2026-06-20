@@ -40,6 +40,7 @@ export async function GET() {
     .from('transactions')
     .select('type, total_amount')
     .eq('store_id', store.id)
+    .is('voided_at', null)
     .eq('date', today)
 
   let todaySales = 0

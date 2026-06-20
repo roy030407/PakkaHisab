@@ -33,6 +33,7 @@ async function dayTransactions(
     .from('transactions')
     .select('type, payment_method, total_amount')
     .eq('store_id', storeId)
+    .is('voided_at', null)
     .eq('date', date)
   return (data ?? []).map(t => ({
     type: t.type,

@@ -39,7 +39,7 @@ export async function GET(
 
   const { data: transactions } = await supabase
     .from('transactions')
-    .select('id, date, type, total_amount, payment_method, source, created_at')
+    .select('id, date, type, total_amount, payment_method, source, created_at, voided_at')
     .eq('customer_id', params.id)
     .eq('store_id', store.id)
     .order('created_at', { ascending: false })

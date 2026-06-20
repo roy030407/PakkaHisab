@@ -171,6 +171,7 @@ async function loadCatalog(supabase: SupabaseClient, storeId: string): Promise<C
     .from('transactions')
     .select('id')
     .eq('store_id', storeId)
+    .is('voided_at', null)
     .gte('date', since)
   const txIds = (recentTx ?? []).map((t: { id: string }) => t.id)
 
