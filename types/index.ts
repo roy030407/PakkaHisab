@@ -394,6 +394,14 @@ export interface PaymentBreakdown {
   credit: number
 }
 
+export interface ExpenseBreakdown {
+  rent: number
+  salaries: number
+  electricity: number
+  transport: number
+  other: number
+}
+
 export interface CashFlowPoint {
   date: string        // YYYY-MM-DD label
   sales: number
@@ -411,6 +419,8 @@ export interface PeriodReport {
   taxSummary: TaxSummary
   topProducts: TopProduct[]
   itemsSold?: TopProduct[]   // every product sold in the period (full list, revenue-sorted)
+  totalExpenses?: number
+  expenseBreakdown?: ExpenseBreakdown
   paymentBreakdown: PaymentBreakdown
   cashFlowData: CashFlowPoint[]
   transactionCount: number

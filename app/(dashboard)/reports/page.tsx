@@ -9,6 +9,7 @@
  * CHANGES THIS SESSION:
  *   - Initial creation for Phase 4 reporting
  *   - Khata Green restyle
+ *   - Added ExpenseBreakdownCard between items sold and profit card
  *
  * WHERE IT FITS:
  *   Accessible from the bottom nav "Reports" tab and dashboard quick links.
@@ -28,6 +29,7 @@ import { StatCard, formatINR } from "@/components/reports/StatCard"
 import { ProfitCard } from "@/components/reports/ProfitCard"
 import { TaxSummary } from "@/components/reports/TaxSummary"
 import { ItemsSoldCard } from "@/components/reports/ItemsSoldCard"
+import { ExpenseBreakdownCard } from "@/components/reports/ExpenseBreakdownCard"
 import { ReportSkeleton } from "@/components/shared/PageSkeleton"
 import type { ReportPeriod, PeriodReport } from "@/types"
 
@@ -163,6 +165,14 @@ export default function ReportsPage() {
 
           {/* Per-item sales breakdown (collapsed preview, expandable) */}
           <ItemsSoldCard items={report.itemsSold ?? report.topProducts ?? []} />
+
+          {/* Expense category breakdown */}
+          {(report.totalExpenses ?? 0) > 0 && (
+            <ExpenseBreakdownCard
+              breakdown={report.expenseBreakdown!}
+              total={report.totalExpenses!}
+            />
+          )}
 
           {/* Profit breakdown */}
           <ProfitCard report={report} />

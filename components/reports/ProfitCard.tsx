@@ -8,6 +8,7 @@
  * CHANGES THIS SESSION:
  *   - Initial creation for Phase 4 reporting
  *   - Khata Green restyle
+ *   - Added expenses row between gross margin and fixed costs
  *
  * WHERE IT FITS:
  *   Placed on the reports page below the period toggle.
@@ -41,6 +42,9 @@ export function ProfitCard({ report }: Props) {
       <Row label="Total sales" value={formatINR(report.sales)} />
       <Row label="Total purchases" value={`- ${formatINR(report.purchases)}`} />
       <Row label="Gross margin" value={`${formatINR(report.grossMargin)} (${report.grossMargin > 0 && report.sales > 0 ? Math.round(report.grossMargin / report.sales * 100) : 0}%)`} />
+      {(report.totalExpenses ?? 0) > 0 && (
+        <Row label="Expenses" value={`- ${formatINR(report.totalExpenses ?? 0)}`} />
+      )}
       <Row label="Fixed costs" value={`- ${formatINR(report.fixedCosts)}`} />
       <Row label="Net profit" value={formatINR(report.netProfit)} bold color={netColor} />
     </div>

@@ -7,6 +7,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation for Phase 4 reporting
+ *   - Added expenses param to calculateProfit, subtracted from netProfit
  *
  * WHERE IT FITS:
  *   Used by /api/reports to produce the profit breakdown card.
@@ -18,6 +19,7 @@
 export interface ProfitResult {
   sales: number
   purchases: number
+  expenses: number
   grossMargin: number
   fixedCosts: number
   netProfit: number
@@ -27,15 +29,17 @@ export interface ProfitResult {
 export function calculateProfit(
   sales: number,
   purchases: number,
-  fixedCosts: number
+  fixedCosts: number,
+  expenses: number = 0
 ): ProfitResult {
   const grossMargin = sales - purchases
-  const netProfit = grossMargin - fixedCosts
+  const netProfit = grossMargin - fixedCosts - expenses
   const marginPct = sales > 0 ? Math.round((grossMargin / sales) * 1000) / 10 : 0
 
   return {
     sales: Math.round(sales),
     purchases: Math.round(purchases),
+    expenses: Math.round(expenses),
     grossMargin: Math.round(grossMargin),
     fixedCosts: Math.round(fixedCosts),
     netProfit: Math.round(netProfit),

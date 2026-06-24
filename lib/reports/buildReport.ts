@@ -10,6 +10,7 @@
  *   - Initial creation (extracted from app/api/reports/route.ts)
  *   - Fix: filter on logical `date` column instead of `created_at` for correct period bucketing
  *   - Fix: chunk transaction_items IN query to avoid PostgREST URL-length limit on busy stores
+ *   - Added expense tracking by category (rent, salaries, electricity, transport, other)
  *
  * WHERE IT FITS:
  *   Called by /api/reports, /api/reports/pdf, and /api/cron/* routes.
@@ -28,7 +29,7 @@ import {
 } from './periods'
 import { calculateProfit } from './profit'
 import { calculateTax } from './tax'
-import type { ReportPeriod, PeriodReport, TopProduct, PaymentBreakdown, FixedCost } from '@/types'
+import type { ReportPeriod, PeriodReport, TopProduct, PaymentBreakdown, ExpenseBreakdown, FixedCost } from '@/types'
 
 export async function buildPeriodReport(
   supabase: SupabaseClient,
@@ -44,7 +45,7 @@ export async function buildPeriodReport(
   const [txResult, costsResult] = await Promise.all([
     supabase
       .from('transactions')
-      .select('id, type, total_amount, tax_amount, payment_method, date')
+      .select('id, type, total_amount, tax_amount, payment_method, date, notes')
       .eq('store_id', storeId)
       .is('voided_at', null)
       .gte('date', startDate)
@@ -60,7 +61,9 @@ export async function buildPeriodReport(
 
   let totalSales = 0
   let totalPurchases = 0
+  let totalExpenses = 0
   const paymentBreakdown: PaymentBreakdown = { cash: 0, upi: 0, credit: 0 }
+  const expenseBreakdown: ExpenseBreakdown = { rent: 0, salaries: 0, electricity: 0, transport: 0, other: 0 }
 
   for (const tx of txRows) {
     const amt = Number(tx.total_amount) || 0
@@ -70,6 +73,14 @@ export async function buildPeriodReport(
       if (method && method in paymentBreakdown) paymentBreakdown[method] += amt
     } else if (tx.type === 'purchase') {
       totalPurchases += amt
+    } else if (tx.type === 'expense') {
+      totalExpenses += amt
+      const note = (tx.notes ?? '').toLowerCase()
+      if (note.includes('rent')) expenseBreakdown.rent += amt
+      else if (note.includes('salar')) expenseBreakdown.salaries += amt
+      else if (note.includes('electric') || note.includes('bijli')) expenseBreakdown.electricity += amt
+      else if (note.includes('transport') || note.includes('delivery')) expenseBreakdown.transport += amt
+      else expenseBreakdown.other += amt
     }
   }
 
@@ -79,7 +90,7 @@ export async function buildPeriodReport(
     days
   )
 
-  const profit = calculateProfit(totalSales, totalPurchases, fixedCosts)
+  const profit = calculateProfit(totalSales, totalPurchases, fixedCosts, totalExpenses)
   const taxSummary = calculateTax(txRows)
 
   // Top products - chunked to avoid PostgREST URL-length limit (each UUID is ~37 chars;
@@ -146,6 +157,14 @@ export async function buildPeriodReport(
     grossMargin: profit.grossMargin,
     fixedCosts: Math.round(fixedCosts),
     netProfit: profit.netProfit,
+    totalExpenses: Math.round(totalExpenses),
+    expenseBreakdown: {
+      rent: Math.round(expenseBreakdown.rent),
+      salaries: Math.round(expenseBreakdown.salaries),
+      electricity: Math.round(expenseBreakdown.electricity),
+      transport: Math.round(expenseBreakdown.transport),
+      other: Math.round(expenseBreakdown.other),
+    },
     taxSummary,
     topProducts,
     itemsSold,
