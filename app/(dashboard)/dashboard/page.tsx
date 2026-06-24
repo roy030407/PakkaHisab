@@ -61,9 +61,10 @@ export default async function DashboardPage() {
   let lowStockCount = 0, expiryCount = 0
   let profitByDay: number[] = []
   let dayLabels: string[] = []
+  let totalTxCount = 0, totalSalesAmount = 0, activeSinceDays = 0, activeSinceDate = ""
 
   if (store) {
-    const [txResult, mtdResult, costsResult, customersResult, inventoryResult, expiryResult] =
+    const [txResult, mtdResult, allTimeSalesResult, earliestTxResult, costsResult, customersResult, inventoryResult, expiryResult] =
       await Promise.all([
         supabase
           .from("transactions")
@@ -79,6 +80,18 @@ export default async function DashboardPage() {
           .is("voided_at", null)
           .gte("date", monthStart)
           .lte("date", today),
+        supabase
+          .from("transactions")
+          .select("type, total_amount")
+          .eq("store_id", store.id)
+          .is("voided_at", null),
+        supabase
+          .from("transactions")
+          .select("date")
+          .eq("store_id", store.id)
+          .is("voided_at", null)
+          .order("date", { ascending: true })
+          .limit(1),
         supabase
           .from("fixed_costs")
           .select("amount, frequency")
@@ -156,6 +169,19 @@ export default async function DashboardPage() {
       if (stock <= 0 || (reorder > 0 && stock <= reorder)) lowStockCount++
     }
     expiryCount = expiryResult.count ?? 0
+
+    for (const tx of allTimeSalesResult.data ?? []) {
+      totalTxCount++
+      if (tx.type === "sale") totalSalesAmount += Number(tx.total_amount) || 0
+    }
+
+    const earliest = earliestTxResult.data?.[0]?.date
+    if (earliest) {
+      const diff = Date.now() - new Date(earliest + "T00:00:00+05:30").getTime()
+      activeSinceDays = Math.max(1, Math.ceil(diff / 86400000))
+      activeSinceDate = new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", timeZone: "Asia/Kolkata" })
+        .format(new Date(earliest + "T00:00:00+05:30"))
+    }
   }
 
   const netProfitToday = Math.round(salesToday - purchasesToday - dailyFixedCost)
@@ -170,8 +196,28 @@ export default async function DashboardPage() {
   const netProfitMtd = Math.round(salesMtd - purchasesMtd - mtdFixedCost)
   const monthName = new Intl.DateTimeFormat("en-IN", { month: "short", timeZone: "Asia/Kolkata" }).format(new Date())
 
+  const formatLargeINR = (n: number) => {
+    if (n >= 100000) return `${(n / 100000).toFixed(1)}L`
+    if (n >= 1000) return `${(n / 1000).toFixed(1)}K`
+    return String(Math.round(n))
+  }
+
   return (
     <div className="page-enter px-4 py-6 md:px-8 md:py-8 max-w-5xl mx-auto">
+      {/* Usage evidence banner */}
+      {activeSinceDays > 0 && (
+        <div className="mb-4 flex items-center justify-between rounded-xl bg-gray-900 px-4 py-3 text-white">
+          <div className="flex items-center gap-4 text-xs">
+            <span className="font-medium">Active {activeSinceDays} days</span>
+            <span className="text-gray-400">|</span>
+            <span>{totalTxCount} transactions</span>
+            <span className="text-gray-400">|</span>
+            <span>&#8377;{formatLargeINR(totalSalesAmount)} in sales</span>
+          </div>
+          <span className="text-[10px] text-gray-400">since {activeSinceDate}</span>
+        </div>
+      )}
+
       <div className="mb-5">
         <GreetingHeader
           ownerName={store?.owner_name ?? ""}
