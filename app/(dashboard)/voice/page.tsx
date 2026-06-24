@@ -35,6 +35,7 @@ import { decideCommandAction, buildBalanceSpeech } from '@/lib/voice/command'
 import { speak } from '@/lib/voice/speak'
 import { buildBalanceByNameSpeech } from '@/lib/voice/customer'
 import type { VoiceCartRow, VoiceParseResponse, VoiceCommand, VoiceParseArgs, VoiceCustomerMatch } from '@/lib/voice/types'
+import { FrequentItems, type FrequentProduct } from '@/components/shared/FrequentItems'
 
 export default function VoicePage() {
   const [rows, setRows] = useState<VoiceCartRow[]>([])
@@ -126,6 +127,17 @@ export default function VoicePage() {
         <h1 className="text-xl font-bold text-gray-900">Bolकर बेचो</h1>
         <p className="text-sm text-gray-500">Tap the mic and speak. Say &ldquo;agla&rdquo; to save, &ldquo;khatam&rdquo; to finish.</p>
       </header>
+
+      {/* Quick add frequent items by tap */}
+      <FrequentItems
+        onAdd={(p: FrequentProduct) => {
+          setRows(prev => addRowsToCart(prev, [{
+            productId: p.id, name: p.name, quantity: 1,
+            unitPrice: p.price, addedAsNew: false,
+          }]))
+        }}
+        label="Tap to add"
+      />
 
       {/* Mic + status */}
       <div className="flex flex-col items-center gap-3 py-4">

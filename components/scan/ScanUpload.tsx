@@ -18,12 +18,14 @@
  */
 'use client'
 import { useRef } from 'react'
+import { FrequentItems, type FrequentProduct } from '@/components/shared/FrequentItems'
 
 interface Props {
   onFileSelected: (files: File[]) => void
+  onQuickAdd?: (product: FrequentProduct) => void
 }
 
-export function ScanUpload({ onFileSelected }: Props) {
+export function ScanUpload({ onFileSelected, onQuickAdd }: Props) {
   const cameraRef = useRef<HTMLInputElement>(null)
   const galleryRef = useRef<HTMLInputElement>(null)
   const fileRef = useRef<HTMLInputElement>(null)
@@ -74,6 +76,12 @@ export function ScanUpload({ onFileSelected }: Props) {
           <span className="text-sm font-medium text-gray-700">Upload file (PDF or image)</span>
         </button>
       </div>
+
+      {onQuickAdd && (
+        <div className="w-full max-w-xs mt-6">
+          <FrequentItems onAdd={onQuickAdd} label="Or quick-add without scanning" />
+        </div>
+      )}
     </div>
   )
 }

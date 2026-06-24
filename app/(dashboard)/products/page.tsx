@@ -37,6 +37,7 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { LoadingState } from "@/components/shared/LoadingState";
 import { StockTabs } from "@/components/shared/StockTabs";
+import { FrequentItems } from "@/components/shared/FrequentItems";
 
 type Product = {
   id: string;
@@ -242,8 +243,16 @@ export default function ProductsPage() {
         </Button>
       </div>
 
+      {/* Most sold products */}
+      <div className="mt-4 mb-2">
+        <FrequentItems
+          onAdd={() => {}}
+          label="Most sold (last 30 days)"
+        />
+      </div>
+
       {/* Search */}
-      <div className="mt-4 mb-6">
+      <div className="mt-2 mb-6">
         <Input
           placeholder="Search by name, brand, or item number..."
           value={search}
