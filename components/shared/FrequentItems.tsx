@@ -48,8 +48,8 @@ export function FrequentItems({ onAdd, counts, label = 'Frequently sold' }: Prop
   if (!loaded || products.length === 0) return null
 
   return (
-    <div className="space-y-1.5">
-      <p className="text-xs font-semibold text-gray-500 px-1">{label}</p>
+    <div className="rounded-xl border border-emerald-200 bg-emerald-50/60 p-3 space-y-2">
+      <p className="text-xs font-bold uppercase tracking-wide text-emerald-700">{label}</p>
       <div className="flex flex-wrap gap-2">
         {products.map(p => {
           const count = counts?.get(p.id) ?? 0
@@ -58,17 +58,17 @@ export function FrequentItems({ onAdd, counts, label = 'Frequently sold' }: Prop
               key={p.id}
               type="button"
               onClick={() => onAdd(p)}
-              className="btn-lift flex items-center gap-1.5 rounded-full border border-gray-200 bg-white pl-3 pr-2 py-1.5 text-xs cursor-pointer"
+              className="btn-lift flex items-center gap-2 rounded-full border border-emerald-200 bg-white pl-3.5 pr-2.5 py-2 text-sm cursor-pointer shadow-sm"
             >
-              <span className="font-medium text-gray-800 whitespace-nowrap">{p.name}</span>
-              <span className="text-gray-400">&#8377;{p.price}</span>
+              <span className="font-semibold text-gray-900 whitespace-nowrap">{p.name}</span>
+              <span className="text-emerald-600 font-medium">&#8377;{p.price}</span>
               {count > 0 ? (
-                <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-emerald-600 px-1 text-[10px] font-bold text-white">
+                <span className="flex h-6 min-w-[24px] items-center justify-center rounded-full bg-emerald-600 px-1.5 text-xs font-bold text-white">
                   {count}
                 </span>
               ) : (
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
-                  <Plus size={12} />
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-200 text-emerald-700">
+                  <Plus size={14} />
                 </span>
               )}
             </button>
