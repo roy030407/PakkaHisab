@@ -10,10 +10,15 @@
  *   - Initial creation (transaction history feature)
  *
  * WHERE IT FITS:
- *   Called by components/dashboard/RecentTransactions.tsx on the dashboard.
+ *   Called by components/dashboard/RecentTransactions.tsx on the dashboard
+ *   and app/(dashboard)/transactions/page.tsx for full history.
+ *
+ * CHANGES THIS SESSION:
+ *   - Added type filter param (sale | purchase | expense)
  *
  * CALLED BY / IMPORTS FROM:
  *   components/dashboard/RecentTransactions.tsx
+ *   app/(dashboard)/transactions/page.tsx
  */
 import { NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
@@ -37,6 +42,7 @@ export async function GET(request: Request) {
   const url = new URL(request.url)
   const date = url.searchParams.get('date') || todayIST()
   const includeVoided = url.searchParams.get('includeVoided') !== 'false'
+  const typeFilter = url.searchParams.get('type') // sale | purchase | expense | null (all)
   const limit = Math.min(Number(url.searchParams.get('limit')) || 20, 50)
 
   let query = supabase
@@ -49,6 +55,10 @@ export async function GET(request: Request) {
 
   if (!includeVoided) {
     query = query.is('voided_at', null)
+  }
+
+  if (typeFilter) {
+    query = query.eq('type', typeFilter)
   }
 
   const { data: txRows } = await query

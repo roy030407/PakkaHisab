@@ -14,6 +14,7 @@
  *   - Slice C: "Din ka hisab" card links to the cash reconciliation screen
  *   - POC: "Scan your khata" card links to the ledger capture -> day total screen
  *   - Added RecentTransactions section (transaction history feature)
+ *   - Added "See full transaction history" link to /transactions page
  *
  * WHERE IT FITS:
  *   First page a merchant sees after logging in. Uses server-side fetch
@@ -352,6 +353,10 @@ export default async function DashboardPage() {
 
           {/* Recent transactions */}
           <RecentTransactions />
+          <Link href="/transactions"
+            className="btn-lift w-full rounded-xl border border-gray-200 bg-white py-2.5 text-center text-xs font-medium text-emerald-700 cursor-pointer">
+            See full transaction history
+          </Link>
 
           {/* Scan your khata (ledger -> day total) */}
           <Link href="/ledger"
