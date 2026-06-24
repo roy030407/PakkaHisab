@@ -11,6 +11,7 @@
  *   - Fix: filter on logical `date` column instead of `created_at` for correct period bucketing
  *   - Fix: chunk transaction_items IN query to avoid PostgREST URL-length limit on busy stores
  *   - Added expense tracking by category (rent, salaries, electricity, transport, other)
+ *   - Added monthly fixed cost override support (fetches overrides for report month)
  *
  * WHERE IT FITS:
  *   Called by /api/reports, /api/reports/pdf, and /api/cron/* routes.
@@ -42,7 +43,9 @@ export async function buildPeriodReport(
   const startDate = bounds.start.toISOString().split('T')[0]
   const endDate   = bounds.end.toISOString().split('T')[0]
 
-  const [txResult, costsResult] = await Promise.all([
+  const reportMonth = startDate.slice(0, 7) // YYYY-MM
+
+  const [txResult, costsResult, overridesResult] = await Promise.all([
     supabase
       .from('transactions')
       .select('id, type, total_amount, tax_amount, payment_method, date, notes')
@@ -52,9 +55,13 @@ export async function buildPeriodReport(
       .lte('date', endDate),
     supabase
       .from('fixed_costs')
-      .select('amount, frequency, is_active')
+      .select('id, amount, frequency, is_active')
       .eq('store_id', storeId)
       .eq('is_active', true),
+    supabase
+      .from('fixed_cost_overrides')
+      .select('fixed_cost_id, amount')
+      .eq('month', reportMonth),
   ])
 
   const txRows = txResult.data ?? []
@@ -84,11 +91,22 @@ export async function buildPeriodReport(
     }
   }
 
+  // Build override map: fixedCostId -> overridden amount for this month
+  const overrideMap = new Map<string, number>()
+  for (const o of overridesResult.data ?? []) {
+    overrideMap.set(o.fixed_cost_id, Number(o.amount))
+  }
+
   const days = periodDays(period)
-  const fixedCosts = fixedCostForPeriod(
-    (costsResult.data ?? []).map((c) => ({ ...c, isActive: c.is_active })) as unknown as FixedCost[],
-    days
-  )
+  const costsWithOverrides = (costsResult.data ?? []).map((c) => {
+    const overriddenAmount = overrideMap.get(c.id)
+    return {
+      ...c,
+      amount: overriddenAmount !== undefined ? overriddenAmount : Number(c.amount),
+      isActive: c.is_active,
+    }
+  }) as unknown as FixedCost[]
+  const fixedCosts = fixedCostForPeriod(costsWithOverrides, days)
 
   const profit = calculateProfit(totalSales, totalPurchases, fixedCosts, totalExpenses)
   const taxSummary = calculateTax(txRows)

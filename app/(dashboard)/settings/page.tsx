@@ -13,6 +13,7 @@
  *   - Added Phase 6: template loader and CSV/Excel import wizard
  *   - Khata Green restyle
  *   - Fixed costs can now be edited (reuses the form + PATCH /api/fixed-costs/[id])
+ *   - Added MonthlyOverride inline editor for monthly cost overrides
  *
  * WHERE IT FITS:
  *   Fixed costs feed into profit calculations. Tax config feeds into
@@ -294,54 +295,60 @@ export default function SettingsPage() {
         ) : (
           <div className="space-y-2">
             {costs.map((cost) => (
-              <div
-                key={cost.id}
-                className="flex items-center justify-between rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-sm"
-              >
-                <div>
-                  <p className="font-medium text-gray-900">{cost.name}</p>
-                  <p className="text-sm text-gray-500">
-                    {CAT_LABELS[cost.category]} ·{" "}
-                    <span className="font-medium text-gray-700">
-                      ₹{Number(cost.amount).toLocaleString("en-IN")}
-                    </span>
-                    /{FREQ_LABELS[cost.frequency].toLowerCase()}
-                  </p>
-                </div>
-                <div className="flex items-center gap-4">
-                  <p className="text-sm text-gray-400">
-                    ≈ ₹{dailyCost(cost).toFixed(0)}/day
-                  </p>
-                  <button
-                    onClick={() => startEdit(cost)}
-                    className="text-xs text-emerald-700 hover:underline"
-                  >
-                    Edit
-                  </button>
-                  {confirmDelete === cost.id ? (
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => handleDelete(cost.id)}
-                        className="rounded px-2 py-1 text-xs text-white bg-red-500 hover:bg-red-600"
-                      >
-                        Confirm
-                      </button>
-                      <button
-                        onClick={() => setConfirmDelete(null)}
-                        className="rounded px-2 py-1 text-xs text-gray-500 hover:bg-gray-100"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  ) : (
+              <div key={cost.id}>
+                <div
+                  className="flex items-center justify-between rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-sm"
+                >
+                  <div>
+                    <p className="font-medium text-gray-900">{cost.name}</p>
+                    <p className="text-sm text-gray-500">
+                      {CAT_LABELS[cost.category]} ·{" "}
+                      <span className="font-medium text-gray-700">
+                        ₹{Number(cost.amount).toLocaleString("en-IN")}
+                      </span>
+                      /{FREQ_LABELS[cost.frequency].toLowerCase()}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <p className="text-sm text-gray-400">
+                      ≈ ₹{dailyCost(cost).toFixed(0)}/day
+                    </p>
                     <button
-                      onClick={() => setConfirmDelete(cost.id)}
-                      className="text-xs text-red-500 hover:underline"
+                      onClick={() => startEdit(cost)}
+                      className="text-xs text-emerald-700 hover:underline cursor-pointer"
                     >
-                      Remove
+                      Edit
                     </button>
-                  )}
+                    {confirmDelete === cost.id ? (
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleDelete(cost.id)}
+                          className="rounded px-2 py-1 text-xs text-white bg-red-500 hover:bg-red-600 cursor-pointer"
+                        >
+                          Confirm
+                        </button>
+                        <button
+                          onClick={() => setConfirmDelete(null)}
+                          className="rounded px-2 py-1 text-xs text-gray-500 hover:bg-gray-100 cursor-pointer"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => setConfirmDelete(cost.id)}
+                        className="text-xs text-red-500 hover:underline cursor-pointer"
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
                 </div>
+                <MonthlyOverride
+                  costId={cost.id}
+                  baseAmount={Number(cost.amount)}
+                  frequency={cost.frequency}
+                />
               </div>
             ))}
           </div>
@@ -377,6 +384,107 @@ export default function SettingsPage() {
         />
         <LogoutButton variant="button" />
       </section>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MONTHLY OVERRIDE (inline editor per cost)
+// ─────────────────────────────────────────────────────────────────────────────
+
+function MonthlyOverride({
+  costId,
+  baseAmount,
+  frequency,
+}: {
+  costId: string;
+  baseAmount: number;
+  frequency: string;
+}) {
+  const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
+  const monthLabel = new Intl.DateTimeFormat("en-IN", {
+    month: "short",
+    year: "numeric",
+  }).format(new Date());
+
+  const [override, setOverride] = useState<number | null>(null);
+  const [editing, setEditing] = useState(false);
+  const [inputVal, setInputVal] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    fetch(`/api/fixed-costs/${costId}?month=${currentMonth}`)
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.override?.amount) setOverride(Number(d.override.amount));
+      })
+      .catch(() => {});
+  }, [costId, currentMonth]);
+
+  async function saveOverride() {
+    const amt = Number(inputVal);
+    if (!amt || amt <= 0) return;
+    setSaving(true);
+    const res = await fetch(
+      `/api/fixed-costs/${costId}?month=${currentMonth}`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: amt }),
+      }
+    );
+    if (res.ok) {
+      setOverride(amt);
+      setEditing(false);
+    }
+    setSaving(false);
+  }
+
+  // Overrides only make sense for monthly costs
+  if (frequency !== "monthly") return null;
+
+  return (
+    <div className="ml-4 mt-1 mb-2">
+      {editing ? (
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-gray-500">{monthLabel}:</span>
+          <input
+            type="number"
+            min="1"
+            step="1"
+            value={inputVal}
+            onChange={(e) => setInputVal(e.target.value)}
+            placeholder={String(baseAmount)}
+            className="w-24 rounded-lg border border-gray-200 px-2 py-1 text-xs"
+            autoFocus
+          />
+          <button
+            onClick={saveOverride}
+            disabled={saving}
+            className="btn-lift rounded-lg bg-emerald-700 px-2.5 py-1 text-xs text-white cursor-pointer"
+          >
+            {saving ? "..." : "Save"}
+          </button>
+          <button
+            onClick={() => setEditing(false)}
+            className="text-xs text-gray-400 cursor-pointer"
+          >
+            Cancel
+          </button>
+        </div>
+      ) : (
+        <button
+          onClick={() => {
+            setInputVal(String(override ?? baseAmount));
+            setEditing(true);
+          }}
+          className="text-xs text-emerald-700 hover:underline cursor-pointer"
+        >
+          {override
+            ? `${monthLabel}: ₹${override.toLocaleString("en-IN")} (override)`
+            : `Set ${monthLabel} amount`}
+        </button>
+      )}
     </div>
   );
 }
