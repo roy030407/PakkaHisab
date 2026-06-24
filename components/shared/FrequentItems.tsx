@@ -55,35 +55,33 @@ export function FrequentItems({ onAdd, onRemove, counts, label = 'Frequently sol
         {products.map(p => {
           const count = counts?.get(p.id) ?? 0
           return (
-            <div key={p.id} className="flex items-center gap-0.5">
+            <div key={p.id} className={`flex items-center gap-1.5 rounded-full border bg-white pl-3.5 pr-2 py-1.5 text-sm shadow-sm ${
+              count > 0 ? 'border-emerald-400' : 'border-emerald-200'
+            }`}>
+              <span className="font-semibold text-gray-900 whitespace-nowrap">{p.name}</span>
+              <span className="text-emerald-600 font-medium">&#8377;{p.price}</span>
               {count > 0 && onRemove && (
                 <button
                   type="button"
-                  onClick={() => onRemove(p)}
-                  className="btn-lift flex h-8 w-8 items-center justify-center rounded-full border border-emerald-200 bg-white text-emerald-700 cursor-pointer shadow-sm"
+                  onClick={(e) => { e.stopPropagation(); onRemove(p) }}
+                  className="btn-lift flex h-6 w-6 items-center justify-center rounded-full bg-rose-100 text-rose-600 cursor-pointer"
                   aria-label={`Remove one ${p.name}`}
                 >
-                  <Minus size={14} />
+                  <Minus size={12} />
                 </button>
               )}
+              {count > 0 ? (
+                <span className="flex h-6 min-w-[24px] items-center justify-center rounded-full bg-emerald-600 px-1.5 text-xs font-bold text-white">
+                  {count}
+                </span>
+              ) : null}
               <button
                 type="button"
                 onClick={() => onAdd(p)}
-                className={`btn-lift flex items-center gap-2 rounded-full border bg-white pl-3.5 pr-2.5 py-2 text-sm cursor-pointer shadow-sm ${
-                  count > 0 ? 'border-emerald-400' : 'border-emerald-200'
-                }`}
+                className="btn-lift flex h-6 w-6 items-center justify-center rounded-full bg-emerald-200 text-emerald-700 cursor-pointer"
+                aria-label={`Add one ${p.name}`}
               >
-                <span className="font-semibold text-gray-900 whitespace-nowrap">{p.name}</span>
-                <span className="text-emerald-600 font-medium">&#8377;{p.price}</span>
-                {count > 0 ? (
-                  <span className="flex h-6 min-w-[24px] items-center justify-center rounded-full bg-emerald-600 px-1.5 text-xs font-bold text-white">
-                    {count}
-                  </span>
-                ) : (
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-200 text-emerald-700">
-                    <Plus size={14} />
-                  </span>
-                )}
+                <Plus size={12} />
               </button>
             </div>
           )
