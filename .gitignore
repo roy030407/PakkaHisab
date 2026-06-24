@@ -41,3 +41,12 @@ next-env.d.ts
 
 # brainstorm visual companion sessions
 .superpowers/
+
+# internal docs (plans, specs, handoffs, reviews)
+CLAUDE.md
+HANDOFF.md
+REVIEW.md
+docs/superpowers/
+scripts/seed-*.js
+scripts/seed-*.ts
+nul
