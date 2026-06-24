@@ -66,6 +66,7 @@ export function RecentTransactions() {
   const [loadingItems, setLoadingItems] = useState(false)
   const [voidingId, setVoidingId] = useState<string | null>(null)
   const [confirmVoidId, setConfirmVoidId] = useState<string | null>(null)
+  const [showAll, setShowAll] = useState(false)
 
   useEffect(() => {
     fetch('/api/transactions')
@@ -136,11 +137,18 @@ export function RecentTransactions() {
     return 0
   })
 
+  const PREVIEW_COUNT = 5
+  const visible = showAll ? sorted : sorted.slice(0, PREVIEW_COUNT)
+  const hasMore = sorted.length > PREVIEW_COUNT
+
   return (
     <div className="space-y-1.5">
-      <h2 className="text-sm font-semibold text-gray-700 px-1">Today&apos;s transactions</h2>
+      <h2 className="text-sm font-semibold text-gray-700 px-1">
+        Today&apos;s transactions
+        <span className="ml-1.5 text-xs font-normal text-gray-400">({rows.length})</span>
+      </h2>
       <div className="rounded-xl border border-gray-100 bg-white divide-y divide-gray-50">
-        {sorted.map(tx => {
+        {visible.map(tx => {
           const isVoided = !!tx.voidedAt
           const isExpanded = expandedId === tx.id
           const isConfirming = confirmVoidId === tx.id
@@ -243,6 +251,15 @@ export function RecentTransactions() {
           )
         })}
       </div>
+      {hasMore && (
+        <button
+          type="button"
+          onClick={() => setShowAll(prev => !prev)}
+          className="btn-lift w-full rounded-xl border border-gray-200 bg-white py-2.5 text-xs font-medium text-gray-600 cursor-pointer"
+        >
+          {showAll ? 'Show less' : `Show all ${rows.length} transactions`}
+        </button>
+      )}
     </div>
   )
 }

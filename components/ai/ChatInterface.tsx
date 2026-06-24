@@ -23,6 +23,7 @@
 "use client"
 
 import { useState, useRef, useEffect, useCallback } from "react"
+import { useSearchParams } from "next/navigation"
 
 interface Message {
   role: "user" | "assistant"
@@ -44,10 +45,23 @@ export function ChatInterface() {
   const [conversationId, setConversationId] = useState<string | undefined>()
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
+  const searchParams = useSearchParams()
+  const tipSent = useRef(false)
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
+
+  // Auto-send the dashboard tip as the first question when navigating from InsightCard
+  useEffect(() => {
+    const tip = searchParams.get("tip")
+    if (tip && !tipSent.current && messages.length === 0) {
+      tipSent.current = true
+      const prompt = `You said: "${tip}"\n\nTell me more about this. What should I do?`
+      setTimeout(() => send(prompt), 300)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams])
 
   const send = useCallback(
     async (text: string) => {

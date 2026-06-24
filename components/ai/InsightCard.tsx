@@ -8,6 +8,7 @@
  * CHANGES THIS SESSION:
  *   - Initial creation for Phase 5 AI Advisor
  *   - Khata Green restyle: emerald left-border card, Aaj ki salah header
+ *   - "Tell me more" passes the insight text to /advisor via query param
  *
  * WHERE IT FITS:
  *   Rendered at the top of the dashboard page below the header.
@@ -54,7 +55,7 @@ export function InsightCard() {
       </p>
       <p className="text-sm leading-relaxed text-gray-800">{insight}</p>
       <Link
-        href="/advisor"
+        href={`/advisor?tip=${encodeURIComponent(insight)}`}
         className="mt-3 inline-block text-xs font-semibold text-emerald-700 hover:text-emerald-800"
       >
         Tell me more →
