@@ -198,6 +198,14 @@
   .row-lift, .row-lift:hover { transition: none; transform: none; box-shadow: none; }
 }
 
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 @layer base {
   :root {
     --background: oklch(1 0 0);

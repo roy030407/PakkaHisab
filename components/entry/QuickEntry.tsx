@@ -30,6 +30,7 @@ import type { Product, TransactionType, PaymentMethod } from '@/types'
 import { CustomerSheet } from './CustomerSheet'
 import { AnimatedNumber } from '@/components/shared/AnimatedNumber'
 import { ShareReceiptButton } from '@/components/share/ShareReceiptButton'
+import { FrequentItems, type FrequentProduct } from '@/components/shared/FrequentItems'
 
 interface LineItem { productId: string; productName: string; unitPrice: number; quantity: number }
 interface Props {
@@ -261,6 +262,14 @@ export function QuickEntry({ onSaved, onSwitchFull }: Props) {
         </div>
       ) : (
       <>
+      {/* Frequent items quick-add */}
+      <div className="px-4 pt-3">
+        <FrequentItems
+          onAdd={(p: FrequentProduct) => adj(p.id, 1)}
+          counts={qtys}
+        />
+      </div>
+
       {/* Product list */}
       <div className="flex-1 px-4 py-2">
         {products.length === 0 ? (
