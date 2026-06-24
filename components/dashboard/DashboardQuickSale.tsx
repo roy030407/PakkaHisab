@@ -40,6 +40,16 @@ export function DashboardQuickSale() {
     })
   }, [])
 
+  const removeItem = useCallback((product: FrequentProduct) => {
+    setCart(prev => {
+      const next = new Map(prev)
+      const existing = next.get(product.id)
+      if (!existing) return prev
+      if (existing.qty <= 1) { next.delete(product.id) } else { next.set(product.id, { ...existing, qty: existing.qty - 1 }) }
+      return next
+    })
+  }, [])
+
   const counts = new Map(Array.from(cart.entries()).map(([id, v]) => [id, v.qty]))
   const itemCount = Array.from(cart.values()).reduce((s, v) => s + v.qty, 0)
   const total = Array.from(cart.values()).reduce((s, v) => s + v.product.price * v.qty, 0)
@@ -75,7 +85,7 @@ export function DashboardQuickSale() {
 
   return (
     <div>
-      <FrequentItems onAdd={addItem} counts={counts} />
+      <FrequentItems onAdd={addItem} onRemove={removeItem} counts={counts} />
       {itemCount > 0 && (
         <div className="mt-2 flex items-center justify-between rounded-xl bg-gray-900 px-4 py-2.5">
           <span className="text-sm text-white">

@@ -266,6 +266,7 @@ export function QuickEntry({ onSaved, onSwitchFull }: Props) {
       <div className="px-4 pt-3">
         <FrequentItems
           onAdd={(p: FrequentProduct) => adj(p.id, 1)}
+          onRemove={(p: FrequentProduct) => adj(p.id, -1)}
           counts={qtys}
         />
       </div>

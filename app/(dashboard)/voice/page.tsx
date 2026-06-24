@@ -136,6 +136,15 @@ export default function VoicePage() {
             unitPrice: p.price, addedAsNew: false,
           }]))
         }}
+        onRemove={(p: FrequentProduct) => {
+          setRows(prev => {
+            const idx = prev.findIndex(r => r.productId === p.id)
+            if (idx === -1) return prev
+            const row = prev[idx]
+            if (row.quantity <= 1) return [...prev.slice(0, idx), ...prev.slice(idx + 1)]
+            return [...prev.slice(0, idx), { ...row, quantity: row.quantity - 1 }, ...prev.slice(idx + 1)]
+          })
+        }}
         label="Tap to add"
       />
 

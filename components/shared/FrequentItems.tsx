@@ -19,7 +19,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Plus } from 'lucide-react'
+import { Plus, Minus } from 'lucide-react'
 
 export interface FrequentProduct {
   id: string
@@ -29,11 +29,12 @@ export interface FrequentProduct {
 
 interface Props {
   onAdd: (product: FrequentProduct) => void
+  onRemove?: (product: FrequentProduct) => void
   counts?: Map<string, number>
   label?: string
 }
 
-export function FrequentItems({ onAdd, counts, label = 'Frequently sold' }: Props) {
+export function FrequentItems({ onAdd, onRemove, counts, label = 'Frequently sold' }: Props) {
   const [products, setProducts] = useState<FrequentProduct[]>([])
   const [loaded, setLoaded] = useState(false)
 
@@ -54,24 +55,37 @@ export function FrequentItems({ onAdd, counts, label = 'Frequently sold' }: Prop
         {products.map(p => {
           const count = counts?.get(p.id) ?? 0
           return (
-            <button
-              key={p.id}
-              type="button"
-              onClick={() => onAdd(p)}
-              className="btn-lift flex items-center gap-2 rounded-full border border-emerald-200 bg-white pl-3.5 pr-2.5 py-2 text-sm cursor-pointer shadow-sm"
-            >
-              <span className="font-semibold text-gray-900 whitespace-nowrap">{p.name}</span>
-              <span className="text-emerald-600 font-medium">&#8377;{p.price}</span>
-              {count > 0 ? (
-                <span className="flex h-6 min-w-[24px] items-center justify-center rounded-full bg-emerald-600 px-1.5 text-xs font-bold text-white">
-                  {count}
-                </span>
-              ) : (
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-200 text-emerald-700">
-                  <Plus size={14} />
-                </span>
+            <div key={p.id} className="flex items-center gap-0.5">
+              {count > 0 && onRemove && (
+                <button
+                  type="button"
+                  onClick={() => onRemove(p)}
+                  className="btn-lift flex h-8 w-8 items-center justify-center rounded-full border border-emerald-200 bg-white text-emerald-700 cursor-pointer shadow-sm"
+                  aria-label={`Remove one ${p.name}`}
+                >
+                  <Minus size={14} />
+                </button>
               )}
-            </button>
+              <button
+                type="button"
+                onClick={() => onAdd(p)}
+                className={`btn-lift flex items-center gap-2 rounded-full border bg-white pl-3.5 pr-2.5 py-2 text-sm cursor-pointer shadow-sm ${
+                  count > 0 ? 'border-emerald-400' : 'border-emerald-200'
+                }`}
+              >
+                <span className="font-semibold text-gray-900 whitespace-nowrap">{p.name}</span>
+                <span className="text-emerald-600 font-medium">&#8377;{p.price}</span>
+                {count > 0 ? (
+                  <span className="flex h-6 min-w-[24px] items-center justify-center rounded-full bg-emerald-600 px-1.5 text-xs font-bold text-white">
+                    {count}
+                  </span>
+                ) : (
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-200 text-emerald-700">
+                    <Plus size={14} />
+                  </span>
+                )}
+              </button>
+            </div>
           )
         })}
       </div>
