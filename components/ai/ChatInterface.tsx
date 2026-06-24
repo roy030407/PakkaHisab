@@ -23,7 +23,6 @@
 "use client"
 
 import { useState, useRef, useEffect, useCallback } from "react"
-import { useSearchParams } from "next/navigation"
 
 interface Message {
   role: "user" | "assistant"
@@ -38,30 +37,21 @@ const QUICK_PROMPTS = [
   "Is this month better than last?",
 ]
 
-export function ChatInterface() {
+interface ChatInterfaceProps {
+  onSendRef?: React.MutableRefObject<((text: string) => void) | null>
+}
+
+export function ChatInterface({ onSendRef }: ChatInterfaceProps = {}) {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState("")
   const [loading, setLoading] = useState(false)
   const [conversationId, setConversationId] = useState<string | undefined>()
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
-  const searchParams = useSearchParams()
-  const tipSent = useRef(false)
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
-
-  // Auto-send the dashboard tip as the first question when navigating from InsightCard
-  useEffect(() => {
-    const tip = searchParams.get("tip")
-    if (tip && !tipSent.current && messages.length === 0) {
-      tipSent.current = true
-      const prompt = `You said: "${tip}"\n\nTell me more about this. What should I do?`
-      setTimeout(() => send(prompt), 300)
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams])
 
   const send = useCallback(
     async (text: string) => {
@@ -151,6 +141,10 @@ export function ChatInterface() {
     },
     [messages, loading, conversationId]
   )
+
+  useEffect(() => {
+    if (onSendRef) onSendRef.current = send
+  }, [send, onSendRef])
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === "Enter" && !e.shiftKey) {

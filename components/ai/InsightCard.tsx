@@ -55,7 +55,7 @@ export function InsightCard() {
       </p>
       <p className="text-sm leading-relaxed text-gray-800">{insight}</p>
       <Link
-        href={`/advisor?tip=${encodeURIComponent(insight)}`}
+        href="/advisor"
         className="mt-3 inline-block text-xs font-semibold text-emerald-700 hover:text-emerald-800"
       >
         Tell me more →
