@@ -50,7 +50,7 @@ export function FrequentItems({ onAdd, counts, label = 'Frequently sold' }: Prop
   return (
     <div className="space-y-1.5">
       <p className="text-xs font-semibold text-gray-500 px-1">{label}</p>
-      <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+      <div className="flex flex-wrap gap-2">
         {products.map(p => {
           const count = counts?.get(p.id) ?? 0
           return (
@@ -58,7 +58,7 @@ export function FrequentItems({ onAdd, counts, label = 'Frequently sold' }: Prop
               key={p.id}
               type="button"
               onClick={() => onAdd(p)}
-              className="btn-lift shrink-0 flex items-center gap-1.5 rounded-full border border-gray-200 bg-white pl-3 pr-2 py-1.5 text-xs cursor-pointer"
+              className="btn-lift flex items-center gap-1.5 rounded-full border border-gray-200 bg-white pl-3 pr-2 py-1.5 text-xs cursor-pointer"
             >
               <span className="font-medium text-gray-800 whitespace-nowrap">{p.name}</span>
               <span className="text-gray-400">&#8377;{p.price}</span>
