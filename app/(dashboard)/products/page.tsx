@@ -37,7 +37,6 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { LoadingState } from "@/components/shared/LoadingState";
 import { StockTabs } from "@/components/shared/StockTabs";
-import { FrequentItems } from "@/components/shared/FrequentItems";
 
 type Product = {
   id: string;
@@ -83,6 +82,14 @@ export default function ProductsPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState({ ...emptyForm });
+  const [frequentIds, setFrequentIds] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    fetch("/api/products/frequent")
+      .then(r => r.json())
+      .then(d => setFrequentIds(new Set((d.products ?? []).map((p: { id: string }) => p.id))))
+      .catch(() => {});
+  }, []);
 
   const fetchProducts = useCallback(async (q?: string) => {
     setLoading(true);
@@ -243,16 +250,8 @@ export default function ProductsPage() {
         </Button>
       </div>
 
-      {/* Most sold products */}
-      <div className="mt-4 mb-2">
-        <FrequentItems
-          onAdd={() => {}}
-          label="Most sold (last 30 days)"
-        />
-      </div>
-
       {/* Search */}
-      <div className="mt-2 mb-6">
+      <div className="mt-4 mb-6">
         <Input
           placeholder="Search by name, brand, or item number..."
           value={search}
@@ -420,13 +419,20 @@ export default function ProductsPage() {
         />
       ) : (
         <div className="grid gap-3 sm:grid-cols-2">
-          {products.map((product) => (
+          {[...products]
+            .sort((a, b) => {
+              const aFreq = frequentIds.has(a.id) ? 1 : 0;
+              const bFreq = frequentIds.has(b.id) ? 1 : 0;
+              return bFreq - aFreq;
+            })
+            .map((product) => (
             <ProductCard
               key={product.id}
               product={product}
               onEdit={openEdit}
               onTogglePin={handleTogglePin}
               onDelete={handleDelete}
+              highlighted={frequentIds.has(product.id)}
             />
           ))}
         </div>
