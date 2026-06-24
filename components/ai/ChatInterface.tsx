@@ -154,7 +154,7 @@ export function ChatInterface({ onSendRef }: ChatInterfaceProps = {}) {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100dvh-56px)]">
+    <div className="flex flex-col flex-1 min-h-0">
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
         {messages.length === 0 && (
