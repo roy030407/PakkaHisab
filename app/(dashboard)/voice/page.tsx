@@ -17,6 +17,7 @@
  *   - Layer 4: udhaar by voice (attach_customer attaches a customer + saves the
  *     sale on credit; customer_balance reads a named customer's balance aloud);
  *     detachable customer chip
+ *   - Added PaymentToggle (Cash/UPI) after voice sale saves
  *
  * WHERE IT FITS:
  *   Reached from the Sidebar (desktop) and the VoiceFab (mobile).
@@ -36,12 +37,14 @@ import { speak } from '@/lib/voice/speak'
 import { buildBalanceByNameSpeech } from '@/lib/voice/customer'
 import type { VoiceCartRow, VoiceParseResponse, VoiceCommand, VoiceParseArgs, VoiceCustomerMatch } from '@/lib/voice/types'
 import { FrequentItems, type FrequentProduct } from '@/components/shared/FrequentItems'
+import { PaymentToggle } from '@/components/shared/PaymentToggle'
 
 export default function VoicePage() {
   const [rows, setRows] = useState<VoiceCartRow[]>([])
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
   const [customer, setCustomer] = useState<VoiceCustomerMatch | null>(null)
+  const [savedSale, setSavedSale] = useState<{ id: string; total: number } | null>(null)
 
   // The hook holds onResult by identity, so command handling reads the latest
   // cart + saving flag + attached customer through a ref, not a stale closure.
@@ -69,8 +72,13 @@ export default function VoicePage() {
         }),
       })
       if (!res.ok) { setSaveError('Could not save. Check your connection and try again.'); return }
+      const data = await res.json().catch(() => ({}))
+      const saleTotal = cartTotal(stateRef.current.rows)
       setRows([])
       setCustomer(null)
+      if (data?.transactionId) {
+        setSavedSale({ id: data.transactionId, total: saleTotal })
+      }
     } catch {
       setSaveError('Could not save. Check your connection and try again.')
     } finally {
@@ -209,6 +217,14 @@ export default function VoicePage() {
       </div>
 
       {saveError && <p className="text-sm text-rose-600">{saveError}</p>}
+
+      {savedSale && (
+        <PaymentToggle
+          transactionId={savedSale.id}
+          total={savedSale.total}
+          onDone={() => setSavedSale(null)}
+        />
+      )}
 
       {/* Footer: button equivalents for the voice commands. */}
       <div className="flex gap-3">
