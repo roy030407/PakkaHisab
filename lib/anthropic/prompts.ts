@@ -7,6 +7,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation for Phase 5 AI Advisor
+ *   - Tighten INSIGHT prompt to 2 short sentences, under 30 words
  *
  * WHERE IT FITS:
  *   Imported by advisor.ts and insight.ts to build final prompts.
@@ -43,7 +44,7 @@ Generate ONE specific, actionable daily insight based on the data below.
 RULES:
 - Must reference specific numbers from their data (not generic advice).
 - Must be something they can act on today or this week.
-- Maximum 2 sentences.
+- Maximum 2 short sentences, under 30 words total. Be specific and concise.
 - Start directly with the insight - no greetings, no "Based on your data".
 - Never use em dashes. Use commas, periods, or a plain hyphen instead.
 - Language: {{language}}

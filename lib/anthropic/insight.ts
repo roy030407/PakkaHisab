@@ -11,6 +11,7 @@
  *   - Fix: update model to claude-sonnet-4-6; fix upsert onConflict target to match DB constraint
  *   - Fix: log cache-write failures (silent failure caused a paid Claude call
  *     on every dashboard load)
+ *   - Lower maxOutputTokens from 200 to 100 to prevent truncation
  *
  * WHERE IT FITS:
  *   Called by /api/ai/insight. Result shown as InsightCard on dashboard.
@@ -53,7 +54,7 @@ export async function getDailyInsight(
     contents: "Generate today's business insight.",
     config: {
       systemInstruction: systemPrompt,
-      maxOutputTokens: 200,
+      maxOutputTokens: 100,
     },
   })
   const text = (result.text ?? "").trim()
