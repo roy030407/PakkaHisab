@@ -21,11 +21,13 @@ import { useCallback, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { FrequentItems, type FrequentProduct } from '@/components/shared/FrequentItems'
+import { PaymentToggle } from '@/components/shared/PaymentToggle'
 
 export function DashboardQuickSale({ label }: { label?: string } = {}) {
   const router = useRouter()
   const [cart, setCart] = useState<Map<string, { product: FrequentProduct; qty: number }>>(new Map())
   const [saving, setSaving] = useState(false)
+  const [savedSale, setSavedSale] = useState<{ id: string; total: number } | null>(null)
 
   const addItem = useCallback((product: FrequentProduct) => {
     setCart(prev => {
@@ -71,8 +73,14 @@ export function DashboardQuickSale({ label }: { label?: string } = {}) {
         }),
       })
       if (res.ok) {
-        toast.success('Sale saved!')
+        const data = await res.json().catch(() => ({}))
+        const saleTotal = total
         setCart(new Map())
+        if (data?.transactionId) {
+          setSavedSale({ id: data.transactionId, total: saleTotal })
+        } else {
+          toast.success('Sale saved!')
+        }
         router.refresh()
       } else {
         toast.error('Could not save. Try again.')
@@ -99,6 +107,15 @@ export function DashboardQuickSale({ label }: { label?: string } = {}) {
           >
             {saving ? 'Saving...' : 'Save sale'}
           </button>
+        </div>
+      )}
+      {savedSale && (
+        <div className="mt-2">
+          <PaymentToggle
+            transactionId={savedSale.id}
+            total={savedSale.total}
+            onDone={() => setSavedSale(null)}
+          />
         </div>
       )}
     </div>

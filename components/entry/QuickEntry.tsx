@@ -31,6 +31,7 @@ import { CustomerSheet } from './CustomerSheet'
 import { AnimatedNumber } from '@/components/shared/AnimatedNumber'
 import { ShareReceiptButton } from '@/components/share/ShareReceiptButton'
 import { FrequentItems, type FrequentProduct } from '@/components/shared/FrequentItems'
+import { PaymentToggle } from '@/components/shared/PaymentToggle'
 
 interface LineItem { productId: string; productName: string; unitPrice: number; quantity: number }
 interface Props {
@@ -156,11 +157,14 @@ export function QuickEntry({ onSaved, onSwitchFull }: Props) {
         <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-2xl font-bold text-emerald-700">
           &#10003;
         </div>
-        <p className="text-lg font-semibold text-gray-900">Sale saved</p>
-        <p className="mt-1 text-sm text-gray-500">
-          &#8377;{savedSale.total.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
-        </p>
-        <div className="mt-6 w-full max-w-xs space-y-2">
+        <div className="w-full max-w-xs">
+          <PaymentToggle
+            transactionId={savedSale.id}
+            total={savedSale.total}
+            onDone={() => {}}
+          />
+        </div>
+        <div className="mt-4 w-full max-w-xs space-y-2">
           <ShareReceiptButton transactionId={savedSale.id} shopName={shopName} variant="prominent" />
           <button
             onClick={() => { setSavedSale(null); onSaved() }}

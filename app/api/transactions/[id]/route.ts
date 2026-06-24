@@ -174,10 +174,27 @@ export async function PATCH(
   const { data: { user }, error: authError } = await supabase.auth.getUser()
   if (authError || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  let body: { action?: string }
+  let body: { action?: string; paymentMethod?: string }
   try { body = await request.json() } catch {
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
   }
+
+  if (body.action === 'set_payment') {
+    const pm = body.paymentMethod
+    if (pm !== 'cash' && pm !== 'upi' && pm !== 'credit') {
+      return NextResponse.json({ error: 'Invalid payment method' }, { status: 400 })
+    }
+    const { data: store2 } = await supabase.from('stores').select('id').eq('owner_id', user.id).maybeSingle()
+    if (!store2) return NextResponse.json({ error: 'Store not found' }, { status: 404 })
+    const { error: pmErr } = await supabase
+      .from('transactions')
+      .update({ payment_method: pm })
+      .eq('id', params.id)
+      .eq('store_id', store2.id)
+    if (pmErr) return NextResponse.json({ error: 'Failed to update' }, { status: 500 })
+    return NextResponse.json({ updated: true })
+  }
+
   if (body.action !== 'void') {
     return NextResponse.json({ error: 'Unsupported action' }, { status: 400 })
   }

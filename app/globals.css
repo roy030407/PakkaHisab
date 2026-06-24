@@ -198,6 +198,14 @@
   .row-lift, .row-lift:hover { transition: none; transform: none; box-shadow: none; }
 }
 
+@keyframes shrink {
+  from { width: 100%; }
+  to { width: 0%; }
+}
+.animate-shrink {
+  animation: shrink 4s linear forwards;
+}
+
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
