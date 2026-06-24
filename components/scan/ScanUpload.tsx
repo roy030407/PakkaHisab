@@ -18,14 +18,13 @@
  */
 'use client'
 import { useRef } from 'react'
-import { FrequentItems, type FrequentProduct } from '@/components/shared/FrequentItems'
+import { DashboardQuickSale } from '@/components/dashboard/DashboardQuickSale'
 
 interface Props {
   onFileSelected: (files: File[]) => void
-  onQuickAdd?: (product: FrequentProduct) => void
 }
 
-export function ScanUpload({ onFileSelected, onQuickAdd }: Props) {
+export function ScanUpload({ onFileSelected }: Props) {
   const cameraRef = useRef<HTMLInputElement>(null)
   const galleryRef = useRef<HTMLInputElement>(null)
   const fileRef = useRef<HTMLInputElement>(null)
@@ -77,11 +76,9 @@ export function ScanUpload({ onFileSelected, onQuickAdd }: Props) {
         </button>
       </div>
 
-      {onQuickAdd && (
-        <div className="w-full max-w-xs mt-6">
-          <FrequentItems onAdd={onQuickAdd} label="Or quick-add without scanning" />
-        </div>
-      )}
+      <div className="w-full max-w-md mt-6">
+        <DashboardQuickSale label="Or quick-add without scanning" />
+      </div>
     </div>
   )
 }

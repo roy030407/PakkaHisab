@@ -26,8 +26,6 @@ import { ExtractionReview } from '@/components/scan/ExtractionReview'
 import { LedgerReview } from '@/components/scan/LedgerReview'
 import { ShareReceiptButton } from '@/components/share/ShareReceiptButton'
 import type { ExtractionResult } from '@/types'
-import type { FrequentProduct } from '@/components/shared/FrequentItems'
-import { toast } from 'sonner'
 
 type ScanState = 'upload' | 'loading' | 'review' | 'error'
 
@@ -185,22 +183,8 @@ export default function ScanPage() {
     )
   }
 
-  async function handleQuickAdd(product: FrequentProduct) {
-    try {
-      const res = await fetch('/api/entry/quick', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'sale', paymentMethod: 'cash',
-          items: [{ productId: product.id, quantity: 1 }],
-        }),
-      })
-      if (res.ok) toast.success(`${product.name} sold!`)
-    } catch { /* ignore */ }
-  }
-
   if (state === 'upload') {
-    return <ScanUpload onFileSelected={handleFilesSelected} onQuickAdd={handleQuickAdd} />
+    return <ScanUpload onFileSelected={handleFilesSelected} />
   }
 
   if (state === 'loading') {

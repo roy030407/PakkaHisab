@@ -22,7 +22,7 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { FrequentItems, type FrequentProduct } from '@/components/shared/FrequentItems'
 
-export function DashboardQuickSale() {
+export function DashboardQuickSale({ label }: { label?: string } = {}) {
   const router = useRouter()
   const [cart, setCart] = useState<Map<string, { product: FrequentProduct; qty: number }>>(new Map())
   const [saving, setSaving] = useState(false)
@@ -85,7 +85,7 @@ export function DashboardQuickSale() {
 
   return (
     <div>
-      <FrequentItems onAdd={addItem} onRemove={removeItem} counts={counts} />
+      <FrequentItems onAdd={addItem} onRemove={removeItem} counts={counts} label={label} />
       {itemCount > 0 && (
         <div className="mt-2 flex items-center justify-between rounded-xl bg-gray-900 px-4 py-2.5">
           <span className="text-sm text-white">
