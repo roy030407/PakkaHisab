@@ -56,7 +56,7 @@ export default async function DashboardPage() {
   const monthStart = today.slice(0, 8) + "01"
 
   let salesToday = 0, purchasesToday = 0, txCountToday = 0
-  let salesMtd = 0, purchasesMtd = 0
+  let salesMtd = 0, purchasesMtd = 0, expensesMtd = 0
   let dailyFixedCost = 0, outstandingReceivables = 0, receivableCustomers = 0
   let lowStockCount = 0, expiryCount = 0
   let profitByDay: number[] = []
@@ -156,6 +156,7 @@ export default async function DashboardPage() {
       const amt = Number(tx.total_amount) || 0
       if (tx.type === "sale") salesMtd += amt
       else if (tx.type === "purchase") purchasesMtd += amt
+      else if (tx.type === "expense") expensesMtd += amt
     }
 
     outstandingReceivables = (customersResult.data ?? []).reduce(
@@ -193,7 +194,7 @@ export default async function DashboardPage() {
 
   const dayOfMonth = new Date().getDate()
   const mtdFixedCost = dailyFixedCost * dayOfMonth
-  const netProfitMtd = Math.round(salesMtd - purchasesMtd - mtdFixedCost)
+  const netProfitMtd = Math.round(salesMtd - purchasesMtd - expensesMtd - mtdFixedCost)
   const monthName = new Intl.DateTimeFormat("en-IN", { month: "short", timeZone: "Asia/Kolkata" }).format(new Date())
 
   const formatLargeINR = (n: number) => {
