@@ -28,6 +28,7 @@ import { useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { LogOut } from 'lucide-react'
 import { createSupabaseBrowserClient } from '@/lib/supabase/browser'
+import { track, resetAnalytics } from '@/lib/analytics/posthog'
 
 interface Props {
   variant?: 'nav' | 'button'
@@ -50,9 +51,11 @@ export function LogoutButton({ variant = 'button' }: Props) {
   async function handleLogout() {
     if (busy) return
     setBusy(true)
+    track('logout')
     try {
       const supabase = createSupabaseBrowserClient()
       await supabase.auth.signOut()
+      resetAnalytics()
     } finally {
       // Always return home, even if sign-out hiccups, so the merchant is never stuck.
       router.replace('/')

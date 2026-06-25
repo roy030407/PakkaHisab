@@ -38,6 +38,7 @@ import { buildBalanceByNameSpeech } from '@/lib/voice/customer'
 import type { VoiceCartRow, VoiceParseResponse, VoiceCommand, VoiceParseArgs, VoiceCustomerMatch } from '@/lib/voice/types'
 import { FrequentItems, type FrequentProduct } from '@/components/shared/FrequentItems'
 import { PaymentToggle } from '@/components/shared/PaymentToggle'
+import { track } from '@/lib/analytics/posthog'
 
 export default function VoicePage() {
   const [rows, setRows] = useState<VoiceCartRow[]>([])
@@ -78,6 +79,7 @@ export default function VoicePage() {
       setCustomer(null)
       if (data?.transactionId) {
         setSavedSale({ id: data.transactionId, total: saleTotal })
+        track('sale_saved', { amount: saleTotal, itemCount: cart.length, source: 'voice', hasCustomer: !!cust })
       }
     } catch {
       setSaveError('Could not save. Check your connection and try again.')
@@ -117,7 +119,8 @@ export default function VoicePage() {
     runCommand(r.command, r.args)
   }, [runCommand])
 
-  const { status, lastTranscript, start, stop } = useVoiceSession(onResult)
+  const { status, lastTranscript, start: rawStart, stop } = useVoiceSession(onResult)
+  const start = useCallback(() => { track('voice_session_started'); rawStart() }, [rawStart])
   stopRef.current = stop
   const listening = status === 'listening' || status === 'thinking'
 

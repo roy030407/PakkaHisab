@@ -24,6 +24,8 @@
 
 import { useState, useRef, useEffect, useCallback } from "react"
 
+import { track } from '@/lib/analytics/posthog'
+
 interface Message {
   role: "user" | "assistant"
   content: string
@@ -58,6 +60,7 @@ export function ChatInterface({ onSendRef }: ChatInterfaceProps = {}) {
       if (!text.trim() || loading) return
 
       const userMessage: Message = { role: "user", content: text.trim() }
+      track('advisor_message_sent', { messageLength: text.trim().length })
       const updatedMessages = [...messages, userMessage]
       setMessages([...updatedMessages, { role: "assistant", content: "", streaming: true }])
       setInput("")

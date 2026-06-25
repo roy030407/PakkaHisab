@@ -22,6 +22,7 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { FrequentItems, type FrequentProduct } from '@/components/shared/FrequentItems'
 import { PaymentToggle } from '@/components/shared/PaymentToggle'
+import { track } from '@/lib/analytics/posthog'
 
 export function DashboardQuickSale({ label }: { label?: string } = {}) {
   const router = useRouter()
@@ -78,6 +79,7 @@ export function DashboardQuickSale({ label }: { label?: string } = {}) {
         setCart(new Map())
         if (data?.transactionId) {
           setSavedSale({ id: data.transactionId, total: saleTotal })
+          track('sale_saved', { amount: saleTotal, itemCount, source: 'dashboard_quick' })
         } else {
           toast.success('Sale saved!')
         }

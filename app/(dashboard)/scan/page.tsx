@@ -21,6 +21,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { ScanUpload } from '@/components/scan/ScanUpload'
+import { track } from '@/lib/analytics/posthog'
 import { ScanLoading } from '@/components/scan/ScanLoading'
 import { ExtractionReview } from '@/components/scan/ExtractionReview'
 import { LedgerReview } from '@/components/scan/LedgerReview'
@@ -122,6 +123,7 @@ export default function ScanPage() {
     })
     if (res.ok) {
       const data = await res.json().catch(() => ({}))
+      track('bill_scanned', { type: payload.type, amount: payload.totalAmount, itemCount: payload.items?.length ?? 0 })
       // In a batch, advance to the next photo instead of leaving the flow.
       if (queuePos + 1 < queue.length) {
         const next = queuePos + 1

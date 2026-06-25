@@ -32,6 +32,7 @@ import { AnimatedNumber } from '@/components/shared/AnimatedNumber'
 import { ShareReceiptButton } from '@/components/share/ShareReceiptButton'
 import { FrequentItems, type FrequentProduct } from '@/components/shared/FrequentItems'
 import { PaymentToggle } from '@/components/shared/PaymentToggle'
+import { track } from '@/lib/analytics/posthog'
 
 interface LineItem { productId: string; productName: string; unitPrice: number; quantity: number }
 interface Props {
@@ -133,6 +134,12 @@ export function QuickEntry({ onSaved, onSwitchFull }: Props) {
     }
     toast.success(`${TYPE_META[type].label} saved`)
     const data = await res.json().catch(() => ({}))
+    track(`${type}_saved`, {
+      amount: total,
+      itemCount: isExpense ? 1 : qtys.size,
+      source: 'quick_entry',
+      ...(isExpense ? { category: expenseCategory } : {}),
+    })
     if (type === 'sale' && data?.transactionId) {
       setSavedSale({ id: data.transactionId, total })
     } else {

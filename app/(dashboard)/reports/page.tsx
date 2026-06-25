@@ -32,6 +32,7 @@ import { ItemsSoldCard } from "@/components/reports/ItemsSoldCard"
 import { ExpenseBreakdownCard } from "@/components/reports/ExpenseBreakdownCard"
 import { ReportSkeleton } from "@/components/shared/PageSkeleton"
 import type { ReportPeriod, PeriodReport } from "@/types"
+import { track } from "@/lib/analytics/posthog"
 
 // Charts pull in recharts (heavy). Lazy-load them client-side so the rest of the
 // Reports page - and every other route sharing the bundle - loads faster.
@@ -73,6 +74,7 @@ export default function ReportsPage() {
       const res = await fetch(`/api/reports?period=${p}`)
       if (!res.ok) throw new Error("Failed to load report")
       setReport(await res.json())
+      track('report_viewed', { period: p })
     } catch {
       setError("Could not load report. Please try again.")
     } finally {

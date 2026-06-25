@@ -18,6 +18,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
+import { track } from '@/lib/analytics/posthog'
 
 interface Props {
   transactionId: string
@@ -41,6 +42,7 @@ export function PaymentToggle({ transactionId, total, onDone }: Props) {
 
   async function pickUpi() {
     setSelected('upi')
+    track('payment_toggled', { method: 'upi', transactionId })
     try {
       await fetch(`/api/transactions/${transactionId}`, {
         method: 'PATCH',

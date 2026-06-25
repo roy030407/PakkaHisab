@@ -13,6 +13,7 @@
  *   - Wrapped page content in AppErrorBoundary so a client render crash on any
  *     dashboard screen shows a friendly retry instead of a white screen
  *   - Mounted VoiceFab (mobile mic shortcut to /voice)
+ *   - Wrapped tree in PostHogProvider for analytics
  *
  * WHERE IT FITS:
  *   Wraps all pages under (dashboard)/*. The single point of auth
@@ -28,6 +29,7 @@ import { BottomNav } from "@/components/shared/BottomNav";
 import { Sidebar } from "@/components/shared/Sidebar";
 import { AppErrorBoundary } from "@/components/shared/AppErrorBoundary";
 import { VoiceFab } from "@/components/voice/VoiceFab";
+import { PostHogProvider } from "@/components/analytics/PostHogProvider";
 
 export default async function DashboardLayout({
   children,
@@ -54,15 +56,17 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <Sidebar />
-      <div className="flex flex-col flex-1 min-w-0">
-        <main className="flex-1 pb-16 md:pb-0">
-          <AppErrorBoundary>{children}</AppErrorBoundary>
-        </main>
-        <BottomNav />
-        <VoiceFab />
+    <PostHogProvider userId={user.id} email={user.email}>
+      <div className="flex min-h-screen bg-gray-50">
+        <Sidebar />
+        <div className="flex flex-col flex-1 min-w-0">
+          <main className="flex-1 pb-16 md:pb-0">
+            <AppErrorBoundary>{children}</AppErrorBoundary>
+          </main>
+          <BottomNav />
+          <VoiceFab />
+        </div>
       </div>
-    </div>
+    </PostHogProvider>
   );
 }
