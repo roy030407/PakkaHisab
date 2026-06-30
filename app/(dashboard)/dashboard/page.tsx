@@ -354,7 +354,7 @@ export default async function DashboardPage() {
           {/* Recent transactions */}
           <RecentTransactions />
           <Link href="/transactions"
-            className="btn-lift w-full rounded-xl border border-gray-200 bg-white py-2.5 text-center text-xs font-medium text-emerald-700 cursor-pointer">
+            className="btn-lift block w-full rounded-xl border border-gray-200 bg-white py-2.5 text-center text-xs font-medium text-emerald-700 cursor-pointer">
             See full transaction history
           </Link>
 
