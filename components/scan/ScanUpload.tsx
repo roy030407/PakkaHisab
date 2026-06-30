@@ -18,7 +18,7 @@
  */
 'use client'
 import { useRef } from 'react'
-import { DashboardQuickSale } from '@/components/dashboard/DashboardQuickSale'
+
 
 interface Props {
   onFileSelected: (files: File[]) => void
@@ -76,9 +76,6 @@ export function ScanUpload({ onFileSelected }: Props) {
         </button>
       </div>
 
-      <div className="w-full max-w-md mt-6">
-        <DashboardQuickSale label="Or quick-add without scanning" />
-      </div>
     </div>
   )
 }
