@@ -36,7 +36,6 @@ import { decideCommandAction, buildBalanceSpeech } from '@/lib/voice/command'
 import { speak } from '@/lib/voice/speak'
 import { buildBalanceByNameSpeech } from '@/lib/voice/customer'
 import type { VoiceCartRow, VoiceParseResponse, VoiceCommand, VoiceParseArgs, VoiceCustomerMatch } from '@/lib/voice/types'
-import { FrequentItems, type FrequentProduct } from '@/components/shared/FrequentItems'
 import { PaymentToggle } from '@/components/shared/PaymentToggle'
 import { track } from '@/lib/analytics/posthog'
 
@@ -67,7 +66,7 @@ export default function VoicePage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           type: 'sale',
-          paymentMethod: cust ? 'credit' : 'cash',
+          paymentMethod: cust ? 'credit' : 'upi',
           customerId: cust?.id,
           items: cart.map((r) => ({ productId: r.productId, quantity: r.quantity })),
         }),
@@ -138,26 +137,6 @@ export default function VoicePage() {
         <h1 className="text-xl font-bold text-gray-900">Bolकर बेचो</h1>
         <p className="text-sm text-gray-500">Tap the mic and speak. Say &ldquo;agla&rdquo; to save, &ldquo;khatam&rdquo; to finish.</p>
       </header>
-
-      {/* Quick add frequent items by tap */}
-      <FrequentItems
-        onAdd={(p: FrequentProduct) => {
-          setRows(prev => addRowsToCart(prev, [{
-            productId: p.id, name: p.name, quantity: 1,
-            unitPrice: p.price, addedAsNew: false,
-          }]))
-        }}
-        onRemove={(p: FrequentProduct) => {
-          setRows(prev => {
-            const idx = prev.findIndex(r => r.productId === p.id)
-            if (idx === -1) return prev
-            const row = prev[idx]
-            if (row.quantity <= 1) return [...prev.slice(0, idx), ...prev.slice(idx + 1)]
-            return [...prev.slice(0, idx), { ...row, quantity: row.quantity - 1 }, ...prev.slice(idx + 1)]
-          })
-        }}
-        label="Tap to add"
-      />
 
       {/* Mic + status */}
       <div className="flex flex-col items-center gap-3 py-4">

@@ -38,7 +38,7 @@ export function FullEntryForm({ initialItems, onSaved, onSwitchQuick }: Props) {
   const [items, setItems] = useState<LineItem[]>(initialItems ?? [])
   const [type, setType] = useState<TransactionType>('sale')
   const [date, setDate] = useState(new Date().toISOString().split('T')[0])
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('cash')
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('upi')
   const [customerId, setCustomerId] = useState<string | undefined>()
   const [vendorName, setVendorName] = useState('')
   const [notes, setNotes] = useState('')

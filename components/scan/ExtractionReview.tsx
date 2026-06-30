@@ -95,7 +95,7 @@ export function ExtractionReview({ extraction, documentUploadId, duplicateWarnin
   const [saving, setSaving] = useState(false)
   const [txType, setTxType] = useState<'purchase' | 'sale'>('sale')
   const [customerId, setCustomerId] = useState<string | undefined>()
-  const [paymentMethod, setPaymentMethod] = useState<'cash' | 'upi' | 'credit'>('cash')
+  const [paymentMethod, setPaymentMethod] = useState<'cash' | 'upi' | 'credit'>('upi')
   const [showCustomer, setShowCustomer] = useState(false)
 
   const live = items.filter(i => !i.removed)

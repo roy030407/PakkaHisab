@@ -35,7 +35,6 @@ import { PrivacyCard } from "@/components/shared/PrivacyCard"
 import Link from "next/link"
 import { Camera, PenLine, Package, ShoppingCart, HandCoins } from "lucide-react"
 import { RecentTransactions } from "@/components/dashboard/RecentTransactions"
-import { DashboardQuickSale } from "@/components/dashboard/DashboardQuickSale"
 
 function istDateString(d: Date): string {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata" }).format(d)
@@ -298,9 +297,6 @@ export default async function DashboardPage() {
               <Sparkline values={profitByDay} labels={dayLabels} />
             </div>
           </div>
-
-          {/* Quick sale from frequent items */}
-          <DashboardQuickSale />
 
           {/* Quick actions */}
           <div className="grid grid-cols-3 gap-2">

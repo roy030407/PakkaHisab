@@ -30,7 +30,6 @@ import type { Product, TransactionType, PaymentMethod } from '@/types'
 import { CustomerSheet } from './CustomerSheet'
 import { AnimatedNumber } from '@/components/shared/AnimatedNumber'
 import { ShareReceiptButton } from '@/components/share/ShareReceiptButton'
-import { FrequentItems, type FrequentProduct } from '@/components/shared/FrequentItems'
 import { PaymentToggle } from '@/components/shared/PaymentToggle'
 import { track } from '@/lib/analytics/posthog'
 
@@ -45,7 +44,7 @@ export function QuickEntry({ onSaved, onSwitchFull }: Props) {
   const [type, setType] = useState<TransactionType>('sale')
   const [qtys, setQtys] = useState<Map<string, number>>(new Map())
   const [customerId, setCustomerId] = useState<string | undefined>()
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('cash')
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('upi')
   const [showCustomer, setShowCustomer] = useState(false)
   const [showTypeOptions, setShowTypeOptions] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -273,15 +272,6 @@ export function QuickEntry({ onSaved, onSwitchFull }: Props) {
         </div>
       ) : (
       <>
-      {/* Frequent items quick-add */}
-      <div className="px-4 pt-3">
-        <FrequentItems
-          onAdd={(p: FrequentProduct) => adj(p.id, 1)}
-          onRemove={(p: FrequentProduct) => adj(p.id, -1)}
-          counts={qtys}
-        />
-      </div>
-
       {/* Product list */}
       <div className="flex-1 px-4 py-2">
         {products.length === 0 ? (

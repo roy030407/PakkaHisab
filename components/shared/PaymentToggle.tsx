@@ -2,8 +2,8 @@
  * FILE: components/shared/PaymentToggle.tsx
  *
  * WHAT THIS DOES:
- *   Post-save payment method toggle. Shows for 3 seconds after a sale is saved.
- *   Default is cash. Tap UPI to switch. Auto-dismisses to cash if no tap.
+ *   Post-save payment method toggle. Shows for 4 seconds after a sale is saved.
+ *   Default is UPI. Tap Cash to switch. Auto-dismisses to UPI if no tap.
  *   Calls PATCH /api/transactions/[id] with action: set_payment.
  *
  * CHANGES THIS SESSION:
@@ -27,7 +27,7 @@ interface Props {
 }
 
 export function PaymentToggle({ transactionId, total, onDone }: Props) {
-  const [selected, setSelected] = useState<'cash' | 'upi'>('cash')
+  const [selected, setSelected] = useState<'cash' | 'upi'>('upi')
   const [dismissed, setDismissed] = useState(false)
 
   const dismiss = useCallback(() => {
@@ -40,14 +40,14 @@ export function PaymentToggle({ transactionId, total, onDone }: Props) {
     return () => clearTimeout(timer)
   }, [dismiss])
 
-  async function pickUpi() {
-    setSelected('upi')
-    track('payment_toggled', { method: 'upi', transactionId })
+  async function pickCash() {
+    setSelected('cash')
+    track('payment_toggled', { method: 'cash', transactionId })
     try {
       await fetch(`/api/transactions/${transactionId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'set_payment', paymentMethod: 'upi' }),
+        body: JSON.stringify({ action: 'set_payment', paymentMethod: 'cash' }),
       })
     } catch { /* best effort */ }
     setTimeout(dismiss, 600)
@@ -63,7 +63,7 @@ export function PaymentToggle({ transactionId, total, onDone }: Props) {
       <div className="flex gap-2 justify-center">
         <button
           type="button"
-          onClick={dismiss}
+          onClick={pickCash}
           className={`btn-lift rounded-lg px-5 py-2.5 text-sm font-semibold cursor-pointer transition-colors ${
             selected === 'cash'
               ? 'bg-emerald-700 text-white shadow-sm'
@@ -74,7 +74,7 @@ export function PaymentToggle({ transactionId, total, onDone }: Props) {
         </button>
         <button
           type="button"
-          onClick={pickUpi}
+          onClick={dismiss}
           className={`btn-lift rounded-lg px-5 py-2.5 text-sm font-semibold cursor-pointer transition-colors ${
             selected === 'upi'
               ? 'bg-violet-600 text-white shadow-sm'
