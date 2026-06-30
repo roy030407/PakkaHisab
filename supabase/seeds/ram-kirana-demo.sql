@@ -77,7 +77,7 @@ BEGIN
          CURRENT_DATE - days.d,
          'sale',
          (280 + floor(random() * 1400))::numeric,
-         (ARRAY['cash','cash','cash','cash','upi'])[1 + floor(random() * 5)::int],
+         (ARRAY['cash','upi','upi','upi'])[1 + floor(random() * 4)::int],
          'manual_quick', 0, 'DEMO_SEED'
   FROM (VALUES (28,4),(27,5),(26,4),(25,5),(24,6),(23,5)) AS days(d, n)
   CROSS JOIN LATERAL generate_series(1, days.n) g;
@@ -92,7 +92,7 @@ BEGIN
          CURRENT_DATE - days.d,
          'sale',
          (320 + floor(random() * 1800))::numeric,
-         (ARRAY['cash','cash','cash','upi','upi'])[1 + floor(random() * 5)::int],
+         (ARRAY['cash','upi','upi','upi','upi'])[1 + floor(random() * 5)::int],
          'manual_quick', 0, 'DEMO_SEED'
   FROM (VALUES (21,7),(20,8),(19,7),(18,8),(17,9),(16,8)) AS days(d, n)
   CROSS JOIN LATERAL generate_series(1, days.n) g;
@@ -110,7 +110,7 @@ BEGIN
          CURRENT_DATE - days.d,
          'sale',
          (350 + floor(random() * 2200))::numeric,
-         (ARRAY['cash','cash','cash','upi','upi'])[1 + floor(random() * 5)::int],
+         (ARRAY['cash','upi','upi','upi','upi'])[1 + floor(random() * 5)::int],
          (ARRAY['manual_quick','manual_quick','manual_quick','bill_scan'])[1 + floor(random() * 4)::int],
          0, 'DEMO_SEED'
   FROM (VALUES (14,10),(13,11),(12,10),(11,12),(10,11),(9,12),(8,11)) AS days(d, n)
@@ -138,7 +138,7 @@ BEGIN
          CURRENT_DATE - days.d,
          'sale',
          (350 + floor(random() * 2600))::numeric,
-         (ARRAY['cash','cash','cash','cash','upi','upi'])[1 + floor(random() * 6)::int],
+         (ARRAY['cash','upi','upi','upi','upi','upi'])[1 + floor(random() * 6)::int],
          (ARRAY['manual_quick','manual_quick','bill_scan','voice'])[1 + floor(random() * 4)::int],
          0, 'DEMO_SEED'
   FROM (VALUES (6,12),(5,11),(4,13),(3,12),(2,14),(1,16),(0,15)) AS days(d, n)
