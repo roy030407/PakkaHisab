@@ -10,6 +10,7 @@
  *   - Initial creation for Phase 4 reporting
  *   - Khata Green restyle
  *   - Added ExpenseBreakdownCard between items sold and profit card
+ *   - Added MerchantActivityCard at the bottom (feature adoption, active days, weekly growth)
  *
  * WHERE IT FITS:
  *   Accessible from the bottom nav "Reports" tab and dashboard quick links.
@@ -30,6 +31,7 @@ import { ProfitCard } from "@/components/reports/ProfitCard"
 import { TaxSummary } from "@/components/reports/TaxSummary"
 import { ItemsSoldCard } from "@/components/reports/ItemsSoldCard"
 import { ExpenseBreakdownCard } from "@/components/reports/ExpenseBreakdownCard"
+import { MerchantActivityCard } from "@/components/reports/MerchantActivityCard"
 import { ReportSkeleton } from "@/components/shared/PageSkeleton"
 import type { ReportPeriod, PeriodReport } from "@/types"
 import { track } from "@/lib/analytics/posthog"
@@ -186,6 +188,9 @@ export default function ReportsPage() {
           <CashFlowChart data={report.cashFlowData} />
           <SalesPurchasesChart data={report.cashFlowData} />
           <TopProductsChart products={report.topProducts} />
+
+          {/* Merchant usage activity - feature adoption, active days, weekly growth */}
+          <MerchantActivityCard />
         </div>
       )}
     </div>
