@@ -30,6 +30,7 @@ import type { Product, TransactionType, PaymentMethod } from '@/types'
 import { CustomerSheet } from './CustomerSheet'
 import { AnimatedNumber } from '@/components/shared/AnimatedNumber'
 import { ShareReceiptButton } from '@/components/share/ShareReceiptButton'
+import { FrequentItems, type FrequentProduct } from '@/components/shared/FrequentItems'
 import { PaymentToggle } from '@/components/shared/PaymentToggle'
 import { track } from '@/lib/analytics/posthog'
 
@@ -272,6 +273,16 @@ export function QuickEntry({ onSaved, onSwitchFull }: Props) {
         </div>
       ) : (
       <>
+      {/* Most popular items quick-add */}
+      <div className="px-4 pt-3">
+        <FrequentItems
+          onAdd={(p: FrequentProduct) => adj(p.id, 1)}
+          onRemove={(p: FrequentProduct) => adj(p.id, -1)}
+          counts={qtys}
+          label="Most popular items"
+        />
+      </div>
+
       {/* Product list */}
       <div className="flex-1 px-4 py-2">
         {products.length === 0 ? (

@@ -54,57 +54,57 @@ BEGIN
 
   -- Morning rush (8-11am): 14 small UPI sales
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, source, tax_amount, notes) VALUES
-    (v_store, v_user, CURRENT_DATE-5, 'sale',  42, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-5, 'sale',  78, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-5, 'sale', 115, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-5, 'sale',  55, 'cash', 'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-5, 'sale', 190, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-5, 'sale',  38, 'cash', 'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-5, 'sale', 260, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-5, 'sale',  95, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-5, 'sale', 145, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-5, 'sale',  62, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-5, 'sale', 320, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-5, 'sale',  88, 'cash', 'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-5, 'sale', 170, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-5, 'sale',  45, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY');
+    (v_store, v_user, CURRENT_DATE-5, 'sale',  42, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-5, 'sale',  78, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-5, 'sale', 115, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-5, 'sale',  55, 'cash', 'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-5, 'sale', 190, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-5, 'sale',  38, 'cash', 'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-5, 'sale', 260, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-5, 'sale',  95, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-5, 'sale', 145, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-5, 'sale',  62, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-5, 'sale', 320, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-5, 'sale',  88, 'cash', 'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-5, 'sale', 170, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-5, 'sale',  45, 'upi',  'voice', 0, 'DEMO_SEED_TODAY');
 
   -- Afternoon (12-5pm): 10 more, mix of sizes
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, source, tax_amount, notes) VALUES
-    (v_store, v_user, CURRENT_DATE-5, 'sale', 430, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-5, 'sale',  72, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-5, 'sale', 510, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-5, 'sale', 125, 'cash', 'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-5, 'sale', 285, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-5, 'sale',  58, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-5, 'sale', 640, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-5, 'sale', 195, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-5, 'sale',  85, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-5, 'sale', 360, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY');
+    (v_store, v_user, CURRENT_DATE-5, 'sale', 430, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-5, 'sale',  72, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-5, 'sale', 510, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-5, 'sale', 125, 'cash', 'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-5, 'sale', 285, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-5, 'sale',  58, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-5, 'sale', 640, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-5, 'sale', 195, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-5, 'sale',  85, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-5, 'sale', 360, 'upi',  'voice', 0, 'DEMO_SEED_TODAY');
 
   -- RESTOCK TRIGGER: stock running low on cold drinks + biscuits
-  -- Merchant calls Balaji Distributors and places an order for morning delivery
+  -- Merchant scans the handwritten order note from Balaji Distributors
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, vendor_name, source, tax_amount, notes) VALUES
-    (v_store, v_user, CURRENT_DATE-5, 'purchase', 4200, 'cash', 'Balaji Distributors', 'manual_full', 0, 'DEMO_SEED_TODAY');
+    (v_store, v_user, CURRENT_DATE-5, 'purchase', 4200, 'cash', 'Balaji Distributors', 'bill_scan', 0, 'DEMO_SEED_TODAY');
 
   -- Evening (6-9pm): 8 sales, cold drinks moving fast before stock runs out
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, source, tax_amount, notes) VALUES
-    (v_store, v_user, CURRENT_DATE-5, 'sale',  92, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-5, 'sale', 760, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-5, 'sale', 315, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-5, 'sale',  48, 'cash', 'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-5, 'sale', 225, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-5, 'sale',  92, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-5, 'sale', 760, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-5, 'sale', 315, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-5, 'sale',  48, 'cash', 'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-5, 'sale', 225, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
     (v_store, v_user, CURRENT_DATE-5, 'sale', 140, 'upi',  'voice',        0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-5, 'sale', 390, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-5, 'sale',  75, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY');
+    (v_store, v_user, CURRENT_DATE-5, 'sale', 390, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-5, 'sale',  75, 'upi',  'voice', 0, 'DEMO_SEED_TODAY');
 
-  -- Thu: Gupta ji takes on credit
+  -- Thu: Gupta ji takes on credit (voice entry)
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, customer_id, source, tax_amount, notes) VALUES
-    (v_store, v_user, CURRENT_DATE-5, 'sale', 1450, 'credit', c_gupta, 'manual_quick', 0, 'DEMO_SEED_TODAY');
+    (v_store, v_user, CURRENT_DATE-5, 'sale', 1450, 'credit', c_gupta, 'voice', 0, 'DEMO_SEED_TODAY');
 
   -- Thu: transport expense (auto for delivery pickup)
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, source, tax_amount, notes) VALUES
-    (v_store, v_user, CURRENT_DATE-5, 'expense', 120, 'cash', 'manual_quick', 0, 'DEMO_SEED_TODAY');
+    (v_store, v_user, CURRENT_DATE-5, 'expense', 120, 'cash', 'manual_full', 0, 'DEMO_SEED_TODAY');
 
   -- ============================================================
   -- FRIDAY June 26 (CURRENT_DATE - 4)
@@ -120,43 +120,43 @@ BEGIN
 
   -- Morning (9-11am): 12 sales, cold drinks flying again after restock
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, source, tax_amount, notes) VALUES
-    (v_store, v_user, CURRENT_DATE-4, 'sale',  55, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-4, 'sale', 110, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-4, 'sale',  42, 'cash', 'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-4, 'sale', 230, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-4, 'sale',  78, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-4, 'sale', 155, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-4, 'sale', 310, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-4, 'sale',  66, 'cash', 'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-4, 'sale', 480, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-4, 'sale', 225, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-4, 'sale',  92, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-4, 'sale', 560, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY');
+    (v_store, v_user, CURRENT_DATE-4, 'sale',  55, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-4, 'sale', 110, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-4, 'sale',  42, 'cash', 'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-4, 'sale', 230, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-4, 'sale',  78, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-4, 'sale', 155, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-4, 'sale', 310, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-4, 'sale',  66, 'cash', 'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-4, 'sale', 480, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-4, 'sale', 225, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-4, 'sale',  92, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-4, 'sale', 560, 'upi',  'voice', 0, 'DEMO_SEED_TODAY');
 
-  -- Shree Agencies afternoon delivery (staples: atta, oil, sugar, dal)
+  -- Shree Agencies afternoon delivery (staples: atta, oil, sugar, dal) - scanned invoice
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, vendor_name, source, tax_amount, notes) VALUES
-    (v_store, v_user, CURRENT_DATE-4, 'purchase', 9500, 'cash', 'Shree Agencies', 'manual_full', 0, 'DEMO_SEED_TODAY');
+    (v_store, v_user, CURRENT_DATE-4, 'purchase', 9500, 'cash', 'Shree Agencies', 'bill_scan', 0, 'DEMO_SEED_TODAY');
 
   -- Afternoon + evening (12-9pm): 14 more sales
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, source, tax_amount, notes) VALUES
-    (v_store, v_user, CURRENT_DATE-4, 'sale', 690, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-4, 'sale', 415, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-4, 'sale',  85, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-4, 'sale', 340, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-4, 'sale', 690, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-4, 'sale', 415, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-4, 'sale',  85, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-4, 'sale', 340, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
     (v_store, v_user, CURRENT_DATE-4, 'sale', 880, 'upi',  'voice',        0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-4, 'sale',  52, 'cash', 'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-4, 'sale', 720, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-4, 'sale', 175, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-4, 'sale', 260, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-4, 'sale', 495, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-4, 'sale', 835, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-4, 'sale',  68, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-4, 'sale', 130, 'cash', 'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-4, 'sale', 370, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY');
+    (v_store, v_user, CURRENT_DATE-4, 'sale',  52, 'cash', 'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-4, 'sale', 720, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-4, 'sale', 175, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-4, 'sale', 260, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-4, 'sale', 495, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-4, 'sale', 835, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-4, 'sale',  68, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-4, 'sale', 130, 'cash', 'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-4, 'sale', 370, 'upi',  'voice', 0, 'DEMO_SEED_TODAY');
 
-  -- Fri: Verma ji credit sale
+  -- Fri: Verma ji credit sale via voice
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, customer_id, source, tax_amount, notes) VALUES
-    (v_store, v_user, CURRENT_DATE-4, 'sale', 1850, 'credit', c_verma, 'manual_quick', 0, 'DEMO_SEED_TODAY');
+    (v_store, v_user, CURRENT_DATE-4, 'sale', 1850, 'credit', c_verma, 'voice', 0, 'DEMO_SEED_TODAY');
 
   -- ============================================================
   -- SATURDAY June 27 (CURRENT_DATE - 3)
@@ -166,53 +166,53 @@ BEGIN
 
   -- Morning rush (8-12pm): 18 small sales
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, source, tax_amount, notes) VALUES
-    (v_store, v_user, CURRENT_DATE-3, 'sale',  48, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-3, 'sale', 110, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-3, 'sale', 210, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-3, 'sale',  72, 'cash', 'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-3, 'sale', 375, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-3, 'sale', 590, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-3, 'sale',  95, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-3, 'sale', 445, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-3, 'sale', 155, 'cash', 'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-3, 'sale', 780, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-3, 'sale',  62, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-3, 'sale', 320, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-3, 'sale', 650, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-3, 'sale', 290, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-3, 'sale',  44, 'cash', 'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-3, 'sale', 910, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-3, 'sale', 475, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-3, 'sale', 185, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY');
+    (v_store, v_user, CURRENT_DATE-3, 'sale',  48, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-3, 'sale', 110, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-3, 'sale', 210, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-3, 'sale',  72, 'cash', 'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-3, 'sale', 375, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-3, 'sale', 590, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-3, 'sale',  95, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-3, 'sale', 445, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-3, 'sale', 155, 'cash', 'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-3, 'sale', 780, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-3, 'sale',  62, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-3, 'sale', 320, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-3, 'sale', 650, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-3, 'sale', 290, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-3, 'sale',  44, 'cash', 'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-3, 'sale', 910, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-3, 'sale', 475, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-3, 'sale', 185, 'upi',  'voice', 0, 'DEMO_SEED_TODAY');
 
-  -- ANOMALY: Saini Traders big Saturday bulk order (wholesale spike)
+  -- ANOMALY: Saini Traders big Saturday bulk order (wholesale spike) - scanned order sheet
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, customer_id, source, tax_amount, notes) VALUES
-    (v_store, v_user, CURRENT_DATE-3, 'sale', 9200, 'credit', c_saini, 'manual_full', 0, 'DEMO_SEED_TODAY');
+    (v_store, v_user, CURRENT_DATE-3, 'sale', 9200, 'credit', c_saini, 'bill_scan', 0, 'DEMO_SEED_TODAY');
 
   -- Afternoon + evening (2-9pm): 14 more sales
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, source, tax_amount, notes) VALUES
-    (v_store, v_user, CURRENT_DATE-3, 'sale', 560, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-3, 'sale',1100, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-3, 'sale', 380, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-3, 'sale', 840, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-3, 'sale',  78, 'cash', 'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-3, 'sale', 235, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-3, 'sale', 670, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-3, 'sale', 560, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-3, 'sale',1100, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-3, 'sale', 380, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-3, 'sale', 840, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-3, 'sale',  78, 'cash', 'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-3, 'sale', 235, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-3, 'sale', 670, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
     (v_store, v_user, CURRENT_DATE-3, 'sale', 120, 'upi',  'voice',        0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-3, 'sale', 455, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-3, 'sale',  55, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-3, 'sale', 310, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-3, 'sale', 725, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-3, 'sale', 180, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-3, 'sale',  92, 'cash', 'manual_quick', 0, 'DEMO_SEED_TODAY');
+    (v_store, v_user, CURRENT_DATE-3, 'sale', 455, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-3, 'sale',  55, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-3, 'sale', 310, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-3, 'sale', 725, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-3, 'sale', 180, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-3, 'sale',  92, 'cash', 'voice', 0, 'DEMO_SEED_TODAY');
 
   -- Evening restock: staples running low, order placed for Sunday delivery
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, vendor_name, source, tax_amount, notes) VALUES
     (v_store, v_user, CURRENT_DATE-3, 'purchase', 13800, 'cash', 'Balaji Distributors', 'bill_scan', 0, 'DEMO_SEED_TODAY');
 
-  -- Sat: Verma ji repays some udhaar
+  -- Sat: Meena Devi credit sale via voice
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, customer_id, source, tax_amount, notes) VALUES
-    (v_store, v_user, CURRENT_DATE-3, 'sale',  2100, 'credit', c_meena,  'manual_quick', 0, 'DEMO_SEED_TODAY');
+    (v_store, v_user, CURRENT_DATE-3, 'sale',  2100, 'credit', c_meena,  'voice', 0, 'DEMO_SEED_TODAY');
 
   -- ============================================================
   -- SUNDAY June 28 (CURRENT_DATE - 2)
@@ -222,42 +222,42 @@ BEGIN
 
   -- Morning (9-12pm): 16 sales, fresh stock selling well
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, source, tax_amount, notes) VALUES
-    (v_store, v_user, CURRENT_DATE-2, 'sale',  62, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-2, 'sale', 165, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-2, 'sale', 290, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-2, 'sale',  48, 'cash', 'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-2, 'sale', 540, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-2, 'sale', 380, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-2, 'sale', 720, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-2, 'sale',  85, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-2, 'sale',  62, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-2, 'sale', 165, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-2, 'sale', 290, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-2, 'sale',  48, 'cash', 'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-2, 'sale', 540, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-2, 'sale', 380, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-2, 'sale', 720, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-2, 'sale',  85, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
     (v_store, v_user, CURRENT_DATE-2, 'sale', 455, 'upi',  'voice',        0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-2, 'sale', 310, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-2, 'sale',  58, 'cash', 'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-2, 'sale', 860, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-2, 'sale', 195, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-2, 'sale', 625, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-2, 'sale', 430, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-2, 'sale',  95, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY');
+    (v_store, v_user, CURRENT_DATE-2, 'sale', 310, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-2, 'sale',  58, 'cash', 'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-2, 'sale', 860, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-2, 'sale', 195, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-2, 'sale', 625, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-2, 'sale', 430, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-2, 'sale',  95, 'upi',  'voice', 0, 'DEMO_SEED_TODAY');
 
   -- Afternoon (2-6pm): 12 more - families stocking up for the week
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, source, tax_amount, notes) VALUES
-    (v_store, v_user, CURRENT_DATE-2, 'sale', 780, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-2, 'sale', 255, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-2, 'sale', 940, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-2, 'sale',  72, 'cash', 'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-2, 'sale', 520, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-2, 'sale', 345, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-2, 'sale', 680, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-2, 'sale', 115, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-2, 'sale', 435, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-2, 'sale',  55, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-2, 'sale', 825, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-2, 'sale', 190, 'cash', 'manual_quick', 0, 'DEMO_SEED_TODAY');
+    (v_store, v_user, CURRENT_DATE-2, 'sale', 780, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-2, 'sale', 255, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-2, 'sale', 940, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-2, 'sale',  72, 'cash', 'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-2, 'sale', 520, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-2, 'sale', 345, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-2, 'sale', 680, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-2, 'sale', 115, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-2, 'sale', 435, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-2, 'sale',  55, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-2, 'sale', 825, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-2, 'sale', 190, 'cash', 'voice', 0, 'DEMO_SEED_TODAY');
 
   -- Sun: Meena credit sale + Sharma repays
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, customer_id, source, tax_amount, notes) VALUES
-    (v_store, v_user, CURRENT_DATE-2, 'sale',   1350, 'credit', c_meena,  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-2, 'payment', 2000, 'upi',  c_sharma, 'manual_quick', 0, 'DEMO_SEED_TODAY');
+    (v_store, v_user, CURRENT_DATE-2, 'sale',    1350, 'credit', c_meena,  'voice',       0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-2, 'payment', 2000, 'upi',   c_sharma, 'manual_full', 0, 'DEMO_SEED_TODAY');
 
   -- ============================================================
   -- MONDAY June 29 (CURRENT_DATE - 1)
@@ -268,24 +268,24 @@ BEGIN
 
   -- Slow day: only 10 sales, smaller amounts
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, source, tax_amount, notes) VALUES
-    (v_store, v_user, CURRENT_DATE-1, 'sale',  88, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-1, 'sale', 145, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-1, 'sale',  42, 'cash', 'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-1, 'sale', 310, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-1, 'sale', 265, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-1, 'sale',  75, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-1, 'sale', 420, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-1, 'sale', 190, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-1, 'sale',  55, 'cash', 'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE-1, 'sale', 380, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY');
+    (v_store, v_user, CURRENT_DATE-1, 'sale',  88, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-1, 'sale', 145, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-1, 'sale',  42, 'cash', 'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-1, 'sale', 310, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-1, 'sale', 265, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-1, 'sale',  75, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-1, 'sale', 420, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-1, 'sale', 190, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-1, 'sale',  55, 'cash', 'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE-1, 'sale', 380, 'upi',  'voice', 0, 'DEMO_SEED_TODAY');
 
-  -- Mon: small top-up order placed (oil, sugar, soap stock low)
+  -- Mon: small top-up order placed - scanned handwritten order
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, vendor_name, source, tax_amount, notes) VALUES
-    (v_store, v_user, CURRENT_DATE-1, 'purchase', 5400, 'cash', 'Shree Agencies', 'manual_full', 0, 'DEMO_SEED_TODAY');
+    (v_store, v_user, CURRENT_DATE-1, 'purchase', 5400, 'cash', 'Shree Agencies', 'bill_scan', 0, 'DEMO_SEED_TODAY');
 
   -- Mon: electricity bill expense
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, source, tax_amount, notes) VALUES
-    (v_store, v_user, CURRENT_DATE-1, 'expense', 1200, 'cash', 'manual_quick', 0, 'DEMO_SEED_TODAY');
+    (v_store, v_user, CURRENT_DATE-1, 'expense', 1200, 'cash', 'manual_full', 0, 'DEMO_SEED_TODAY');
 
   -- ============================================================
   -- TODAY June 30 (CURRENT_DATE)
@@ -301,49 +301,49 @@ BEGIN
 
   -- Morning (9-12pm): 14 sales, fresh stock moving well
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, source, tax_amount, notes) VALUES
-    (v_store, v_user, CURRENT_DATE, 'sale',  48, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE, 'sale', 120, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE, 'sale',  85, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE, 'sale', 310, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE, 'sale',  62, 'cash', 'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE, 'sale', 220, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE, 'sale', 175, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE, 'sale', 480, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE, 'sale',  92, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE, 'sale',  48, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE, 'sale', 120, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE, 'sale',  85, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE, 'sale', 310, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE, 'sale',  62, 'cash', 'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE, 'sale', 220, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE, 'sale', 175, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE, 'sale', 480, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE, 'sale',  92, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
     (v_store, v_user, CURRENT_DATE, 'sale', 560, 'upi',  'voice',        0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE, 'sale', 140, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE, 'sale', 320, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE, 'sale',  55, 'cash', 'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE, 'sale', 710, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY');
+    (v_store, v_user, CURRENT_DATE, 'sale', 140, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE, 'sale', 320, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE, 'sale',  55, 'cash', 'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE, 'sale', 710, 'upi',  'voice', 0, 'DEMO_SEED_TODAY');
 
-  -- ANOMALY: month-end Saini Traders big order
+  -- ANOMALY: month-end Saini Traders big order - scanned their order form
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, customer_id, source, tax_amount, notes) VALUES
-    (v_store, v_user, CURRENT_DATE, 'sale', 8750, 'credit', c_saini, 'manual_full', 0, 'DEMO_SEED_TODAY');
+    (v_store, v_user, CURRENT_DATE, 'sale', 8750, 'credit', c_saini, 'bill_scan', 0, 'DEMO_SEED_TODAY');
 
-  -- New customer: Bajaj Medicals first order
+  -- New customer: Bajaj Medicals first order - scanned their purchase order
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, customer_id, source, tax_amount, notes) VALUES
-    (v_store, v_user, CURRENT_DATE, 'sale', 3400, 'credit', c_new, 'manual_full', 0, 'DEMO_SEED_TODAY');
+    (v_store, v_user, CURRENT_DATE, 'sale', 3400, 'credit', c_new, 'bill_scan', 0, 'DEMO_SEED_TODAY');
 
   -- Afternoon (1-5pm): 10 more sales
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, source, tax_amount, notes) VALUES
-    (v_store, v_user, CURRENT_DATE, 'sale', 390, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE, 'sale',  78, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE, 'sale', 650, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE, 'sale', 215, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE, 'sale',  45, 'cash', 'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE, 'sale', 895, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE, 'sale', 155, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE, 'sale', 440, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE, 'sale',  68, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY'),
-    (v_store, v_user, CURRENT_DATE, 'sale', 275, 'upi',  'manual_quick', 0, 'DEMO_SEED_TODAY');
+    (v_store, v_user, CURRENT_DATE, 'sale', 390, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE, 'sale',  78, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE, 'sale', 650, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE, 'sale', 215, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE, 'sale',  45, 'cash', 'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE, 'sale', 895, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE, 'sale', 155, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE, 'sale', 440, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE, 'sale',  68, 'upi',  'voice', 0, 'DEMO_SEED_TODAY'),
+    (v_store, v_user, CURRENT_DATE, 'sale', 275, 'upi',  'voice', 0, 'DEMO_SEED_TODAY');
 
   -- Sharma pays udhaar (end of month)
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, customer_id, source, tax_amount, notes) VALUES
-    (v_store, v_user, CURRENT_DATE, 'payment', 2500, 'upi', c_sharma, 'manual_quick', 0, 'DEMO_SEED_TODAY');
+    (v_store, v_user, CURRENT_DATE, 'payment', 2500, 'upi', c_sharma, 'manual_full', 0, 'DEMO_SEED_TODAY');
 
   -- Today: misc expense (packaging material)
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, source, tax_amount, notes) VALUES
-    (v_store, v_user, CURRENT_DATE, 'expense', 850, 'cash', 'manual_quick', 0, 'DEMO_SEED_TODAY');
+    (v_store, v_user, CURRENT_DATE, 'expense', 850, 'cash', 'manual_full', 0, 'DEMO_SEED_TODAY');
 
   -- Set new customer's opening balance
   UPDATE customers SET current_balance = 3400 WHERE id = c_new;

@@ -70,101 +70,100 @@ BEGIN
   INSERT INTO customers (store_id, name, phone, type, credit_limit, current_balance, notes)
     VALUES (v_store, 'Saini Traders','9829055555', 'wholesale',20000, 0, 'DEMO_SEED') RETURNING id INTO c_saini;
 
-  -- 3) WEEK 1 (days 22-28 ago): Getting started. Fewer txns, smaller amounts.
-  --    Merchant is learning; mostly cash, one credit sale. No purchases yet.
+  -- 3) WEEK 1 (days 22-28 ago): Getting started - merchant learns to scan bills.
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, source, tax_amount, notes)
   SELECT v_store, v_user,
          CURRENT_DATE - days.d,
          'sale',
          (280 + floor(random() * 1400))::numeric,
          (ARRAY['cash','upi','upi','upi'])[1 + floor(random() * 4)::int],
-         'manual_quick', 0, 'DEMO_SEED'
+         'bill_scan', 0, 'DEMO_SEED'
   FROM (VALUES (28,4),(27,5),(26,4),(25,5),(24,6),(23,5)) AS days(d, n)
   CROSS JOIN LATERAL generate_series(1, days.n) g;
 
-  -- Week 1: one credit sale (first udhaar tracked)
+  -- Week 1: one credit sale via scan
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, customer_id, source, tax_amount, notes) VALUES
-    (v_store, v_user, CURRENT_DATE-26, 'sale', 1200, 'credit', c_sharma, 'manual_quick', 0, 'DEMO_SEED');
+    (v_store, v_user, CURRENT_DATE-26, 'sale', 1200, 'credit', c_sharma, 'bill_scan', 0, 'DEMO_SEED');
 
-  -- 4) WEEK 2 (days 15-21 ago): Ramping up. More txns, first purchase entry.
+  -- 4) WEEK 2 (days 15-21 ago): Scanning every day. First voice entries appear.
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, source, tax_amount, notes)
   SELECT v_store, v_user,
          CURRENT_DATE - days.d,
          'sale',
          (320 + floor(random() * 1800))::numeric,
          (ARRAY['cash','upi','upi','upi','upi'])[1 + floor(random() * 5)::int],
-         'manual_quick', 0, 'DEMO_SEED'
+         (ARRAY['bill_scan','bill_scan','bill_scan','voice'])[1 + floor(random() * 4)::int],
+         0, 'DEMO_SEED'
   FROM (VALUES (21,7),(20,8),(19,7),(18,8),(17,9),(16,8)) AS days(d, n)
   CROSS JOIN LATERAL generate_series(1, days.n) g;
 
   -- Week 2: first purchase entry + more udhaar
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, vendor_name, source, tax_amount, notes) VALUES
-    (v_store, v_user, CURRENT_DATE-19, 'purchase', 12000, 'cash', 'Balaji Distributors', 'manual_full', 0, 'DEMO_SEED');
+    (v_store, v_user, CURRENT_DATE-19, 'purchase', 12000, 'cash', 'Balaji Distributors', 'bill_scan', 0, 'DEMO_SEED');
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, customer_id, source, tax_amount, notes) VALUES
-    (v_store, v_user, CURRENT_DATE-21, 'sale', 1650, 'credit', c_verma,  'manual_quick', 0, 'DEMO_SEED'),
-    (v_store, v_user, CURRENT_DATE-18, 'sale', 2100, 'credit', c_gupta,  'manual_quick', 0, 'DEMO_SEED');
+    (v_store, v_user, CURRENT_DATE-21, 'sale', 1650, 'credit', c_verma,  'bill_scan', 0, 'DEMO_SEED'),
+    (v_store, v_user, CURRENT_DATE-18, 'sale', 2100, 'credit', c_gupta,  'voice',     0, 'DEMO_SEED');
 
-  -- 5) WEEK 3 (days 8-14 ago): Consistent use. Bill scanning added. Expenses tracked.
+  -- 5) WEEK 3 (days 8-14 ago): Voice becomes the go-to for daily sales.
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, source, tax_amount, notes)
   SELECT v_store, v_user,
          CURRENT_DATE - days.d,
          'sale',
          (350 + floor(random() * 2200))::numeric,
          (ARRAY['cash','upi','upi','upi','upi'])[1 + floor(random() * 5)::int],
-         (ARRAY['manual_quick','manual_quick','manual_quick','bill_scan'])[1 + floor(random() * 4)::int],
+         (ARRAY['bill_scan','voice','voice'])[1 + floor(random() * 3)::int],
          0, 'DEMO_SEED'
   FROM (VALUES (14,10),(13,11),(12,10),(11,12),(10,11),(9,12),(8,11)) AS days(d, n)
   CROSS JOIN LATERAL generate_series(1, days.n) g;
 
   -- Week 3: purchases + expenses + more udhaar
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, vendor_name, source, tax_amount, notes) VALUES
-    (v_store, v_user, CURRENT_DATE-12, 'purchase', 16500, 'cash', 'Balaji Distributors', 'bill_scan',    0, 'DEMO_SEED'),
-    (v_store, v_user, CURRENT_DATE-9,  'purchase',  8200, 'cash', 'Shree Agencies',      'manual_full',  0, 'DEMO_SEED');
+    (v_store, v_user, CURRENT_DATE-12, 'purchase', 16500, 'cash', 'Balaji Distributors', 'bill_scan',   0, 'DEMO_SEED'),
+    (v_store, v_user, CURRENT_DATE-9,  'purchase',  8200, 'cash', 'Shree Agencies',      'bill_scan',   0, 'DEMO_SEED');
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, source, tax_amount, notes) VALUES
-    (v_store, v_user, CURRENT_DATE-11, 'expense', 1200, 'cash', 'manual_quick', 0, 'DEMO_SEED'),
-    (v_store, v_user, CURRENT_DATE-8,  'expense',  450, 'cash', 'manual_quick', 0, 'DEMO_SEED');
+    (v_store, v_user, CURRENT_DATE-11, 'expense', 1200, 'cash', 'manual_full', 0, 'DEMO_SEED'),
+    (v_store, v_user, CURRENT_DATE-8,  'expense',  450, 'cash', 'manual_full', 0, 'DEMO_SEED');
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, customer_id, source, tax_amount, notes) VALUES
-    (v_store, v_user, CURRENT_DATE-14, 'sale', 1850, 'credit', c_sharma, 'manual_quick', 0, 'DEMO_SEED'),
-    (v_store, v_user, CURRENT_DATE-10, 'sale',  900, 'credit', c_meena,  'manual_quick', 0, 'DEMO_SEED'),
-    (v_store, v_user, CURRENT_DATE-9,  'sale', 4200, 'credit', c_saini,  'manual_full',  0, 'DEMO_SEED');
+    (v_store, v_user, CURRENT_DATE-14, 'sale', 1850, 'credit', c_sharma, 'voice',     0, 'DEMO_SEED'),
+    (v_store, v_user, CURRENT_DATE-10, 'sale',  900, 'credit', c_meena,  'voice',     0, 'DEMO_SEED'),
+    (v_store, v_user, CURRENT_DATE-9,  'sale', 4200, 'credit', c_saini,  'bill_scan', 0, 'DEMO_SEED');
   -- Week 3: first repayment collected
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, customer_id, source, tax_amount, notes) VALUES
-    (v_store, v_user, CURRENT_DATE-10, 'payment', 1000, 'cash', c_sharma, 'manual_quick', 0, 'DEMO_SEED');
+    (v_store, v_user, CURRENT_DATE-10, 'payment', 1000, 'upi', c_sharma, 'manual_full', 0, 'DEMO_SEED');
 
-  -- 6) WEEK 4 / current week (days 1-7 ago): Peak adoption. Full feature use.
-  --    Higher txn counts, voice entry mixed in, scanned bills every other day.
+  -- 6) WEEK 4 / current week (days 1-7 ago): Voice-first. Scan for purchase invoices.
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, source, tax_amount, notes)
   SELECT v_store, v_user,
          CURRENT_DATE - days.d,
          'sale',
          (350 + floor(random() * 2600))::numeric,
          (ARRAY['cash','upi','upi','upi','upi','upi'])[1 + floor(random() * 6)::int],
-         (ARRAY['manual_quick','manual_quick','bill_scan','voice'])[1 + floor(random() * 4)::int],
+         (ARRAY['voice','voice','voice','bill_scan'])[1 + floor(random() * 4)::int],
          0, 'DEMO_SEED'
   FROM (VALUES (6,12),(5,11),(4,13),(3,12),(2,14),(1,16),(0,15)) AS days(d, n)
   CROSS JOIN LATERAL generate_series(1, days.n) g;
 
-  -- Week 4: credit sales
+  -- Week 4: credit sales via voice
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, customer_id, source, tax_amount, notes) VALUES
-    (v_store, v_user, CURRENT_DATE-6, 'sale', 1850, 'credit', c_sharma, 'manual_quick', 0, 'DEMO_SEED'),
-    (v_store, v_user, CURRENT_DATE-5, 'sale', 2400, 'credit', c_gupta,  'manual_quick', 0, 'DEMO_SEED'),
-    (v_store, v_user, CURRENT_DATE-4, 'sale',  900, 'credit', c_meena,  'manual_quick', 0, 'DEMO_SEED'),
-    (v_store, v_user, CURRENT_DATE-3, 'sale', 1650, 'credit', c_verma,  'manual_full',  0, 'DEMO_SEED'),
-    (v_store, v_user, CURRENT_DATE-2, 'sale', 4200, 'credit', c_saini,  'manual_full',  0, 'DEMO_SEED'),
-    (v_store, v_user, CURRENT_DATE-1, 'sale', 1300, 'credit', c_sharma, 'manual_quick', 0, 'DEMO_SEED');
-  -- Week 4: purchases + expenses
+    (v_store, v_user, CURRENT_DATE-6, 'sale', 1850, 'credit', c_sharma, 'voice',     0, 'DEMO_SEED'),
+    (v_store, v_user, CURRENT_DATE-5, 'sale', 2400, 'credit', c_gupta,  'voice',     0, 'DEMO_SEED'),
+    (v_store, v_user, CURRENT_DATE-4, 'sale',  900, 'credit', c_meena,  'voice',     0, 'DEMO_SEED'),
+    (v_store, v_user, CURRENT_DATE-3, 'sale', 1650, 'credit', c_verma,  'bill_scan', 0, 'DEMO_SEED'),
+    (v_store, v_user, CURRENT_DATE-2, 'sale', 4200, 'credit', c_saini,  'voice',     0, 'DEMO_SEED'),
+    (v_store, v_user, CURRENT_DATE-1, 'sale', 1300, 'credit', c_sharma, 'voice',     0, 'DEMO_SEED');
+  -- Week 4: purchases scanned, expenses as manual_full
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, vendor_name, source, tax_amount, notes) VALUES
-    (v_store, v_user, CURRENT_DATE-5, 'purchase', 14500, 'cash', 'Balaji Distributors', 'manual_full', 0, 'DEMO_SEED'),
-    (v_store, v_user, CURRENT_DATE-2, 'purchase',  9800, 'cash', 'Shree Agencies',      'manual_full', 0, 'DEMO_SEED');
+    (v_store, v_user, CURRENT_DATE-5, 'purchase', 14500, 'cash', 'Balaji Distributors', 'bill_scan', 0, 'DEMO_SEED'),
+    (v_store, v_user, CURRENT_DATE-2, 'purchase',  9800, 'cash', 'Shree Agencies',      'bill_scan', 0, 'DEMO_SEED');
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, source, tax_amount, notes) VALUES
-    (v_store, v_user, CURRENT_DATE-4, 'expense', 1200, 'cash', 'manual_quick', 0, 'DEMO_SEED'),
-    (v_store, v_user, CURRENT_DATE-3, 'expense',  450, 'cash', 'manual_quick', 0, 'DEMO_SEED'),
-    (v_store, v_user, CURRENT_DATE-1, 'expense',  600, 'cash', 'manual_quick', 0, 'DEMO_SEED');
+    (v_store, v_user, CURRENT_DATE-4, 'expense', 1200, 'cash', 'manual_full', 0, 'DEMO_SEED'),
+    (v_store, v_user, CURRENT_DATE-3, 'expense',  450, 'cash', 'manual_full', 0, 'DEMO_SEED'),
+    (v_store, v_user, CURRENT_DATE-1, 'expense',  600, 'cash', 'manual_full', 0, 'DEMO_SEED');
   -- Week 4: repayments collected
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, customer_id, source, tax_amount, notes) VALUES
-    (v_store, v_user, CURRENT_DATE-2, 'payment', 1000, 'cash', c_sharma, 'manual_quick', 0, 'DEMO_SEED'),
-    (v_store, v_user, CURRENT_DATE-1, 'payment', 1500, 'upi',  c_verma,  'manual_quick', 0, 'DEMO_SEED'),
-    (v_store, v_user, CURRENT_DATE,   'payment', 2000, 'cash', c_gupta,  'manual_quick', 0, 'DEMO_SEED');
+    (v_store, v_user, CURRENT_DATE-2, 'payment', 1000, 'upi',  c_sharma, 'manual_full', 0, 'DEMO_SEED'),
+    (v_store, v_user, CURRENT_DATE-1, 'payment', 1500, 'upi',  c_verma,  'manual_full', 0, 'DEMO_SEED'),
+    (v_store, v_user, CURRENT_DATE,   'payment', 2000, 'upi',  c_gupta,  'manual_full', 0, 'DEMO_SEED');
 
   -- 7) Recompute each customer's balance from all credit sales minus all payments
   UPDATE customers c
