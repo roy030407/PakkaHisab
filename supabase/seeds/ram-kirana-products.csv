@@ -1,0 +1,63 @@
+name,brand,category,subcategory,unit,purchase_price,selling_price,tax_rate
+Aashirvaad Atta 5kg,Aashirvaad,Atta & Flour,Wheat Atta,packet,255,270,5
+Aashirvaad Atta 10kg,Aashirvaad,Atta & Flour,Wheat Atta,packet,498,520,5
+Fortune Chakki Atta 5kg,Fortune,Atta & Flour,Wheat Atta,packet,245,260,5
+Besan,,Atta & Flour,Gram Flour,kg,82,95,0
+Maida,,Atta & Flour,Refined Flour,kg,38,45,0
+Suji Rava 500g,,Atta & Flour,Semolina,packet,28,35,5
+India Gate Basmati 1kg,India Gate,Rice,Basmati,packet,115,130,5
+Daawat Basmati 5kg,Daawat,Rice,Basmati,packet,560,620,5
+Sona Masoori Rice,,Rice,Everyday Rice,kg,52,62,0
+Poha 500g,,Rice,Flattened Rice,packet,28,35,0
+Toor Dal,,Dal & Pulses,Arhar,kg,150,170,0
+Chana Dal,,Dal & Pulses,Chana,kg,78,90,0
+Moong Dal,,Dal & Pulses,Moong,kg,108,120,0
+Masoor Dal,,Dal & Pulses,Masoor,kg,82,95,0
+Urad Dal,,Dal & Pulses,Urad,kg,112,125,0
+Rajma,,Dal & Pulses,Rajma,kg,130,150,0
+Kabuli Chana,,Dal & Pulses,Chickpea,kg,95,110,0
+Fortune Sunflower Oil 1L,Fortune,Oil & Ghee,Sunflower,bottle,128,140,5
+Fortune Mustard Oil 1L,Fortune,Oil & Ghee,Mustard,bottle,145,160,5
+Saffola Gold 1L,Saffola,Oil & Ghee,Blended,bottle,175,195,5
+Amul Ghee 1L,Amul,Oil & Ghee,Ghee,tetra,560,610,12
+Patanjali Ghee 1L,Patanjali,Oil & Ghee,Ghee,jar,540,590,12
+Sugar,,Sugar & Salt,Sugar,kg,40,45,0
+Tata Salt 1kg,Tata,Sugar & Salt,Iodized Salt,packet,24,28,0
+Gur Jaggery,,Sugar & Salt,Jaggery,kg,50,60,0
+Tata Tea Premium 250g,Tata,Tea & Coffee,Tea,packet,130,150,5
+Red Label 250g,Brooke Bond,Tea & Coffee,Tea,packet,135,155,5
+Tata Tea Gold 1kg,Tata,Tea & Coffee,Tea,packet,480,520,5
+Bru Instant Coffee 50g,Bru,Tea & Coffee,Coffee,jar,145,165,18
+Everest Haldi 100g,Everest,Spices & Masala,Turmeric,packet,26,32,5
+Everest Lal Mirch 100g,Everest,Spices & Masala,Chilli Powder,packet,34,42,5
+Everest Dhania 100g,Everest,Spices & Masala,Coriander,packet,28,36,5
+MDH Garam Masala 100g,MDH,Spices & Masala,Garam Masala,packet,75,90,5
+Catch Jeera 100g,Catch,Spices & Masala,Cumin,packet,60,72,5
+Parle-G 250g,Parle,Biscuits & Snacks,Glucose Biscuit,packet,25,30,18
+Britannia Good Day,Britannia,Biscuits & Snacks,Cookies,packet,25,30,18
+Britannia Bourbon,Britannia,Biscuits & Snacks,Cream Biscuit,packet,35,40,18
+Haldiram Bhujia 200g,Haldiram,Biscuits & Snacks,Namkeen,packet,48,58,12
+Lays 52g,Lays,Biscuits & Snacks,Chips,packet,17,20,12
+Kurkure 90g,Kurkure,Biscuits & Snacks,Snack,packet,17,20,12
+Thums Up 750ml,Thums Up,Beverages,Soft Drink,bottle,36,45,28
+Thums Up 2L,Thums Up,Beverages,Soft Drink,bottle,80,95,28
+Sprite 750ml,Sprite,Beverages,Soft Drink,bottle,36,45,28
+Maaza 600ml,Maaza,Beverages,Juice Drink,bottle,32,40,12
+Bisleri Water 1L,Bisleri,Beverages,Water,bottle,14,20,18
+Maggi Noodles 70g,Maggi,Instant Food,Noodles,packet,12,14,18
+Maggi 4-pack 280g,Maggi,Instant Food,Noodles,packet,50,56,18
+Amul Butter 100g,Amul,Dairy,Butter,packet,56,62,12
+Amul Milk 500ml,Amul,Dairy,Milk,pouch,27,30,0
+Mother Dairy Milk 1L,Mother Dairy,Dairy,Milk,pouch,64,70,0
+Bread,,Dairy,Bread,packet,40,45,0
+Eggs 6pc,,Dairy,Eggs,tray,38,48,0
+Colgate MaxFresh 150g,Colgate,Personal Care,Toothpaste,tube,88,100,18
+Dettol Soap 125g,Dettol,Personal Care,Soap,bar,38,45,18
+Lifebuoy Soap 125g,Lifebuoy,Personal Care,Soap,bar,30,36,18
+Clinic Plus Shampoo 175ml,Clinic Plus,Personal Care,Shampoo,bottle,95,110,18
+Surf Excel 1kg,Surf Excel,Home Care,Detergent,packet,125,140,18
+Vim Bar 200g,Vim,Home Care,Dishwash,bar,18,22,18
+Harpic 500ml,Harpic,Home Care,Toilet Cleaner,bottle,88,100,18
+Good Knight Refill,Good Knight,Home Care,Mosquito Repellent,refill,65,78,18
+Cycle Agarbatti,Cycle,Home Care,Incense,packet,30,38,5
+Matchbox 10pack,Hari Om,Household,Matches,pack,9,12,5
