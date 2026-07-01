@@ -81,14 +81,14 @@ BEGIN
     (store_id, user_id, date, type, total_amount, payment_method, source, tax_amount, notes)
   SELECT
     v_store, v_user,
-    CURRENT_DATE - d.offset,
+    CURRENT_DATE - d.ago,
     'sale',
     (280 + floor(random() * 1200))::numeric,
     (ARRAY['cash','upi','upi','upi','upi'])[1 + floor(random() * 5)::int],
     (ARRAY['manual_quick','manual_quick','manual_quick','manual_quick',
            'voice','voice','voice','bill_scan','bill_scan'])[1 + (g-1) % 9],
     0, 'DEMO_SEED'
-  FROM (VALUES (29,5),(28,5),(27,6),(26,5),(25,6),(24,5),(23,5)) AS d(offset, cnt)
+  FROM (VALUES (29,5),(28,5),(27,6),(26,5),(25,6),(24,5),(23,5)) AS d(ago, cnt)
   CROSS JOIN LATERAL generate_series(1, d.cnt) AS g;
 
   -- Week 1: first purchase (scanned invoice)
@@ -109,14 +109,14 @@ BEGIN
     (store_id, user_id, date, type, total_amount, payment_method, source, tax_amount, notes)
   SELECT
     v_store, v_user,
-    CURRENT_DATE - d.offset,
+    CURRENT_DATE - d.ago,
     'sale',
     (350 + floor(random() * 1800))::numeric,
     (ARRAY['cash','upi','upi','upi','upi','upi'])[1 + floor(random() * 6)::int],
     (ARRAY['manual_quick','manual_quick','manual_quick','manual_quick',
            'voice','voice','voice','bill_scan','bill_scan'])[1 + (g-1) % 9],
     0, 'DEMO_SEED'
-  FROM (VALUES (22,7),(21,8),(20,8),(19,9),(18,8),(17,9),(16,8)) AS d(offset, cnt)
+  FROM (VALUES (22,7),(21,8),(20,8),(19,9),(18,8),(17,9),(16,8)) AS d(ago, cnt)
   CROSS JOIN LATERAL generate_series(1, d.cnt) AS g;
 
   -- Week 2: purchase + credit sales
@@ -136,14 +136,14 @@ BEGIN
     (store_id, user_id, date, type, total_amount, payment_method, source, tax_amount, notes)
   SELECT
     v_store, v_user,
-    CURRENT_DATE - d.offset,
+    CURRENT_DATE - d.ago,
     'sale',
     (380 + floor(random() * 2200))::numeric,
     (ARRAY['cash','upi','upi','upi','upi','upi'])[1 + floor(random() * 6)::int],
     (ARRAY['manual_quick','manual_quick','manual_quick','manual_quick',
            'voice','voice','voice','bill_scan','bill_scan'])[1 + (g-1) % 9],
     0, 'DEMO_SEED'
-  FROM (VALUES (15,10),(14,11),(13,10),(12,12),(11,11),(10,12),(9,10)) AS d(offset, cnt)
+  FROM (VALUES (15,10),(14,11),(13,10),(12,12),(11,11),(10,12),(9,10)) AS d(ago, cnt)
   CROSS JOIN LATERAL generate_series(1, d.cnt) AS g;
 
   -- Week 3: purchases + expenses + credit sales + first payment collected
@@ -174,14 +174,14 @@ BEGIN
     (store_id, user_id, date, type, total_amount, payment_method, source, tax_amount, notes)
   SELECT
     v_store, v_user,
-    CURRENT_DATE - d.offset,
+    CURRENT_DATE - d.ago,
     'sale',
     (400 + floor(random() * 2800))::numeric,
     (ARRAY['cash','upi','upi','upi','upi','upi','upi'])[1 + floor(random() * 7)::int],
     (ARRAY['manual_quick','manual_quick','manual_quick','manual_quick',
            'voice','voice','voice','bill_scan','bill_scan'])[1 + (g-1) % 9],
     0, 'DEMO_SEED'
-  FROM (VALUES (8,13),(7,14),(6,15),(5,14),(4,16),(3,15),(2,16),(1,14)) AS d(offset, cnt)
+  FROM (VALUES (8,13),(7,14),(6,15),(5,14),(4,16),(3,15),(2,16),(1,14)) AS d(ago, cnt)
   CROSS JOIN LATERAL generate_series(1, d.cnt) AS g;
 
   -- Week 4: credit sales (voice and quick)
