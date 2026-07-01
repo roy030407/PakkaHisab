@@ -2,10 +2,13 @@
 -- RAM KIRANA - JULY 1 (Tuesday, month-start)
 -- ----------------------------------------------------------------------------
 -- Month-start sales jump. Balaji Distributors delivers restocked cold drinks.
--- Office reopens after Monday slowdown. Families + offices restocking.
--- Gupta ji pays outstanding credit. New wholesale inquiry from Meena Medicals.
+-- Offices and households restocking for the new month.
+-- Gupta ji clears outstanding credit. Verma ji takes month-start udhaar.
 --
--- Run this directly in Supabase SQL editor.
+-- Source mix: balanced voice / bill_scan / manual_quick for sales.
+-- Full Entry only for expense and payment (admin entries).
+--
+-- Run directly in Supabase SQL editor.
 -- Remove with: DELETE FROM transactions WHERE notes = 'DEMO_SEED_JULY1';
 -- ============================================================================
 
@@ -33,30 +36,29 @@ BEGIN
   SELECT id INTO c_meena  FROM customers WHERE store_id = v_store AND name = 'Meena Devi'    LIMIT 1;
 
   -- ============================================================
-  -- TUESDAY July 1 (month-start, sales jump)
-  -- Balaji delivers restocked cold drinks + biscuits in the morning.
-  -- Offices and households restocking for the new month.
-  -- Best Tuesday in a month - 22 retail sales + 2 bulk orders.
+  -- TUESDAY July 1 (month-start, best Tuesday this month)
+  -- Balaji delivers cold drinks + biscuits. Offices restocking.
+  -- 22 retail sales + Saini Traders bulk order.
   -- ============================================================
 
-  -- Balaji morning delivery (cold drinks, biscuits, snacks for July)
+  -- Balaji morning delivery - scanned the invoice
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, vendor_name, source, tax_amount, notes) VALUES
     (v_store, v_user, '2026-07-01', 'purchase', 11200, 'cash', 'Balaji Distributors', 'bill_scan', 0, 'DEMO_SEED_JULY1');
 
-  -- Morning rush (8-11am): 10 fast sales, cold drinks + staples
+  -- Morning rush (8-11am): 10 fast sales - mix of all 3 methods
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, source, tax_amount, notes) VALUES
-    (v_store, v_user, '2026-07-01', 'sale',  55, 'upi',  'voice', 0, 'DEMO_SEED_JULY1'),
-    (v_store, v_user, '2026-07-01', 'sale', 130, 'upi',  'voice', 0, 'DEMO_SEED_JULY1'),
-    (v_store, v_user, '2026-07-01', 'sale',  88, 'upi',  'voice', 0, 'DEMO_SEED_JULY1'),
-    (v_store, v_user, '2026-07-01', 'sale', 450, 'upi',  'voice', 0, 'DEMO_SEED_JULY1'),
-    (v_store, v_user, '2026-07-01', 'sale',  72, 'cash', 'voice', 0, 'DEMO_SEED_JULY1'),
-    (v_store, v_user, '2026-07-01', 'sale', 280, 'upi',  'voice', 0, 'DEMO_SEED_JULY1'),
-    (v_store, v_user, '2026-07-01', 'sale', 195, 'upi',  'voice', 0, 'DEMO_SEED_JULY1'),
-    (v_store, v_user, '2026-07-01', 'sale', 620, 'upi',  'voice', 0, 'DEMO_SEED_JULY1'),
-    (v_store, v_user, '2026-07-01', 'sale',  48, 'upi',  'voice', 0, 'DEMO_SEED_JULY1'),
-    (v_store, v_user, '2026-07-01', 'sale', 365, 'upi',  'voice', 0, 'DEMO_SEED_JULY1');
+    (v_store, v_user, '2026-07-01', 'sale',  55, 'upi',  'voice',        0, 'DEMO_SEED_JULY1'),
+    (v_store, v_user, '2026-07-01', 'sale', 130, 'upi',  'manual_quick', 0, 'DEMO_SEED_JULY1'),
+    (v_store, v_user, '2026-07-01', 'sale',  88, 'upi',  'bill_scan',    0, 'DEMO_SEED_JULY1'),
+    (v_store, v_user, '2026-07-01', 'sale', 450, 'upi',  'voice',        0, 'DEMO_SEED_JULY1'),
+    (v_store, v_user, '2026-07-01', 'sale',  72, 'cash', 'manual_quick', 0, 'DEMO_SEED_JULY1'),
+    (v_store, v_user, '2026-07-01', 'sale', 280, 'upi',  'bill_scan',    0, 'DEMO_SEED_JULY1'),
+    (v_store, v_user, '2026-07-01', 'sale', 195, 'upi',  'voice',        0, 'DEMO_SEED_JULY1'),
+    (v_store, v_user, '2026-07-01', 'sale', 620, 'upi',  'manual_quick', 0, 'DEMO_SEED_JULY1'),
+    (v_store, v_user, '2026-07-01', 'sale',  48, 'upi',  'bill_scan',    0, 'DEMO_SEED_JULY1'),
+    (v_store, v_user, '2026-07-01', 'sale', 365, 'upi',  'voice',        0, 'DEMO_SEED_JULY1');
 
-  -- Mid-morning (11am-1pm): Saini Traders month-start bulk order (scanned order form)
+  -- Mid-morning: Saini Traders month-start bulk order (scanned their order form)
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, customer_id, source, tax_amount, notes) VALUES
     (v_store, v_user, '2026-07-01', 'sale', 11500, 'credit', c_saini, 'bill_scan', 0, 'DEMO_SEED_JULY1');
 
@@ -66,27 +68,27 @@ BEGIN
 
   -- Afternoon (1-5pm): 8 more strong sales
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, source, tax_amount, notes) VALUES
-    (v_store, v_user, '2026-07-01', 'sale', 840, 'upi',  'voice', 0, 'DEMO_SEED_JULY1'),
-    (v_store, v_user, '2026-07-01', 'sale', 290, 'upi',  'voice', 0, 'DEMO_SEED_JULY1'),
-    (v_store, v_user, '2026-07-01', 'sale', 110, 'cash', 'voice', 0, 'DEMO_SEED_JULY1'),
-    (v_store, v_user, '2026-07-01', 'sale', 760, 'upi',  'voice', 0, 'DEMO_SEED_JULY1'),
-    (v_store, v_user, '2026-07-01', 'sale', 195, 'upi',  'voice', 0, 'DEMO_SEED_JULY1'),
-    (v_store, v_user, '2026-07-01', 'sale', 430, 'upi',  'voice', 0, 'DEMO_SEED_JULY1'),
-    (v_store, v_user, '2026-07-01', 'sale',  65, 'upi',  'bill_scan', 0, 'DEMO_SEED_JULY1'),
-    (v_store, v_user, '2026-07-01', 'sale', 980, 'upi',  'voice', 0, 'DEMO_SEED_JULY1');
+    (v_store, v_user, '2026-07-01', 'sale', 840, 'upi',  'manual_quick', 0, 'DEMO_SEED_JULY1'),
+    (v_store, v_user, '2026-07-01', 'sale', 290, 'upi',  'voice',        0, 'DEMO_SEED_JULY1'),
+    (v_store, v_user, '2026-07-01', 'sale', 110, 'cash', 'bill_scan',    0, 'DEMO_SEED_JULY1'),
+    (v_store, v_user, '2026-07-01', 'sale', 760, 'upi',  'manual_quick', 0, 'DEMO_SEED_JULY1'),
+    (v_store, v_user, '2026-07-01', 'sale', 195, 'upi',  'voice',        0, 'DEMO_SEED_JULY1'),
+    (v_store, v_user, '2026-07-01', 'sale', 430, 'upi',  'bill_scan',    0, 'DEMO_SEED_JULY1'),
+    (v_store, v_user, '2026-07-01', 'sale', 980, 'upi',  'voice',        0, 'DEMO_SEED_JULY1'),
+    (v_store, v_user, '2026-07-01', 'sale', 545, 'upi',  'manual_quick', 0, 'DEMO_SEED_JULY1');
 
-  -- Verma ji month-start udhaar sale
+  -- Verma ji month-start udhaar sale (voice entry)
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, customer_id, source, tax_amount, notes) VALUES
     (v_store, v_user, '2026-07-01', 'sale', 2200, 'credit', c_verma, 'voice', 0, 'DEMO_SEED_JULY1');
 
-  -- Evening (5-9pm): 4 sales
+  -- Evening (5-9pm): 4 closing sales
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, source, tax_amount, notes) VALUES
-    (v_store, v_user, '2026-07-01', 'sale', 345, 'upi',  'voice', 0, 'DEMO_SEED_JULY1'),
-    (v_store, v_user, '2026-07-01', 'sale',  92, 'upi',  'voice', 0, 'DEMO_SEED_JULY1'),
-    (v_store, v_user, '2026-07-01', 'sale', 580, 'upi',  'voice', 0, 'DEMO_SEED_JULY1'),
-    (v_store, v_user, '2026-07-01', 'sale', 240, 'cash', 'voice', 0, 'DEMO_SEED_JULY1');
+    (v_store, v_user, '2026-07-01', 'sale', 345, 'upi',  'manual_quick', 0, 'DEMO_SEED_JULY1'),
+    (v_store, v_user, '2026-07-01', 'sale',  92, 'upi',  'voice',        0, 'DEMO_SEED_JULY1'),
+    (v_store, v_user, '2026-07-01', 'sale', 580, 'upi',  'bill_scan',    0, 'DEMO_SEED_JULY1'),
+    (v_store, v_user, '2026-07-01', 'sale', 240, 'cash', 'voice',        0, 'DEMO_SEED_JULY1');
 
-  -- Evening expense: packaging and carry bags restocked
+  -- Evening expense: packaging and carry bags (only full entry for this)
   INSERT INTO transactions (store_id, user_id, date, type, total_amount, payment_method, source, tax_amount, notes) VALUES
     (v_store, v_user, '2026-07-01', 'expense', 650, 'cash', 'manual_full', 0, 'DEMO_SEED_JULY1');
 
