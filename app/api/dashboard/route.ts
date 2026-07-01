@@ -8,6 +8,7 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation for Phase 4 dashboard
+ *   - Fix: include expense transactions in todayNetProfit (was missing, causing mismatch with report)
  *
  * WHERE IT FITS:
  *   Called by app/(dashboard)/dashboard/page.tsx on every page load.
@@ -45,10 +46,12 @@ export async function GET() {
 
   let todaySales = 0
   let todayPurchases = 0
+  let todayExpenses = 0
   for (const tx of todayTx ?? []) {
     const amt = Number(tx.total_amount) || 0
     if (tx.type === 'sale') todaySales += amt
     else if (tx.type === 'purchase') todayPurchases += amt
+    else if (tx.type === 'expense') todayExpenses += amt
   }
 
   // Daily fixed cost allocation
@@ -63,7 +66,7 @@ export async function GET() {
     1
   )
 
-  const todayNetProfit = todaySales - todayPurchases - dailyFixedCost
+  const todayNetProfit = todaySales - todayPurchases - dailyFixedCost - todayExpenses
 
   // Outstanding receivables (customers with a positive balance owed)
   const { data: customers } = await supabase
