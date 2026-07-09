@@ -18,6 +18,10 @@
  *     sale on credit; customer_balance reads a named customer's balance aloud);
  *     detachable customer chip
  *   - Added PaymentToggle (Cash/UPI) after voice sale saves
+ *   - Save now sends source: 'voice' so voice sales are recorded distinctly
+ *     from tap entry in the transactions table
+ *   - saveCart creates catalog products for kept "new:" rows at save time
+ *     (voice parse no longer auto-creates ₹0 products)
  *
  * WHERE IT FITS:
  *   Reached from the Sidebar (desktop) and the VoiceFab (mobile).
@@ -61,6 +65,34 @@ export default function VoicePage() {
     setSaveError(null)
     try {
       const cust = stateRef.current.customer
+
+      // Rows the merchant kept that are not in the catalog yet ("new:" ids)
+      // become real products only now, at save time - never at parse time,
+      // so a misheard phrase the merchant removes leaves no trace.
+      const items: { productId: string; quantity: number }[] = []
+      for (const r of cart) {
+        if (!r.productId.startsWith('new:')) {
+          items.push({ productId: r.productId, quantity: r.quantity })
+          continue
+        }
+        const created = await fetch('/api/products', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: r.name,
+            category: 'Uncategorised',
+            unit: 'piece',
+            sellingPrice: r.unitPrice,
+          }),
+        })
+        const d = created.ok ? await created.json().catch(() => null) : null
+        if (!d?.product?.id) {
+          setSaveError(`Could not add "${r.name}" to your catalog. Remove it or try again.`)
+          return
+        }
+        items.push({ productId: d.product.id, quantity: r.quantity })
+      }
+
       const res = await fetch('/api/entry/quick', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -68,7 +100,8 @@ export default function VoicePage() {
           type: 'sale',
           paymentMethod: cust ? 'credit' : 'upi',
           customerId: cust?.id,
-          items: cart.map((r) => ({ productId: r.productId, quantity: r.quantity })),
+          source: 'voice',
+          items,
         }),
       })
       if (!res.ok) { setSaveError('Could not save. Check your connection and try again.'); return }

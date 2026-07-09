@@ -7,6 +7,8 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation
+ *   - Identify now sends store_name as a person property so a merchant's
+ *     activity is findable by store name in PostHog
  *
  * WHERE IT FITS:
  *   Mounted once in the dashboard layout so all dashboard pages get
@@ -23,18 +25,20 @@ import { initPostHog, identifyUser } from '@/lib/analytics/posthog'
 export function PostHogProvider({
   userId,
   email,
+  storeName,
   children,
 }: {
   userId?: string
   email?: string
+  storeName?: string
   children: React.ReactNode
 }) {
   useEffect(() => {
     initPostHog()
     if (userId) {
-      identifyUser(userId, { email })
+      identifyUser(userId, { email, store_name: storeName })
     }
-  }, [userId, email])
+  }, [userId, email, storeName])
 
   return <>{children}</>
 }

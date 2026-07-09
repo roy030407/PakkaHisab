@@ -11,6 +11,9 @@
  *   - Initial creation (Voice Layer 1). Gemini audio, NOT Claude.
  *   - Layer 3: classify remove_last + set_qty (set_qty number in args.quantity)
  *   - Layer 4: classify attach_customer + customer_balance (name in args.customerName)
+ *   - Catalog biasing: caller can pass the store's product names, which are
+ *     appended to the system instruction so Gemini transcribes spoken names
+ *     as known catalog products instead of guessing blind
  *
  * WHERE IT FITS:
  *   Called by app/api/voice/parse/route.ts with the base64 audio segment.
@@ -50,8 +53,16 @@ Return exactly:
 export async function parseVoiceAudio(
   audioBase64: string,
   mimeType: string,
+  catalogNames: string[] = [],
 ): Promise<VoiceParseResult> {
   const genAI = getGeminiClient()
+
+  // Bias transcription toward the store's own catalog. Kirana product and
+  // brand names spoken in Hinglish are frequently misheard without this.
+  const catalogHint = catalogNames.length
+    ? `\n\nThis shop sells the following products. When a spoken item sounds like one of these, transcribe it as that exact product name (these are the most likely words the shopkeeper says):\n${catalogNames.join(', ')}`
+    : ''
+
   const response = await genAI.models.generateContent({
     model: DEFAULT_GEMINI_MODEL,
     contents: [{
@@ -62,7 +73,7 @@ export async function parseVoiceAudio(
       ],
     }],
     config: {
-      systemInstruction: SYSTEM_INSTRUCTION,
+      systemInstruction: SYSTEM_INSTRUCTION + catalogHint,
       maxOutputTokens: 1024,
       responseMimeType: 'application/json',
     },

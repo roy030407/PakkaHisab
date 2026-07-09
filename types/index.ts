@@ -150,6 +150,7 @@ export type TransactionSource =
   | "manual_quick"
   | "manual_full"
   | "bill_scan"
+  | "voice"
   | "csv_import"
   | "excel_import";
 export type PaymentMethod = "cash" | "upi" | "credit";
@@ -289,6 +290,7 @@ export interface QuickEntryPayload {
   amount?: number;               // for expense/income: total, no products
   category?: string;             // expense category (rent/electricity/...)
   note?: string;                 // optional free-text note
+  source?: "manual_quick" | "voice";  // entry surface; server whitelists, defaults manual_quick
 }
 
 export interface FullEntryItem {

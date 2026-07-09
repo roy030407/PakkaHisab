@@ -14,6 +14,7 @@
  *     dashboard screen shows a friendly retry instead of a white screen
  *   - Mounted VoiceFab (mobile mic shortcut to /voice)
  *   - Wrapped tree in PostHogProvider for analytics
+ *   - Pass store name to PostHogProvider so identify() sets store_name
  *
  * WHERE IT FITS:
  *   Wraps all pages under (dashboard)/*. The single point of auth
@@ -47,7 +48,7 @@ export default async function DashboardLayout({
 
   const { data: store } = await supabase
     .from("stores")
-    .select("id")
+    .select("id, name")
     .eq("owner_id", user.id)
     .maybeSingle();
 
@@ -56,7 +57,7 @@ export default async function DashboardLayout({
   }
 
   return (
-    <PostHogProvider userId={user.id} email={user.email}>
+    <PostHogProvider userId={user.id} email={user.email} storeName={store.name}>
       <div className="flex min-h-screen bg-gray-50">
         <Sidebar />
         <div className="flex flex-col flex-1 min-w-0">

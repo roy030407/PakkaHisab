@@ -1,6 +1,13 @@
 -- ============================================================================
 -- PATCH ALL SOURCES - Fix source distribution for ALL transactions
 -- ============================================================================
+-- DEPRECATED - DO NOT RUN AGAIN.
+-- This script rewrites the source column of REAL transactions (not just seed
+-- rows) to an invented distribution, which destroys the evidentiary value of
+-- the source data. Voice sales are now recorded with source='voice' at save
+-- time (app/api/entry/quick/route.ts), so no retroactive patching is needed.
+-- Kept only as a record of what was run on 2026-07-01.
+-- ============================================================================
 -- Run this in Supabase SQL Editor after RESET-AND-RESEED.sql.
 -- Unlike the old patch, this targets ALL transactions (seed + real test entries)
 -- so real quick-entry test transactions don't drown out the seed distribution.

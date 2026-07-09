@@ -47,8 +47,9 @@ export interface VoiceParseResult {
   args: VoiceParseArgs
 }
 
-// A row in the live cart. Always carries a productId (add-as-new rows get one
-// created server-side at parse time) so Save can reuse /api/entry/quick.
+// A row in the live cart. Matched rows carry the catalog productId; add-as-new
+// rows carry a synthetic "new:<name>" id and become real products only when
+// the merchant saves the cart (see /voice saveCart).
 export interface VoiceCartRow {
   productId: string
   name: string

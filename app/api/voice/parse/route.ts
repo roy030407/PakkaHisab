@@ -4,14 +4,18 @@
  * WHAT THIS DOES:
  *   POST: receives one spoken-phrase audio clip (multipart "audio"), validates
  *   type+size, sends it to Gemini audio, and returns a VoiceParseResponse. For
- *   items it matches each against the store's active catalog and creates an
- *   active product for true misses (so they match next time); for a command it
- *   passes the classification back to the client.
+ *   items it matches each against the store's active catalog; true misses are
+ *   returned with a synthetic "new:" id and created only when the merchant
+ *   saves the cart. For a command it passes the classification back.
  *
  * CHANGES THIS SESSION:
  *   - Initial creation (Voice Layer 1)
  *   - Layer 4: resolve a customer (fuzzy, store-scoped) for attach_customer /
  *     customer_balance and return it in the response
+ *   - Catalog is loaded before the Gemini call and its top names are passed
+ *     as transcription bias (misheard Hinglish brand names fix)
+ *   - No more auto-insert of unmatched items as ₹0 products at parse time;
+ *     the client creates them at save after the merchant keeps the row
  *
  * WHERE IT FITS:
  *   Called by hooks/useVoiceSession.ts once per VAD-finalized segment.
@@ -79,9 +83,21 @@ export async function POST(request: Request) {
 
   const audioBase64 = Buffer.from(await file.arrayBuffer()).toString('base64')
 
+  // Load the catalog before parsing: its names bias Gemini's transcription
+  // toward products this shop actually sells, then serve item matching below.
+  const catalog = await loadCatalog(supabase, store.id)
+  const catalogNames = [...catalog]
+    .sort((a, b) => b.freq - a.freq)
+    .slice(0, 50)
+    .map((c) =>
+      c.brand && !c.name.toLowerCase().includes(c.brand.toLowerCase())
+        ? `${c.brand} ${c.name}`
+        : c.name,
+    )
+
   let parsed
   try {
-    parsed = await parseVoiceAudio(audioBase64, mime)
+    parsed = await parseVoiceAudio(audioBase64, mime, catalogNames)
   } catch {
     return NextResponse.json({ error: 'voice_parse_failed' }, { status: 422 })
   }
@@ -107,42 +123,20 @@ export async function POST(request: Request) {
     return NextResponse.json(res)
   }
 
-  // Items: match against the catalog; create active products for true misses.
-  const catalog = await loadCatalog(supabase, store.id)
+  // Items: match against the catalog. True misses are NOT inserted here -
+  // a misheard word must not become a permanent ₹0 product. They get a
+  // synthetic "new:" id and are created only when the merchant saves the cart.
   const cartItems: VoiceCartRow[] = []
   for (const spoken of parsed.items) {
     const sizeToken = spoken.unit && /\d/.test(spoken.unit) ? spoken.unit : null
     const match = matchItem({ normalizedName: spoken.name, sizeToken }, catalog)
     const pending = buildPendingRow(spoken, match)
 
-    let productId = pending.productId
-    let unitPrice = pending.unitPrice
-    if (!productId) {
-      const { data: created } = await supabase
-        .from('products')
-        .insert({
-          store_id: store.id,
-          name: pending.name,
-          category: 'Uncategorised',
-          unit: 'piece',
-          purchase_price: 0,
-          selling_price: 0,
-          tax_rate: 0,
-          is_active: true,
-          is_pinned: false,
-        })
-        .select('id')
-        .single()
-      if (!created) continue // could not create - skip this item rather than 500
-      productId = created.id
-      unitPrice = 0
-    }
-
     cartItems.push({
-      productId: productId!,
+      productId: pending.productId ?? `new:${pending.name.toLowerCase()}`,
       name: pending.name,
       quantity: pending.quantity,
-      unitPrice,
+      unitPrice: pending.productId ? pending.unitPrice : 0,
       addedAsNew: pending.addAsNew,
     })
   }

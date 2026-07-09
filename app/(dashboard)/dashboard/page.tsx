@@ -15,6 +15,8 @@
  *   - POC: "Scan your khata" card links to the ledger capture -> day total screen
  *   - Added RecentTransactions section (transaction history feature)
  *   - Added "See full transaction history" link to /transactions page
+ *   - Usage evidence banner now counts real transactions only (rows whose
+ *     notes start with DEMO_SEED are excluded, NULL notes kept)
  *
  * WHERE IT FITS:
  *   First page a merchant sees after logging in. Uses server-side fetch
@@ -84,12 +86,14 @@ export default async function DashboardPage() {
           .from("transactions")
           .select("type, total_amount")
           .eq("store_id", store.id)
-          .is("voided_at", null),
+          .is("voided_at", null)
+          .or("notes.is.null,notes.not.ilike.DEMO_SEED*"),
         supabase
           .from("transactions")
           .select("date")
           .eq("store_id", store.id)
           .is("voided_at", null)
+          .or("notes.is.null,notes.not.ilike.DEMO_SEED*")
           .order("date", { ascending: true })
           .limit(1),
         supabase

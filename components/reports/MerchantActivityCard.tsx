@@ -8,6 +8,8 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation for merchant activity analytics
+ *   - Shows real usage only; when sample (seed) rows exist in the window,
+ *     a small label states how many were excluded
  *
  * WHERE IT FITS:
  *   Rendered at the bottom of app/(dashboard)/reports/page.tsx.
@@ -24,6 +26,7 @@ interface ActivityData {
   activeDays: number
   totalDays: number
   totalTransactions: number
+  demoTransactions: number
   sourceBreakdown: {
     manual_quick: number
     manual_full: number
@@ -81,7 +84,10 @@ export function MerchantActivityCard() {
           </div>
           <div>
             <p className="text-sm font-semibold text-gray-900">Merchant Activity</p>
-            <p className="text-xs text-gray-400">Last 28 days</p>
+            <p className="text-xs text-gray-400">
+              Last 28 days
+              {data.demoTransactions > 0 && ` - excludes ${data.demoTransactions} sample entries`}
+            </p>
           </div>
         </div>
         {data.growth !== null && (

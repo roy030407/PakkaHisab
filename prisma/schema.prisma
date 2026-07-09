@@ -201,7 +201,7 @@ model Transaction {
   paymentMethod    String?  @map("payment_method") // cash | upi | credit
   customerId       String?  @map("customer_id")
   vendorName       String?  @map("vendor_name")
-  source           String   // manual_quick | manual_full | bill_scan | csv_import | excel_import
+  source           String   // manual_quick | manual_full | bill_scan | voice | csv_import | excel_import
   sourceDocumentId String?  @map("source_document_id")
   taxAmount        Decimal  @default(0) @map("tax_amount") @db.Decimal(12, 2)
   taxType          String?  @map("tax_type") // cgst_sgst | igst

@@ -8,6 +8,9 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation for merchant activity analytics
+ *   - All stats now computed from REAL transactions only (rows whose notes
+ *     start with DEMO_SEED are counted separately and returned as
+ *     demoTransactions so the UI can label the exclusion)
  *
  * WHERE IT FITS:
  *   Called by components/reports/MerchantActivityCard.tsx on the Reports page.
@@ -40,13 +43,17 @@ export async function GET() {
 
   const { data: rows } = await supabase
     .from('transactions')
-    .select('date, source, type, total_amount')
+    .select('date, source, type, total_amount, notes')
     .eq('store_id', store.id)
     .is('voided_at', null)
     .gte('date', startStr)
     .lte('date', endStr)
 
-  const txRows = rows ?? []
+  // Split real activity from seeded sample rows. All stats below are computed
+  // from real rows only; the demo count is returned so the UI can say so.
+  const allRows = rows ?? []
+  const txRows = allRows.filter(r => !(r.notes ?? '').startsWith('DEMO_SEED'))
+  const demoTransactions = allRows.length - txRows.length
 
   // Active days - distinct dates that have at least one transaction
   const distinctDates = new Set(txRows.map(r => r.date as string))
@@ -104,6 +111,7 @@ export async function GET() {
     activeDays,
     totalDays: 28,
     totalTransactions: txRows.length,
+    demoTransactions,
     sourceBreakdown,
     weeklyTotals,
     dailyCounts,

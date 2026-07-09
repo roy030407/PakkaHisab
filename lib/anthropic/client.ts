@@ -9,6 +9,9 @@
  *   - Switched from Anthropic SDK to Google Gemini (free tier, 1500 req/day)
  *   - Upgraded from @google/generative-ai to @google/genai (supports AQ. key format)
  *   - Model updated to gemini-2.5-flash
+ *   - Default now gemini-flash-latest: gemini-2.5-flash was retired and
+ *     returned 404 on generateContent, silently breaking every AI feature
+ *     (voice, chat, insight, extraction) wherever GEMINI_MODEL is unset
  *
  * WHERE IT FITS:
  *   Shared by all API routes that call AI (chat, insight, extraction, import/map).
@@ -22,7 +25,9 @@ import { GoogleGenAI } from "@google/genai"
 
 let _client: GoogleGenAI | null = null
 
-export const DEFAULT_GEMINI_MODEL = process.env.GEMINI_MODEL ?? "gemini-2.5-flash"
+// "latest" alias tracks Google's current flash model so a model retirement
+// (like gemini-2.5-flash in July 2026) cannot 404 the whole AI layer again.
+export const DEFAULT_GEMINI_MODEL = process.env.GEMINI_MODEL ?? "gemini-flash-latest"
 
 export function getGeminiClient(): GoogleGenAI {
   if (!_client) {

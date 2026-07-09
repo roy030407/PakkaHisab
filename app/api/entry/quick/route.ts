@@ -11,6 +11,8 @@
  *   - Security: try/catch on request.json()
  *   - Expense/income path: accept an itemless transaction (amount + category +
  *     note) with no products and no stock movement
+ *   - Accept whitelisted source override ('voice') so voice sales are
+ *     recorded as source='voice' instead of manual_quick
  *
  * WHERE IT FITS:
  *   Called by QuickEntry component on save.
@@ -42,6 +44,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
   }
 
+  // Entry surface: only 'voice' may override the default. Anything else
+  // (bill_scan, imports) has its own route and must not be spoofable here.
+  const source = body.source === 'voice' ? 'voice' : 'manual_quick'
+
   // Expense / income: no products, no stock movement. Just an amount + note.
   if (body.type === 'expense' || body.type === 'income') {
     const amount = Number(body.amount)
@@ -60,7 +66,7 @@ export async function POST(request: Request) {
         type: body.type,
         total_amount: amount,
         payment_method: body.paymentMethod ?? 'cash',
-        source: 'manual_quick',
+        source,
         tax_amount: 0,
         notes,
       })
@@ -120,7 +126,7 @@ export async function POST(request: Request) {
       total_amount: totalAmount,
       customer_id: body.customerId ?? null,
       payment_method: body.paymentMethod,
-      source: 'manual_quick',
+      source,
       tax_amount: 0,
     })
     .select('id')

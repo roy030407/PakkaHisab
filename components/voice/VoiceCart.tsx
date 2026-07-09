@@ -8,6 +8,8 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation (Voice Layer 1)
+ *   - New-item rows now say they are added to the catalog on save (they are
+ *     no longer created at parse time)
  *
  * WHERE IT FITS:
  *   Rendered by app/(dashboard)/voice/page.tsx.
@@ -43,7 +45,7 @@ export function VoiceCart({
             <p className="truncate text-sm font-medium text-gray-900">{r.name}</p>
             <p className="text-xs text-gray-500">
               {r.unitPrice > 0 ? `₹${r.unitPrice} each` : 'No price set'}
-              {r.addedAsNew ? ' - new item' : ''}
+              {r.addedAsNew ? ' - new item, added to catalog on save' : ''}
             </p>
           </div>
           <div className="flex items-center gap-1.5">
