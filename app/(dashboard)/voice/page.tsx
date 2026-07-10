@@ -22,6 +22,8 @@
  *     from tap entry in the transactions table
  *   - saveCart creates catalog products for kept "new:" rows at save time
  *     (voice parse no longer auto-creates ₹0 products)
+ *   - Added Most Popular Items strip: taps add straight into the live cart,
+ *     a tap fallback when a phrase was misheard or skipped
  *
  * WHERE IT FITS:
  *   Reached from the Sidebar (desktop) and the VoiceFab (mobile).
@@ -41,6 +43,7 @@ import { speak } from '@/lib/voice/speak'
 import { buildBalanceByNameSpeech } from '@/lib/voice/customer'
 import type { VoiceCartRow, VoiceParseResponse, VoiceCommand, VoiceParseArgs, VoiceCustomerMatch } from '@/lib/voice/types'
 import { PaymentToggle } from '@/components/shared/PaymentToggle'
+import { FrequentItems, type FrequentProduct } from '@/components/shared/FrequentItems'
 import { track } from '@/lib/analytics/posthog'
 
 export default function VoicePage() {
@@ -160,6 +163,18 @@ export default function VoicePage() {
     setRows((prev) => setRowQuantity(prev, productId, quantity))
   }
 
+  // Most Popular Items strip: tap adds 1 unit straight into the live cart,
+  // same as speaking it - useful when a phrase was misheard or skipped.
+  const frequentCounts = new Map(rows.map((r) => [r.productId, r.quantity]))
+  function addFrequent(p: FrequentProduct) {
+    setRows((prev) => addRowsToCart(prev, [
+      { productId: p.id, name: p.name, quantity: 1, unitPrice: p.price, addedAsNew: false },
+    ]))
+  }
+  function removeFrequent(p: FrequentProduct) {
+    setRows((prev) => setRowQuantity(prev, p.id, (frequentCounts.get(p.id) ?? 0) - 1))
+  }
+
   const total = cartTotal(rows)
   const canSave = rows.length > 0 && !saving
   const canClose = listening || rows.length > 0
@@ -200,6 +215,13 @@ export default function VoicePage() {
           </p>
         )}
       </div>
+
+      <FrequentItems
+        onAdd={addFrequent}
+        onRemove={removeFrequent}
+        counts={frequentCounts}
+        label="Most popular items"
+      />
 
       <VoiceCart rows={rows} onSetQty={setQty} />
 

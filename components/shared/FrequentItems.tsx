@@ -13,7 +13,8 @@
  *   Reusable on dashboard, entry, scan, voice, and products pages.
  *
  * CALLED BY / IMPORTS FROM:
- *   components/dashboard/DashboardQuickSale.tsx, components/entry/QuickEntry.tsx,
+ *   components/dashboard/DashboardFrequentItems.tsx, components/entry/QuickEntry.tsx,
+ *   app/(dashboard)/voice/page.tsx, components/scan/ExtractionReview.tsx,
  *   app/(dashboard)/products/page.tsx
  */
 'use client'

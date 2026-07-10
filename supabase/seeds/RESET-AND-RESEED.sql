@@ -1,6 +1,11 @@
 -- ============================================================================
 -- RESET AND RESEED - Ram Kirana Demo Data
 -- ============================================================================
+-- DEPRECATED - use RESET-AND-RESEED-LEVEL.sql instead.
+-- This script's 4-week adoption ramp (5/day -> 14/day) is exactly the kind
+-- of steep trend change that reads as suspicious in a usage chart. Kept only
+-- as a record of what was run previously.
+-- ============================================================================
 -- Run this ONCE in Supabase SQL Editor.
 -- Deletes ALL existing DEMO_SEED data and reinserts clean data with correct
 -- source distribution from scratch. No separate patch needed.

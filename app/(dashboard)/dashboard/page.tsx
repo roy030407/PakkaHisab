@@ -17,6 +17,7 @@
  *   - Added "See full transaction history" link to /transactions page
  *   - Usage evidence banner now counts real transactions only (rows whose
  *     notes start with DEMO_SEED are excluded, NULL notes kept)
+ *   - Added DashboardFrequentItems (Most Popular Items, 1-tap sale)
  *
  * WHERE IT FITS:
  *   First page a merchant sees after logging in. Uses server-side fetch
@@ -37,6 +38,7 @@ import { PrivacyCard } from "@/components/shared/PrivacyCard"
 import Link from "next/link"
 import { Camera, PenLine, Package, ShoppingCart, HandCoins } from "lucide-react"
 import { RecentTransactions } from "@/components/dashboard/RecentTransactions"
+import { DashboardFrequentItems } from "@/components/dashboard/DashboardFrequentItems"
 
 function istDateString(d: Date): string {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata" }).format(d)
@@ -320,6 +322,9 @@ export default async function DashboardPage() {
               <span className="text-xs font-medium">Stock</span>
             </Link>
           </div>
+
+          {/* Most popular items - one tap logs a sale, no extra screen */}
+          <DashboardFrequentItems />
 
           {/* Sales + Udhaar */}
           <div className="grid grid-cols-2 gap-3">

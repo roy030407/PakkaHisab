@@ -1,6 +1,10 @@
 -- ============================================================================
 -- RAM KIRANA - SAMPLE DATA EXTENSION: JULY 2 - JULY 10 (labeled demo data)
 -- ----------------------------------------------------------------------------
+-- DEPRECATED - use RESET-AND-RESEED-LEVEL.sql instead, which regenerates the
+-- entire history (day 1 through today) at a consistent level in one script,
+-- rather than patching just this range. Kept only as a record.
+-- ----------------------------------------------------------------------------
 -- WHAT THIS IS:
 --   Continues the labeled DEMO dataset from where ram-kirana-july1.sql ended,
 --   so the dashboard and charts demonstrate a fully-used product through

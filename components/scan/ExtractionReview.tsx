@@ -16,6 +16,8 @@
  *   - Sale-first (default + first toggle); date defaults to today via a calendar
  *     picker; more bottom padding so the qty/price stepper is never hidden; the
  *     "is X qty or price?" prompt only shows for a real number and gained a Neither
+ *   - Added Most Popular Items strip: quick-add a row the OCR missed; tapping
+ *     an item already on the list bumps its quantity instead of duplicating
  *
  * WHERE IT FITS:
  *   Shown when scan state = 'review' and documentType = 'single_bill'.
@@ -29,6 +31,7 @@ import type { ExtractionResult, ExtractionItem, MatchCandidate } from '@/types'
 import { DuplicateWarning } from './DuplicateWarning'
 import { CustomerSheet } from '@/components/entry/CustomerSheet'
 import { ConfidenceBadge } from './ConfidenceBadge'
+import { FrequentItems, type FrequentProduct } from '@/components/shared/FrequentItems'
 
 type QtyPriceMode = 'unset' | 'quantity' | 'price' | 'skip'
 
@@ -113,6 +116,40 @@ export function ExtractionReview({ extraction, documentUploadId, duplicateWarnin
   const setName = (idx: number, v: string) =>
     patch(idx, it => ({ ...it, editedName: v }))
   const removeRow = (idx: number) => patch(idx, it => ({ ...it, removed: true }))
+
+  // Most Popular Items: quick-add a row this bill's OCR missed. Tapping an
+  // item already on the list bumps its quantity instead of duplicating it.
+  function addFrequentItem(p: FrequentProduct) {
+    const existingIdx = items.findIndex(it => !it.removed && it.matchedProductId === p.id)
+    if (existingIdx !== -1) {
+      adjustQty(existingIdx, 1)
+      return
+    }
+    setItems(prev => [...prev, {
+      productNameRaw: p.name,
+      matchedProductId: p.id,
+      matchedProductName: p.name,
+      matchState: 'matched',
+      candidates: [],
+      quantity: 1,
+      unitPrice: p.price,
+      totalPrice: p.price,
+      fillSource: 'catalog',
+      needsVerify: false,
+      ambiguousQtyPrice: false,
+      editedName: p.name,
+      editedQty: 1,
+      editedPrice: p.price,
+      originalName: p.name,
+      addAsNew: false,
+      removed: false,
+      qtyPriceMode: 'skip',
+      bareNumber: 0,
+    }])
+  }
+  const frequentCounts = new Map(
+    items.filter(it => !it.removed && it.matchedProductId).map(it => [it.matchedProductId as string, it.editedQty])
+  )
 
   const chooseCandidate = (idx: number, c: MatchCandidate) =>
     patch(idx, it => ({
@@ -223,6 +260,14 @@ export function ExtractionReview({ extraction, documentUploadId, duplicateWarnin
             <p className="text-xs text-amber-700 mt-1">Try a clearer, well-lit photo, or discard and add the entry manually.</p>
           </div>
         )}
+
+        <div className="mx-4 mt-3">
+          <FrequentItems
+            onAdd={addFrequentItem}
+            counts={frequentCounts}
+            label="Missed an item? Add it"
+          />
+        </div>
 
         <div className="mx-4 mt-3 space-y-3">
           {items.map((item, idx) => {
