@@ -2,15 +2,18 @@
  * FILE: app/api/products/frequent/route.ts
  *
  * WHAT THIS DOES:
- *   GET - returns the top 10 most-sold products by quantity in the last 30 days.
+ *   GET - returns the top 10 all-time bestsellers by total quantity sold.
  *   Falls back to pinned products, then most recently updated active products,
  *   so the quick-add strip never goes blank while the store has a catalog.
+ *   Unpriced (0-price) products and duplicate names are excluded everywhere.
  *   Used by the FrequentItems quick-add strip on dashboard, entry, and other pages.
  *
  * CHANGES THIS SESSION:
  *   - Fallback chain: line-item frequency -> pinned -> top active products
  *     (strip was disappearing when no line-item sales existed in 30 days)
  *   - All product queries scoped to store_id
+ *   - Popularity is now ALL-TIME (30-day window removed per merchant feedback)
+ *   - Excludes selling_price <= 0 products; dedupes by lowercase name
  *
  * WHERE IT FITS:
  *   Called by components/shared/FrequentItems.tsx
@@ -33,17 +36,14 @@ export async function GET() {
     .maybeSingle()
   if (!store) return NextResponse.json({ products: [] })
 
-  const since = new Date(Date.now() - 30 * 86400000).toISOString().split('T')[0]
-
-  const { data: recentTx } = await supabase
+  const { data: saleTx } = await supabase
     .from('transactions')
     .select('id')
     .eq('store_id', store.id)
     .is('voided_at', null)
     .eq('type', 'sale')
-    .gte('date', since)
 
-  const txIds = (recentTx ?? []).map((t: { id: string }) => t.id)
+  const txIds = (saleTx ?? []).map((t: { id: string }) => t.id)
 
   const freq: Record<string, number> = {}
   if (txIds.length > 0) {
@@ -58,10 +58,9 @@ export async function GET() {
 
   const topIds = Object.entries(freq)
     .sort((a, b) => b[1] - a[1])
-    .slice(0, 10)
     .map(([id]) => id)
 
-  // 1st choice: products actually sold in the last 30 days, by quantity
+  // 1st choice: all-time bestsellers by total quantity sold
   if (topIds.length > 0) {
     const { data: products } = await supabase
       .from('products')
@@ -69,10 +68,13 @@ export async function GET() {
       .eq('store_id', store.id)
       .in('id', topIds)
       .eq('is_active', true)
+      .gt('selling_price', 0)
 
-    const sorted = (products ?? [])
-      .sort((a: { id: string }, b: { id: string }) => topIds.indexOf(a.id) - topIds.indexOf(b.id))
-      .map(toChip)
+    const sorted = dedupeByName(
+      (products ?? [])
+        .sort((a: { id: string }, b: { id: string }) => topIds.indexOf(a.id) - topIds.indexOf(b.id))
+        .map(toChip),
+    )
     if (sorted.length > 0) return NextResponse.json({ products: sorted })
   }
 
@@ -83,24 +85,42 @@ export async function GET() {
     .eq('store_id', store.id)
     .eq('is_active', true)
     .eq('is_pinned', true)
+    .gt('selling_price', 0)
     .limit(10)
   if ((pinned ?? []).length > 0) {
-    return NextResponse.json({ products: (pinned ?? []).map(toChip) })
+    return NextResponse.json({ products: dedupeByName((pinned ?? []).map(toChip)) })
   }
 
   // 3rd choice: most recently updated active products, so the strip
-  // still gives one-tap adds for a store with a catalog but no recent sales
+  // still gives one-tap adds for a store with a catalog but no sales yet
   const { data: recent } = await supabase
     .from('products')
     .select('id, name, selling_price')
     .eq('store_id', store.id)
     .eq('is_active', true)
+    .gt('selling_price', 0)
     .order('updated_at', { ascending: false })
-    .limit(10)
+    .limit(20)
 
-  return NextResponse.json({ products: (recent ?? []).map(toChip) })
+  return NextResponse.json({ products: dedupeByName((recent ?? []).map(toChip)) })
 }
 
-function toChip(p: { id: string; name: string; selling_price: number }) {
+interface Chip { id: string; name: string; price: number }
+
+function toChip(p: { id: string; name: string; selling_price: number }): Chip {
   return { id: p.id, name: p.name, price: Number(p.selling_price) }
+}
+
+// Keep the first (highest-ranked) chip per lowercase name, cap at 10.
+function dedupeByName(chips: Chip[]): Chip[] {
+  const seen = new Set<string>()
+  const out: Chip[] = []
+  for (const c of chips) {
+    const key = c.name.trim().toLowerCase()
+    if (seen.has(key)) continue
+    seen.add(key)
+    out.push(c)
+    if (out.length === 10) break
+  }
+  return out
 }

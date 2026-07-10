@@ -8,6 +8,8 @@
  *
  * CHANGES THIS SESSION:
  *   - Initial creation
+ *   - Tapping the date label opens the native calendar picker (month/year
+ *     navigation), bounded between the store join date and today
  *
  * WHERE IT FITS:
  *   Accessible from the sidebar nav and dashboard link. Provides a
@@ -21,8 +23,8 @@
  */
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
-import { ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Ban } from 'lucide-react'
+import { useState, useEffect, useCallback, useRef } from 'react'
+import { ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Ban, CalendarDays } from 'lucide-react'
 
 interface TransactionRow {
   id: string
@@ -96,6 +98,8 @@ export default function TransactionsPage() {
   const [loadingItems, setLoadingItems] = useState(false)
   const [voidingId, setVoidingId] = useState<string | null>(null)
   const [confirmVoidId, setConfirmVoidId] = useState<string | null>(null)
+  const [joinDate, setJoinDate] = useState<string | null>(null)
+  const dateInputRef = useRef<HTMLInputElement | null>(null)
 
   const fetchTransactions = useCallback(async () => {
     setLoading(true)
@@ -106,9 +110,21 @@ export default function TransactionsPage() {
       const res = await fetch(`/api/transactions?${params}`)
       const data = await res.json()
       setRows(data.transactions ?? [])
+      if (data.storeCreatedAt) setJoinDate(data.storeCreatedAt)
     } catch { setRows([]) }
     setLoading(false)
   }, [date, typeFilter, showVoided])
+
+  const openCalendar = useCallback(() => {
+    const input = dateInputRef.current
+    if (!input) return
+    try {
+      input.showPicker()
+    } catch {
+      input.focus()
+      input.click()
+    }
+  }, [])
 
   useEffect(() => { fetchTransactions() }, [fetchTransactions])
 
@@ -142,6 +158,7 @@ export default function TransactionsPage() {
   }, [])
 
   const isToday = date === todayIST()
+  const atJoinDate = joinDate !== null && date <= joinDate
   const dayTotal = rows.filter(r => !r.voidedAt).reduce((s, r) => {
     if (r.type === 'sale') return s + r.totalAmount
     if (r.type === 'purchase' || r.type === 'expense') return s - r.totalAmount
@@ -159,19 +176,48 @@ export default function TransactionsPage() {
       <h1 className="text-xl font-bold text-gray-900 mb-4">Transactions</h1>
 
       {/* Date navigation */}
-      <div className="flex items-center justify-between rounded-xl bg-white border border-gray-200 px-3 py-2.5 mb-3">
-        <button onClick={() => setDate(prev => shiftDate(prev, -1))}
-          className="btn-lift flex h-8 w-8 items-center justify-center rounded-lg hover:bg-gray-100 cursor-pointer">
-          <ChevronLeft size={18} className="text-gray-600" />
+      <div className="relative flex items-center justify-between rounded-xl bg-white border border-gray-200 px-3 py-2.5 mb-3">
+        <button onClick={() => { if (!atJoinDate) setDate(prev => shiftDate(prev, -1)) }}
+          disabled={atJoinDate}
+          aria-label="Previous day"
+          className={`btn-lift flex h-8 w-8 items-center justify-center rounded-lg ${
+            atJoinDate ? 'text-gray-300 cursor-not-allowed' : 'hover:bg-gray-100 text-gray-600 cursor-pointer'
+          }`}>
+          <ChevronLeft size={18} />
         </button>
-        <div className="text-center">
-          <p className="text-sm font-semibold text-gray-900">{formatDateLabel(date)}</p>
-          <p className="text-[10px] text-gray-400">{date}</p>
-        </div>
+        <button type="button" onClick={openCalendar}
+          aria-label="Pick a date from the calendar"
+          className="btn-lift flex items-center gap-2 rounded-lg px-3 py-1 text-center hover:bg-gray-50 cursor-pointer">
+          <CalendarDays size={15} className="text-gray-400" />
+          <span>
+            <span className="block text-sm font-semibold text-gray-900">{formatDateLabel(date)}</span>
+            <span className="block text-[10px] text-gray-400">{date}</span>
+          </span>
+        </button>
+        {/* Hidden native date input: tapping the label above opens the
+            phone's own calendar with month/year navigation. */}
+        <input
+          ref={dateInputRef}
+          type="date"
+          value={date}
+          min={joinDate ?? undefined}
+          max={todayIST()}
+          onChange={e => {
+            const v = e.target.value
+            if (!v) return
+            const today = todayIST()
+            const clamped = v > today ? today : (joinDate && v < joinDate ? joinDate : v)
+            setDate(clamped)
+          }}
+          className="sr-only absolute left-1/2 top-full"
+          tabIndex={-1}
+          aria-hidden="true"
+        />
         <button onClick={() => { if (!isToday) setDate(prev => shiftDate(prev, 1)) }}
           disabled={isToday}
-          className={`btn-lift flex h-8 w-8 items-center justify-center rounded-lg cursor-pointer ${
-            isToday ? 'text-gray-300 cursor-not-allowed' : 'hover:bg-gray-100 text-gray-600'
+          aria-label="Next day"
+          className={`btn-lift flex h-8 w-8 items-center justify-center rounded-lg ${
+            isToday ? 'text-gray-300 cursor-not-allowed' : 'hover:bg-gray-100 text-gray-600 cursor-pointer'
           }`}>
           <ChevronRight size={18} />
         </button>

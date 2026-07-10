@@ -15,6 +15,8 @@
  *
  * CHANGES THIS SESSION:
  *   - Added type filter param (sale | purchase | expense)
+ *   - Returns storeCreatedAt (join date) so the history page can bound
+ *     its calendar picker to the store's lifetime
  *
  * CALLED BY / IMPORTS FROM:
  *   components/dashboard/RecentTransactions.tsx
@@ -34,10 +36,12 @@ export async function GET(request: Request) {
 
   const { data: store } = await supabase
     .from('stores')
-    .select('id')
+    .select('id, created_at')
     .eq('owner_id', user.id)
     .maybeSingle()
   if (!store) return NextResponse.json({ transactions: [] })
+
+  const storeCreatedAt = (store.created_at as string | null)?.slice(0, 10) ?? null
 
   const url = new URL(request.url)
   const date = url.searchParams.get('date') || todayIST()
@@ -62,7 +66,7 @@ export async function GET(request: Request) {
   }
 
   const { data: txRows } = await query
-  if (!txRows || txRows.length === 0) return NextResponse.json({ transactions: [] })
+  if (!txRows || txRows.length === 0) return NextResponse.json({ transactions: [], storeCreatedAt })
 
   const txIds = txRows.map((t: { id: string }) => t.id)
 
@@ -122,5 +126,5 @@ export async function GET(request: Request) {
     }
   })
 
-  return NextResponse.json({ transactions })
+  return NextResponse.json({ transactions, storeCreatedAt })
 }
