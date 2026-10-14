@@ -1,0 +1,343 @@
+
+> pakkahisab@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+
+ ✓ Starting...
+ ✓ Ready in 4.4s
+ ✓ Compiled /middleware in 761ms
+ ✓ Compiled (126 modules)
+ ✓ Compiled /api/health in 322ms (29 modules)
+ GET /api/health 200 in 602ms
+ ○ Compiling / ...
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (102kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (243kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+ ✓ Compiled / in 9.9s (660 modules)
+ GET / 200 in 10611ms
+ ✓ Compiled in 719ms (284 modules)
+ ✓ Compiled in 276ms (284 modules)
+ ○ Compiling /login ...
+ ✓ Compiled /login in 5.2s (934 modules)
+ GET /login 200 in 5599ms
+ ✓ Compiled /signup in 692ms (940 modules)
+ GET /signup 200 in 691ms
+ ✓ Compiled in 243ms (435 modules)
+ ○ Compiling /onboarding ...
+ ✓ Compiled /onboarding in 2.4s (1188 modules)
+ GET /onboarding 200 in 5141ms
+ ✓ Compiled in 335ms (558 modules)
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 1325ms (1311 modules)
+ ⨯ app\(dashboard)\dashboard\page.tsx (54:27) @ id
+ ⨯ TypeError: Cannot read properties of null (reading 'id')
+    at DashboardPage (dashboard/page.tsx:71:110)
+digest: "2241111414"
+[0m [90m 52 |[39m     [33m.[39m[36mfrom[39m([32m"stores"[39m)[0m
+[0m [90m 53 |[39m     [33m.[39mselect([32m"id, name, owner_name"[39m)[0m
+[0m[31m[1m>[22m[39m[90m 54 |[39m     [33m.[39meq([32m"owner_id"[39m[33m,[39m user[33m![39m[33m.[39mid)[0m
+[0m [90m    |[39m                           [31m[1m^[22m[39m[0m
+[0m [90m 55 |[39m     [33m.[39mmaybeSingle()[0m
+[0m [90m 56 |[39m[0m
+[0m [90m 57 |[39m   [90m// Last 7 days (inclusive of today), IST[39m[0m
+ GET /dashboard 307 in 1860ms
+ ✓ Compiled in 313ms (600 modules)
+ ○ Compiling /scan ...
+ ✓ Compiled /scan in 753ms (1343 modules)
+ GET /scan 307 in 1138ms
+ ✓ Compiled in 304ms (615 modules)
+ ○ Compiling /entry ...
+ ✓ Compiled /entry in 644ms (1359 modules)
+ GET /entry 307 in 899ms
+ ✓ Compiled in 283ms (622 modules)
+ ○ Compiling /inventory ...
+ ✓ Compiled /inventory in 996ms (1389 modules)
+ GET /inventory 307 in 1251ms
+ ✓ Compiled in 327ms (636 modules)
+ ○ Compiling /products ...
+ ✓ Compiled /products in 679ms (1405 modules)
+ GET /products 307 in 983ms
+ ✓ Compiled in 327ms (643 modules)
+ ○ Compiling /customers ...
+ ✓ Compiled /customers in 729ms (1429 modules)
+ GET /customers 307 in 1013ms
+ ✓ Compiled in 312ms (654 modules)
+ ○ Compiling /reports ...
+ ✓ Compiled /reports in 4.9s (2461 modules)
+ GET /reports 307 in 5361ms
+ ○ Compiling /advisor ...
+ ✓ Compiled /advisor in 1306ms (2471 modules)
+ GET /advisor 307 in 1266ms
+ ○ Compiling /settings ...
+ ✓ Compiled /settings in 1188ms (2477 modules)
+ GET /settings 307 in 1132ms
+ ○ Compiling /ledger ...
+ ✓ Compiled /ledger in 1152ms (2483 modules)
+ GET /ledger 307 in 1054ms
+ ○ Compiling /reconcile ...
+ ✓ Compiled /reconcile in 1243ms (2489 modules)
+ GET /reconcile 307 in 1102ms
+ ○ Compiling /transactions ...
+ ✓ Compiled /transactions in 1282ms (2501 modules)
+ GET /transactions 307 in 1232ms
+ ○ Compiling /voice ...
+ ✓ Compiled /voice in 1437ms (2529 modules)
+ GET /voice 307 in 1344ms
+ ○ Compiling /privacy ...
+ ✓ Compiled /privacy in 1280ms (2531 modules)
+ GET /privacy 200 in 1169ms
+ ○ Compiling /terms ...
+ ✓ Compiled /terms in 1356ms (2533 modules)
+ GET /terms 200 in 1254ms
+ ○ Compiling /share/[token] ...
+ ✓ Compiled /share/[token] in 1420ms (2535 modules)
+ ⨯ Error: Your project's URL and Key are required to create a Supabase client!
+
+Check your Supabase project's API settings to find these values
+
+https://supabase.com/dashboard/project/_/settings/api
+    at createSupabaseServiceClient (./lib/supabase/server.ts:48:77)
+    at SharePage (./app/share/[token]/page.tsx:35:98)
+    at stringify (<anonymous>)
+digest: "3560861472"
+ ⨯ Error: Your project's URL and Key are required to create a Supabase client!
+
+Check your Supabase project's API settings to find these values
+
+https://supabase.com/dashboard/project/_/settings/api
+    at createSupabaseServiceClient (./lib/supabase/server.ts:48:77)
+    at SharePage (./app/share/[token]/page.tsx:35:98)
+    at stringify (<anonymous>)
+digest: "3560861472"
+ GET /share/badtoken 500 in 2101ms
+ ○ Compiling /robots.txt ...
+ ✓ Compiled /robots.txt in 1217ms (2582 modules)
+ GET /robots.txt 200 in 1121ms
+ ○ Compiling /sitemap.xml ...
+ ✓ Compiled /sitemap.xml in 1044ms (2585 modules)
+ GET /sitemap.xml 200 in 1579ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 1417ms (2572 modules)
+ GET /nonexistent 404 in 1316ms
+ ○ Compiling /api/activity ...
+ ✓ Compiled /api/activity in 1316ms (2609 modules)
+ GET /api/activity 401 in 1259ms
+ POST /api/activity 405 in 229ms
+ ✓ Compiled in 462ms (1197 modules)
+ ○ Compiling /api/ai/chat ...
+ ✓ Compiled /api/ai/chat in 3s (2780 modules)
+ GET /api/ai/chat 405 in 3018ms
+ ✓ Compiled in 540ms (1197 modules)
+ POST /api/ai/chat 401 in 298ms
+ ○ Compiling /api/ai/insight ...
+ ✓ Compiled /api/ai/insight in 1348ms (2783 modules)
+ GET /api/ai/insight 401 in 1256ms
+ POST /api/ai/insight 405 in 230ms
+ ✓ Compiled in 477ms (1197 modules)
+ ○ Compiling /api/auth/callback ...
+ ✓ Compiled /api/auth/callback in 1368ms (2785 modules)
+ GET /api/auth/callback 307 in 1250ms
+ ✓ Compiled in 419ms (1197 modules)
+ POST /api/auth/callback 405 in 223ms
+ ○ Compiling /api/cron/monthly-report ...
+ ✓ Compiled /api/cron/monthly-report in 1452ms (2789 modules)
+ GET /api/cron/monthly-report 401 in 1317ms
+ ✓ Compiled in 436ms (1197 modules)
+ POST /api/cron/monthly-report 405 in 239ms
+ ○ Compiling /api/cron/weekly-report ...
+ ✓ Compiled /api/cron/weekly-report in 1184ms (2791 modules)
+ GET /api/cron/weekly-report 401 in 1075ms
+ ✓ Compiled in 461ms (1197 modules)
+ POST /api/cron/weekly-report 405 in 259ms
+ ○ Compiling /api/customers ...
+ ✓ Compiled /api/customers in 1166ms (2793 modules)
+ GET /api/customers 401 in 1030ms
+ ✓ Compiled in 422ms (1197 modules)
+ POST /api/customers 401 in 220ms
+ ○ Compiling /api/customers/[id] ...
+ ✓ Compiled /api/customers/[id] in 1151ms (2790 modules)
+ GET /api/customers/00000000-0000-0000-0000-000000000000 401 in 1775ms
+ ✓ Compiled in 426ms (1197 modules)
+ POST /api/customers/00000000-0000-0000-0000-000000000000 405 in 236ms
+ ○ Compiling /api/customers/[id]/payment ...
+ ✓ Compiled /api/customers/[id]/payment in 1363ms (2792 modules)
+ GET /api/customers/00000000-0000-0000-0000-000000000000/payment 405 in 1970ms
+ ✓ Compiled in 419ms (1197 modules)
+ POST /api/customers/00000000-0000-0000-0000-000000000000/payment 401 in 229ms
+ ○ Compiling /api/dashboard ...
+ ✓ Compiled /api/dashboard in 1263ms (2794 modules)
+ GET /api/dashboard 401 in 1124ms
+ POST /api/dashboard 405 in 198ms
+ ✓ Compiled in 428ms (1197 modules)
+ ○ Compiling /api/entry/full ...
+ ✓ Compiled /api/entry/full in 1241ms (2797 modules)
+ GET /api/entry/full 405 in 1106ms
+ ✓ Compiled in 454ms (1197 modules)
+ POST /api/entry/full 401 in 262ms
+ ○ Compiling /api/entry/quick ...
+ ✓ Compiled /api/entry/quick in 1199ms (2799 modules)
+ GET /api/entry/quick 405 in 1038ms
+ POST /api/entry/quick 401 in 214ms
+ ✓ Compiled in 432ms (1197 modules)
+ ○ Compiling /api/fixed-costs ...
+ ✓ Compiled /api/fixed-costs in 1184ms (2801 modules)
+ GET /api/fixed-costs 401 in 1047ms
+ POST /api/fixed-costs 401 in 278ms
+ ✓ Compiled in 501ms (1197 modules)
+ ○ Compiling /api/fixed-costs/[id] ...
+ ✓ Compiled /api/fixed-costs/[id] in 1132ms (2790 modules)
+ GET /api/fixed-costs/00000000-0000-0000-0000-000000000000 401 in 1789ms
+ ✓ Compiled in 448ms (1197 modules)
+ POST /api/fixed-costs/00000000-0000-0000-0000-000000000000 405 in 226ms
+ ○ Compiling /api/health ...
+ ✓ Compiled /api/health in 1189ms (2792 modules)
+ GET /api/health 200 in 1032ms
+ POST /api/health 405 in 218ms
+ ✓ Compiled in 459ms (1197 modules)
+ ○ Compiling /api/import/confirm ...
+ ✓ Compiled /api/import/confirm in 1196ms (2795 modules)
+ GET /api/import/confirm 405 in 1054ms
+ ✓ Compiled in 423ms (1197 modules)
+ POST /api/import/confirm 401 in 222ms
+ ○ Compiling /api/import/map ...
+ ✓ Compiled /api/import/map in 1412ms (2736 modules)
+ GET /api/import/map 405 in 1310ms
+ ✓ Compiled in 416ms (1197 modules)
+ POST /api/import/map 401 in 223ms
+ ○ Compiling /api/import/template ...
+ ✓ Compiled /api/import/template in 1182ms (2744 modules)
+ GET /api/import/template 405 in 1047ms
+ POST /api/import/template 401 in 246ms
+ ✓ Compiled in 477ms (1197 modules)
+ ○ Compiling /api/import/upload ...
+ ✓ Compiled /api/import/upload in 1430ms (2749 modules)
+ GET /api/import/upload 405 in 1371ms
+ POST /api/import/upload 401 in 223ms
+ ✓ Compiled in 449ms (1197 modules)
+ ○ Compiling /api/inventory ...
+ ✓ Compiled /api/inventory in 1025ms (2728 modules)
+ GET /api/inventory 401 in 877ms
+ POST /api/inventory 405 in 240ms
+ ✓ Compiled in 464ms (1197 modules)
+ ○ Compiling /api/inventory/suggest ...
+ ✓ Compiled /api/inventory/suggest in 1054ms (2731 modules)
+ GET /api/inventory/suggest 401 in 917ms
+ POST /api/inventory/suggest 405 in 240ms
+ ✓ Compiled in 459ms (1197 modules)
+ ○ Compiling /api/products ...
+ ✓ Compiled /api/products in 1004ms (2733 modules)
+ GET /api/products 401 in 865ms
+ ✓ Compiled in 451ms (1197 modules)
+ POST /api/products 401 in 251ms
+ ○ Compiling /api/products/[id] ...
+ ✓ Compiled /api/products/[id] in 1037ms (2735 modules)
+ GET /api/products/00000000-0000-0000-0000-000000000000 401 in 1578ms
+ POST /api/products/00000000-0000-0000-0000-000000000000 405 in 209ms
+ ✓ Compiled in 441ms (1197 modules)
+ ○ Compiling /api/products/frequent ...
+ ✓ Compiled /api/products/frequent in 910ms (1991 modules)
+ GET /api/products/frequent 401 in 793ms
+ POST /api/products/frequent 405 in 208ms
+ ✓ Compiled in 433ms (1197 modules)
+ ○ Compiling /api/reconciliation ...
+ ✓ Compiled /api/reconciliation in 852ms (1994 modules)
+ GET /api/reconciliation 401 in 723ms
+ POST /api/reconciliation 401 in 224ms
+ ✓ Compiled in 454ms (1197 modules)
+ ○ Compiling /api/reports ...
+ ✓ Compiled /api/reports in 864ms (1996 modules)
+ GET /api/reports 401 in 708ms
+ POST /api/reports 405 in 199ms
+ ✓ Compiled in 426ms (1197 modules)
+ ○ Compiling /api/reports/pdf ...
+ ✓ Compiled /api/reports/pdf in 935ms (2001 modules)
+ GET /api/reports/pdf 401 in 1427ms
+ POST /api/reports/pdf 405 in 247ms
+ ✓ Compiled in 481ms (1197 modules)
+ ○ Compiling /api/reports/share ...
+ ✓ Compiled /api/reports/share in 862ms (2003 modules)
+ GET /api/reports/share 400 in 710ms
+ ✓ Compiled in 400ms (1197 modules)
+ POST /api/reports/share 401 in 212ms
+ ○ Compiling /api/scan ...
+ ✓ Compiled /api/scan in 968ms (2011 modules)
+ GET /api/scan 405 in 843ms
+ ✓ Compiled in 415ms (1197 modules)
+ POST /api/scan 401 in 223ms
+ ○ Compiling /api/scan/confirm ...
+ ✓ Compiled /api/scan/confirm in 1190ms (2013 modules)
+ GET /api/scan/confirm 405 in 1035ms
+ POST /api/scan/confirm 401 in 279ms
+ ✓ Compiled in 514ms (1197 modules)
+ ✓ Compiled /api/scan/correction in 810ms (1840 modules)
+ GET /api/scan/correction 405 in 770ms
+ POST /api/scan/correction 401 in 251ms
+ ✓ Compiled in 497ms (1197 modules)
+ ✓ Compiled /api/stores in 753ms (1842 modules)
+ GET /api/stores 401 in 644ms
+ POST /api/stores 401 in 221ms
+ ✓ Compiled in 447ms (1197 modules)
+ ○ Compiling /api/stores/seed ...
+ ✓ Compiled /api/stores/seed in 848ms (1844 modules)
+ GET /api/stores/seed 405 in 706ms
+ POST /api/stores/seed 401 in 247ms
+ ✓ Compiled in 474ms (1197 modules)
+ ✓ Compiled /api/transactions in 789ms (1846 modules)
+ GET /api/transactions 401 in 615ms
+ POST /api/transactions 405 in 206ms
+ ✓ Compiled in 428ms (1197 modules)
+ ✓ Compiled /api/transactions/[id] in 825ms (1849 modules)
+ GET /api/transactions/00000000-0000-0000-0000-000000000000 401 in 1370ms
+ ✓ Compiled in 494ms (1197 modules)
+ POST /api/transactions/00000000-0000-0000-0000-000000000000 405 in 281ms
+ ✓ Compiled /api/transactions/last in 856ms (1851 modules)
+ GET /api/transactions/last 401 in 684ms
+ ✓ Compiled in 429ms (1197 modules)
+ POST /api/transactions/last 405 in 229ms
+ ✓ Compiled /api/voice/parse in 813ms (1857 modules)
+ GET /api/voice/parse 405 in 677ms
+ ✓ Compiled in 437ms (1197 modules)
+ POST /api/voice/parse 401 in 220ms
+ ✓ Compiled in 381ms (1197 modules)
+ GET /api/health 200 in 215ms
+ ✓ Compiled in 449ms (1197 modules)
+ ✓ Compiled /share/[token] in 311ms (648 modules)
+ ⨯ Error: Your project's URL and Key are required to create a Supabase client!
+
+Check your Supabase project's API settings to find these values
+
+https://supabase.com/dashboard/project/_/settings/api
+    at createSupabaseServiceClient (./lib/supabase/server.ts:48:77)
+    at SharePage (./app/share/[token]/page.tsx:35:98)
+    at stringify (<anonymous>)
+digest: "3560861472"
+ ⨯ Error: Your project's URL and Key are required to create a Supabase client!
+
+Check your Supabase project's API settings to find these values
+
+https://supabase.com/dashboard/project/_/settings/api
+    at createSupabaseServiceClient (./lib/supabase/server.ts:48:77)
+    at SharePage (./app/share/[token]/page.tsx:35:98)
+    at stringify (<anonymous>)
+digest: "3560861472"
+ GET /share/badtoken 500 in 573ms
+ PATCH /api/products/x 401 in 69ms
+ PUT /api/products/x 405 in 39ms
+ DELETE /api/products/x 401 in 46ms
+ PATCH /api/customers/x 401 in 47ms
+ PUT /api/customers/x 405 in 30ms
+ DELETE /api/customers/x 405 in 34ms
+ PATCH /api/transactions/x 401 in 47ms
+ PUT /api/transactions/x 405 in 42ms
+ DELETE /api/transactions/x 401 in 36ms
+ PATCH /api/fixed-costs/x 401 in 48ms
+ PUT /api/fixed-costs/x 401 in 40ms
+ DELETE /api/fixed-costs/x 401 in 37ms
+ PATCH /api/stores 401 in 31ms
+ PUT /api/stores 405 in 35ms
+ DELETE /api/stores 405 in 31ms
+ ✓ Compiled /api/customers in 359ms (650 modules)
+ PATCH /api/customers 405 in 449ms
+ PUT /api/customers 405 in 30ms
+ DELETE /api/customers 405 in 30ms

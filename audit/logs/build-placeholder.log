@@ -1,0 +1,104 @@
+
+> pakkahisab@0.1.0 build
+> next build
+
+  ▲ Next.js 14.2.35
+
+   Creating an optimized production build ...
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (102kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (243kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+ ⚠ Compiled with warnings
+
+./node_modules/@supabase/supabase-js/dist/index.mjs
+A Node.js API is used (process.version at line: 27) which is not supported in the Edge Runtime.
+Learn more: https://nextjs.org/docs/api-reference/edge-runtime
+
+Import trace for requested module:
+./node_modules/@supabase/supabase-js/dist/index.mjs
+./node_modules/@supabase/ssr/dist/module/createBrowserClient.js
+./node_modules/@supabase/ssr/dist/module/index.js
+
+ ✓ Compiled successfully
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/57) ...
+   Generating static pages (14/57) 
+   Generating static pages (28/57) 
+   Generating static pages (42/57) 
+ ✓ Generating static pages (57/57)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                              Size     First Load JS
+┌ ƒ /                                    976 B          97.4 kB
+├ ○ /_not-found                          152 B          87.8 kB
+├ ƒ /advisor                             3.44 kB         160 kB
+├ ƒ /api/activity                        0 B                0 B
+├ ƒ /api/ai/chat                         0 B                0 B
+├ ƒ /api/ai/insight                      0 B                0 B
+├ ƒ /api/auth/callback                   0 B                0 B
+├ ƒ /api/cron/monthly-report             0 B                0 B
+├ ƒ /api/cron/weekly-report              0 B                0 B
+├ ƒ /api/customers                       0 B                0 B
+├ ƒ /api/customers/[id]                  0 B                0 B
+├ ƒ /api/customers/[id]/payment          0 B                0 B
+├ ƒ /api/dashboard                       0 B                0 B
+├ ƒ /api/entry/full                      0 B                0 B
+├ ƒ /api/entry/quick                     0 B                0 B
+├ ƒ /api/fixed-costs                     0 B                0 B
+├ ƒ /api/fixed-costs/[id]                0 B                0 B
+├ ○ /api/health                          0 B                0 B
+├ ƒ /api/import/confirm                  0 B                0 B
+├ ƒ /api/import/map                      0 B                0 B
+├ ƒ /api/import/template                 0 B                0 B
+├ ƒ /api/import/upload                   0 B                0 B
+├ ƒ /api/inventory                       0 B                0 B
+├ ƒ /api/inventory/suggest               0 B                0 B
+├ ƒ /api/products                        0 B                0 B
+├ ƒ /api/products/[id]                   0 B                0 B
+├ ƒ /api/products/frequent               0 B                0 B
+├ ƒ /api/reconciliation                  0 B                0 B
+├ ƒ /api/reports                         0 B                0 B
+├ ƒ /api/reports/pdf                     0 B                0 B
+├ ƒ /api/reports/share                   0 B                0 B
+├ ƒ /api/scan                            0 B                0 B
+├ ƒ /api/scan/confirm                    0 B                0 B
+├ ƒ /api/scan/correction                 0 B                0 B
+├ ƒ /api/stores                          0 B                0 B
+├ ƒ /api/stores/seed                     0 B                0 B
+├ ƒ /api/transactions                    0 B                0 B
+├ ƒ /api/transactions/[id]               0 B                0 B
+├ ƒ /api/transactions/last               0 B                0 B
+├ ƒ /api/voice/parse                     0 B                0 B
+├ ƒ /customers                           6.76 kB         113 kB
+├ ƒ /dashboard                           5.2 kB          180 kB
+├ ƒ /entry                               15.8 kB         185 kB
+├ ƒ /inventory                           5.96 kB         111 kB
+├ ƒ /ledger                              2.79 kB        90.5 kB
+├ ○ /login                               3.07 kB         180 kB
+├ ○ /onboarding                          4.6 kB          150 kB
+├ ƒ /privacy                             186 B          96.6 kB
+├ ƒ /products                            4.71 kB         163 kB
+├ ƒ /reconcile                           2 kB           89.7 kB
+├ ƒ /reports                             8.8 kB          184 kB
+├ ○ /robots.txt                          0 B                0 B
+├ ƒ /scan                                7.36 kB         177 kB
+├ ƒ /settings                            6.74 kB         290 kB
+├ ƒ /share/[token]                       152 B          87.8 kB
+├ ○ /signup                              3.07 kB         180 kB
+├ ○ /sitemap.xml                         0 B                0 B
+├ ○ /terms                               186 B          96.6 kB
+├ ƒ /transactions                        4.11 kB        91.8 kB
+└ ƒ /voice                               7.68 kB         164 kB
++ First Load JS shared by all            87.7 kB
+  ├ chunks/2117-23124643a6bef83e.js      31.9 kB
+  ├ chunks/fd9d1056-383f4a61eb104a5a.js  53.6 kB
+  └ other shared chunks (total)          2.13 kB
+
+
+ƒ Middleware                             82.3 kB
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+build exit 0

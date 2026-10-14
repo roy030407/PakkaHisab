@@ -1,0 +1,97 @@
+app/(auth)/login/page.tsx						
+app/(auth)/onboarding/page.tsx						
+app/(auth)/signup/page.tsx						
+app/(dashboard)/advisor/page.tsx						
+app/(dashboard)/customers/page.tsx						
+app/(dashboard)/dashboard/page.tsx	customers,fixed_costs,inventory,stores,transactions					
+app/(dashboard)/entry/page.tsx						
+app/(dashboard)/inventory/page.tsx						
+app/(dashboard)/ledger/page.tsx						
+app/(dashboard)/products/page.tsx						
+app/(dashboard)/reconcile/page.tsx						
+app/(dashboard)/reports/page.tsx						
+app/(dashboard)/scan/page.tsx						
+app/(dashboard)/settings/page.tsx						
+app/(dashboard)/transactions/page.tsx						
+app/(dashboard)/voice/page.tsx						
+app/api/activity/route.ts	stores,transactions					
+app/api/ai/chat/route.ts	ai_conversations,stores		Gemini		ratelimit	
+app/api/ai/insight/route.ts	stores		Gemini		ratelimit	
+app/api/auth/callback/route.ts						
+app/api/cron/monthly-report/route.ts	periodic_reports,stores					
+app/api/cron/weekly-report/route.ts	periodic_reports,stores					
+app/api/customers/[id]/payment/route.ts	customers,stores,transactions					
+app/api/customers/[id]/route.ts	customers,stores,transactions					
+app/api/customers/route.ts	customers,stores,transactions					
+app/api/dashboard/route.ts	customers,fixed_costs,inventory,stores,transactions					
+app/api/entry/full/route.ts	customers,products,stores,transaction_items,transactions					
+app/api/entry/quick/route.ts	customers,products,stores,transaction_items,transactions					
+app/api/fixed-costs/[id]/route.ts	fixed_cost_overrides,fixed_costs,stores					
+app/api/fixed-costs/route.ts	fixed_costs,stores					
+app/api/health/route.ts						
+app/api/import/confirm/route.ts	inventory,products,stores					
+app/api/import/map/route.ts			Gemini			
+app/api/import/template/route.ts	fixed_costs,inventory,products,stores					
+app/api/import/upload/route.ts						
+app/api/inventory/route.ts	inventory,products,stock_movements,stores,transactions					
+app/api/inventory/suggest/route.ts	stores					
+app/api/products/[id]/route.ts	products,stores					
+app/api/products/frequent/route.ts	products,stores,transaction_items,transactions					
+app/api/products/route.ts	products,stores					
+app/api/reconciliation/route.ts	cash_reconciliations,stores,transactions					
+app/api/reports/pdf/route.ts	stores					
+app/api/reports/route.ts	stores					
+app/api/reports/share/route.ts	periodic_reports,stores					
+app/api/scan/confirm/route.ts	customers,document_uploads,extraction_corrections,products,stores,transaction_items,transactions					
+app/api/scan/correction/route.ts	extraction_corrections,stores					
+app/api/scan/route.ts	document_uploads,documents,stores,transactions		Gemini		ratelimit	
+app/api/stores/route.ts	stores					
+app/api/stores/seed/route.ts	fixed_costs,products,stores					
+app/api/transactions/[id]/route.ts	customers,inventory,stock_movements,stores,transaction_items,transactions					
+app/api/transactions/last/route.ts	stores,transactions					
+app/api/transactions/route.ts	customers,stores,transaction_items,transactions					
+app/api/voice/parse/route.ts	customers,products,stores,transaction_items,transactions		Gemini		ratelimit	
+app/page.tsx						
+app/privacy/page.tsx						
+app/share/[token]/page.tsx	periodic_reports,stores					
+app/terms/page.tsx						
+lib/analytics/posthog.ts						
+lib/anthropic/advisor.ts	customers,fixed_costs,inventory,transactions		Gemini			
+lib/anthropic/client.ts			Gemini			
+lib/anthropic/errors.ts						
+lib/anthropic/extraction.ts	extraction_corrections		Gemini			
+lib/anthropic/insight.ts	periodic_reports		Gemini			
+lib/anthropic/prompts.ts			Gemini			
+lib/anthropic/voiceParse.ts			Gemini			
+lib/collections/aging.ts						
+lib/collections/reminder.ts						
+lib/inventory/consumption.ts	stock_movements					
+lib/inventory/suggestions.ts	inventory,products					
+lib/inventory/updateStock.ts	inventory,stock_movements					
+lib/parsers/amounts.ts						
+lib/parsers/csv.ts						
+lib/parsers/excel.ts						xlsx/pdf
+lib/ratelimit.ts					ratelimit	
+lib/reports/buildReport.ts	fixed_cost_overrides,fixed_costs,transaction_items,transactions					
+lib/reports/cashReconciliation.ts						
+lib/reports/generatePDF.ts						xlsx/pdf
+lib/reports/periods.ts						
+lib/reports/profit.ts						
+lib/reports/tax.ts						
+lib/scan/inferQtyPrice.ts						
+lib/scan/match.ts						
+lib/scan/normalize.ts						
+lib/scan/resolve.ts	products,transaction_items,transactions					
+lib/share/receipt.ts						
+lib/supabase/browser.ts						
+lib/supabase/server.ts				svc-role		
+lib/transactions/reverse.ts						
+lib/utils.ts						
+lib/voice/buildCartRow.ts						
+lib/voice/cart.ts						
+lib/voice/command.ts						
+lib/voice/customer.ts						
+lib/voice/parseGemini.ts			Gemini			
+lib/voice/speak.ts						
+lib/voice/types.ts			Gemini			
+lib/voice/vad.ts						

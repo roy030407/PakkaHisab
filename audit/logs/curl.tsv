@@ -1,0 +1,97 @@
+GET	/	200	
+GET	/login	200	
+GET	/signup	200	
+GET	/onboarding	200	
+GET	/dashboard	307	http://localhost:3000/login
+GET	/scan	307	http://localhost:3000/login
+GET	/entry	307	http://localhost:3000/login
+GET	/inventory	307	http://localhost:3000/login
+GET	/products	307	http://localhost:3000/login
+GET	/customers	307	http://localhost:3000/login
+GET	/reports	307	http://localhost:3000/login
+GET	/advisor	307	http://localhost:3000/login
+GET	/settings	307	http://localhost:3000/login
+GET	/ledger	307	http://localhost:3000/login
+GET	/reconcile	307	http://localhost:3000/login
+GET	/transactions	307	http://localhost:3000/login
+GET	/voice	307	http://localhost:3000/login
+GET	/privacy	200	
+GET	/terms	200	
+GET	/share/badtoken	500	
+GET	/robots.txt	200	
+GET	/sitemap.xml	200	
+GET	/nonexistent	404	
+GET	/api/activity	401	
+POST	/api/activity	405	
+GET	/api/ai/chat	405	
+POST	/api/ai/chat	401	
+GET	/api/ai/insight	401	
+POST	/api/ai/insight	405	
+GET	/api/auth/callback	307	http://localhost:3000/login?error=auth_callback_failed
+POST	/api/auth/callback	405	
+GET	/api/cron/monthly-report	401	
+POST	/api/cron/monthly-report	405	
+GET	/api/cron/weekly-report	401	
+POST	/api/cron/weekly-report	405	
+GET	/api/customers	401	
+POST	/api/customers	401	
+GET	/api/customers/00000000-0000-0000-0000-000000000000	401	
+POST	/api/customers/00000000-0000-0000-0000-000000000000	405	
+GET	/api/customers/00000000-0000-0000-0000-000000000000/payment	405	
+POST	/api/customers/00000000-0000-0000-0000-000000000000/payment	401	
+GET	/api/dashboard	401	
+POST	/api/dashboard	405	
+GET	/api/entry/full	405	
+POST	/api/entry/full	401	
+GET	/api/entry/quick	405	
+POST	/api/entry/quick	401	
+GET	/api/fixed-costs	401	
+POST	/api/fixed-costs	401	
+GET	/api/fixed-costs/00000000-0000-0000-0000-000000000000	401	
+POST	/api/fixed-costs/00000000-0000-0000-0000-000000000000	405	
+GET	/api/health	200	
+POST	/api/health	405	
+GET	/api/import/confirm	405	
+POST	/api/import/confirm	401	
+GET	/api/import/map	405	
+POST	/api/import/map	401	
+GET	/api/import/template	405	
+POST	/api/import/template	401	
+GET	/api/import/upload	405	
+POST	/api/import/upload	401	
+GET	/api/inventory	401	
+POST	/api/inventory	405	
+GET	/api/inventory/suggest	401	
+POST	/api/inventory/suggest	405	
+GET	/api/products	401	
+POST	/api/products	401	
+GET	/api/products/00000000-0000-0000-0000-000000000000	401	
+POST	/api/products/00000000-0000-0000-0000-000000000000	405	
+GET	/api/products/frequent	401	
+POST	/api/products/frequent	405	
+GET	/api/reconciliation	401	
+POST	/api/reconciliation	401	
+GET	/api/reports	401	
+POST	/api/reports	405	
+GET	/api/reports/pdf	401	
+POST	/api/reports/pdf	405	
+GET	/api/reports/share	400	
+POST	/api/reports/share	401	
+GET	/api/scan	405	
+POST	/api/scan	401	
+GET	/api/scan/confirm	405	
+POST	/api/scan/confirm	401	
+GET	/api/scan/correction	405	
+POST	/api/scan/correction	401	
+GET	/api/stores	401	
+POST	/api/stores	401	
+GET	/api/stores/seed	405	
+POST	/api/stores/seed	401	
+GET	/api/transactions	401	
+POST	/api/transactions	405	
+GET	/api/transactions/00000000-0000-0000-0000-000000000000	401	
+POST	/api/transactions/00000000-0000-0000-0000-000000000000	405	
+GET	/api/transactions/last	401	
+POST	/api/transactions/last	405	
+GET	/api/voice/parse	405	
+POST	/api/voice/parse	401	

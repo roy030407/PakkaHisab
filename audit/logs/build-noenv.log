@@ -1,0 +1,103 @@
+
+> pakkahisab@0.1.0 build
+> next build
+
+  ▲ Next.js 14.2.35
+
+   Creating an optimized production build ...
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (102kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (243kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+ ⚠ Compiled with warnings
+
+./node_modules/@supabase/supabase-js/dist/index.mjs
+A Node.js API is used (process.version at line: 27) which is not supported in the Edge Runtime.
+Learn more: https://nextjs.org/docs/api-reference/edge-runtime
+
+Import trace for requested module:
+./node_modules/@supabase/supabase-js/dist/index.mjs
+./node_modules/@supabase/ssr/dist/module/createServerClient.js
+./node_modules/@supabase/ssr/dist/module/index.js
+
+ ✓ Compiled successfully
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/57) ...
+   Generating static pages (14/57) 
+   Generating static pages (28/57) 
+   Generating static pages (42/57) 
+Error: @supabase/ssr: Your project's URL and API key are required to create a Supabase client!
+
+Check your Supabase project's API settings to find these values
+
+https://supabase.com/dashboard/project/_/settings/api
+    at si (C:\dev\pakkahisab-audit\.next\server\chunks\7782.js:55:105)
+    at s (C:\dev\pakkahisab-audit\.next\server\app\(auth)\login\page.js:1:12823)
+    at x (C:\dev\pakkahisab-audit\.next\server\app\(auth)\login\page.js:1:3039)
+    at nj (C:\dev\pakkahisab-audit\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:46252)
+    at nM (C:\dev\pakkahisab-audit\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47572)
+    at nL (C:\dev\pakkahisab-audit\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:64547)
+    at nI (C:\dev\pakkahisab-audit\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47011)
+    at nM (C:\dev\pakkahisab-audit\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47718)
+    at nM (C:\dev\pakkahisab-audit\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:61547)
+    at nL (C:\dev\pakkahisab-audit\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:64547) {
+  digest: '4047010668'
+}
+
+Error occurred prerendering page "/login". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: @supabase/ssr: Your project's URL and API key are required to create a Supabase client!
+
+Check your Supabase project's API settings to find these values
+
+https://supabase.com/dashboard/project/_/settings/api
+    at si (C:\dev\pakkahisab-audit\.next\server\chunks\7782.js:55:105)
+    at s (C:\dev\pakkahisab-audit\.next\server\app\(auth)\login\page.js:1:12823)
+    at x (C:\dev\pakkahisab-audit\.next\server\app\(auth)\login\page.js:1:3039)
+    at nj (C:\dev\pakkahisab-audit\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:46252)
+    at nM (C:\dev\pakkahisab-audit\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47572)
+    at nL (C:\dev\pakkahisab-audit\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:64547)
+    at nI (C:\dev\pakkahisab-audit\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47011)
+    at nM (C:\dev\pakkahisab-audit\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47718)
+    at nM (C:\dev\pakkahisab-audit\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:61547)
+    at nL (C:\dev\pakkahisab-audit\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:64547)
+Error: @supabase/ssr: Your project's URL and API key are required to create a Supabase client!
+
+Check your Supabase project's API settings to find these values
+
+https://supabase.com/dashboard/project/_/settings/api
+    at si (C:\dev\pakkahisab-audit\.next\server\chunks\7782.js:55:105)
+    at s (C:\dev\pakkahisab-audit\.next\server\app\(auth)\signup\page.js:1:12880)
+    at m (C:\dev\pakkahisab-audit\.next\server\app\(auth)\signup\page.js:1:2887)
+    at nj (C:\dev\pakkahisab-audit\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:46252)
+    at nM (C:\dev\pakkahisab-audit\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47572)
+    at nL (C:\dev\pakkahisab-audit\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:64547)
+    at nI (C:\dev\pakkahisab-audit\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47011)
+    at nM (C:\dev\pakkahisab-audit\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47718)
+    at nM (C:\dev\pakkahisab-audit\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:61547)
+    at nL (C:\dev\pakkahisab-audit\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:64547) {
+  digest: '4219282652'
+}
+
+Error occurred prerendering page "/signup". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: @supabase/ssr: Your project's URL and API key are required to create a Supabase client!
+
+Check your Supabase project's API settings to find these values
+
+https://supabase.com/dashboard/project/_/settings/api
+    at si (C:\dev\pakkahisab-audit\.next\server\chunks\7782.js:55:105)
+    at s (C:\dev\pakkahisab-audit\.next\server\app\(auth)\signup\page.js:1:12880)
+    at m (C:\dev\pakkahisab-audit\.next\server\app\(auth)\signup\page.js:1:2887)
+    at nj (C:\dev\pakkahisab-audit\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:46252)
+    at nM (C:\dev\pakkahisab-audit\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47572)
+    at nL (C:\dev\pakkahisab-audit\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:64547)
+    at nI (C:\dev\pakkahisab-audit\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47011)
+    at nM (C:\dev\pakkahisab-audit\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47718)
+    at nM (C:\dev\pakkahisab-audit\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:61547)
+    at nL (C:\dev\pakkahisab-audit\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:64547)
+ ✓ Generating static pages (57/57)
+
+> Export encountered errors on following paths:
+	/(auth)/login/page: /login
+	/(auth)/signup/page: /signup
+build exit 1
