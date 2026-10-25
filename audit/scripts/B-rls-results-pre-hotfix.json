@@ -1,0 +1,473 @@
+{
+  "ranAt": "2026-10-25T10:42:19.407Z",
+  "results": [
+    {
+      "target": "products",
+      "attack": "user2 SELECT by id",
+      "outcome": "BLOCKED",
+      "detail": "rows=0"
+    },
+    {
+      "target": "products",
+      "attack": "anon SELECT by id",
+      "outcome": "BLOCKED",
+      "detail": "rows=0"
+    },
+    {
+      "target": "products",
+      "attack": "user2 UPDATE",
+      "outcome": "BLOCKED",
+      "detail": "name now=\"Secret Product\""
+    },
+    {
+      "target": "products",
+      "attack": "user2 DELETE",
+      "outcome": "BLOCKED",
+      "detail": "row still exists=true"
+    },
+    {
+      "target": "customers",
+      "attack": "user2 SELECT by id",
+      "outcome": "BLOCKED",
+      "detail": "rows=0"
+    },
+    {
+      "target": "customers",
+      "attack": "anon SELECT by id",
+      "outcome": "BLOCKED",
+      "detail": "rows=0"
+    },
+    {
+      "target": "customers",
+      "attack": "user2 UPDATE",
+      "outcome": "BLOCKED",
+      "detail": "name now=\"Secret Customer\""
+    },
+    {
+      "target": "customers",
+      "attack": "user2 DELETE",
+      "outcome": "BLOCKED",
+      "detail": "row still exists=true"
+    },
+    {
+      "target": "fixed_costs",
+      "attack": "user2 SELECT by id",
+      "outcome": "BLOCKED",
+      "detail": "rows=0"
+    },
+    {
+      "target": "fixed_costs",
+      "attack": "anon SELECT by id",
+      "outcome": "BLOCKED",
+      "detail": "rows=0"
+    },
+    {
+      "target": "fixed_costs",
+      "attack": "user2 UPDATE",
+      "outcome": "BLOCKED",
+      "detail": "name now=\"Rent\""
+    },
+    {
+      "target": "fixed_costs",
+      "attack": "user2 DELETE",
+      "outcome": "BLOCKED",
+      "detail": "row still exists=true"
+    },
+    {
+      "target": "transactions",
+      "attack": "user2 SELECT by id",
+      "outcome": "BLOCKED",
+      "detail": "rows=0"
+    },
+    {
+      "target": "transactions",
+      "attack": "anon SELECT by id",
+      "outcome": "BLOCKED",
+      "detail": "rows=0"
+    },
+    {
+      "target": "transactions",
+      "attack": "user2 UPDATE",
+      "outcome": "BLOCKED",
+      "detail": "name now=undefined"
+    },
+    {
+      "target": "transactions",
+      "attack": "user2 DELETE",
+      "outcome": "BLOCKED",
+      "detail": "row still exists=true"
+    },
+    {
+      "target": "inventory",
+      "attack": "user2 SELECT by id",
+      "outcome": "BLOCKED",
+      "detail": "rows=0"
+    },
+    {
+      "target": "inventory",
+      "attack": "anon SELECT by id",
+      "outcome": "BLOCKED",
+      "detail": "rows=0"
+    },
+    {
+      "target": "inventory",
+      "attack": "user2 UPDATE",
+      "outcome": "BLOCKED",
+      "detail": "reorder_point now=0"
+    },
+    {
+      "target": "inventory",
+      "attack": "user2 DELETE",
+      "outcome": "BLOCKED",
+      "detail": "row still exists=true"
+    },
+    {
+      "target": "transaction_items",
+      "attack": "user2 SELECT by id",
+      "outcome": "BLOCKED",
+      "detail": "rows=0"
+    },
+    {
+      "target": "transaction_items",
+      "attack": "anon SELECT by id",
+      "outcome": "BLOCKED",
+      "detail": "rows=0"
+    },
+    {
+      "target": "transaction_items",
+      "attack": "user2 UPDATE",
+      "outcome": "BLOCKED",
+      "detail": "product_name_raw now=\"Secret Product\""
+    },
+    {
+      "target": "transaction_items",
+      "attack": "user2 DELETE",
+      "outcome": "BLOCKED",
+      "detail": "row still exists=true"
+    },
+    {
+      "target": "stock_movements",
+      "attack": "user2 SELECT by id",
+      "outcome": "BLOCKED",
+      "detail": "rows=0"
+    },
+    {
+      "target": "stock_movements",
+      "attack": "anon SELECT by id",
+      "outcome": "BLOCKED",
+      "detail": "rows=0"
+    },
+    {
+      "target": "stock_movements",
+      "attack": "user2 UPDATE",
+      "outcome": "BLOCKED",
+      "detail": "reason now=null"
+    },
+    {
+      "target": "stock_movements",
+      "attack": "user2 DELETE",
+      "outcome": "BLOCKED",
+      "detail": "row still exists=true"
+    },
+    {
+      "target": "document_uploads",
+      "attack": "user2 SELECT by id",
+      "outcome": "BLOCKED",
+      "detail": "rows=0"
+    },
+    {
+      "target": "document_uploads",
+      "attack": "anon SELECT by id",
+      "outcome": "BLOCKED",
+      "detail": "rows=0"
+    },
+    {
+      "target": "document_uploads",
+      "attack": "user2 UPDATE",
+      "outcome": "BLOCKED",
+      "detail": "extraction_status now=\"pending\""
+    },
+    {
+      "target": "document_uploads",
+      "attack": "user2 DELETE",
+      "outcome": "BLOCKED",
+      "detail": "row still exists=true"
+    },
+    {
+      "target": "extraction_corrections",
+      "attack": "user2 SELECT by id",
+      "outcome": "BLOCKED",
+      "detail": "rows=0"
+    },
+    {
+      "target": "extraction_corrections",
+      "attack": "anon SELECT by id",
+      "outcome": "BLOCKED",
+      "detail": "rows=0"
+    },
+    {
+      "target": "extraction_corrections",
+      "attack": "user2 UPDATE",
+      "outcome": "BLOCKED",
+      "detail": "corrected_value now=\"b\""
+    },
+    {
+      "target": "extraction_corrections",
+      "attack": "user2 DELETE",
+      "outcome": "BLOCKED",
+      "detail": "row still exists=true"
+    },
+    {
+      "target": "ai_conversations",
+      "attack": "user2 SELECT by id",
+      "outcome": "BLOCKED",
+      "detail": "rows=0"
+    },
+    {
+      "target": "ai_conversations",
+      "attack": "anon SELECT by id",
+      "outcome": "BLOCKED",
+      "detail": "rows=0"
+    },
+    {
+      "target": "ai_conversations",
+      "attack": "user2 UPDATE",
+      "outcome": "BLOCKED",
+      "detail": "messages now=[]"
+    },
+    {
+      "target": "ai_conversations",
+      "attack": "user2 DELETE",
+      "outcome": "BLOCKED",
+      "detail": "row still exists=true"
+    },
+    {
+      "target": "periodic_reports",
+      "attack": "user2 SELECT by id",
+      "outcome": "BLOCKED",
+      "detail": "rows=0"
+    },
+    {
+      "target": "periodic_reports",
+      "attack": "anon SELECT by id",
+      "outcome": "BLOCKED",
+      "detail": "rows=0"
+    },
+    {
+      "target": "periodic_reports",
+      "attack": "user2 UPDATE",
+      "outcome": "BLOCKED",
+      "detail": "summary_text now=null"
+    },
+    {
+      "target": "periodic_reports",
+      "attack": "user2 DELETE",
+      "outcome": "BLOCKED",
+      "detail": "row still exists=true"
+    },
+    {
+      "target": "cash_reconciliations",
+      "attack": "user2 SELECT by id",
+      "outcome": "BLOCKED",
+      "detail": "rows=0"
+    },
+    {
+      "target": "cash_reconciliations",
+      "attack": "anon SELECT by id",
+      "outcome": "BLOCKED",
+      "detail": "rows=0"
+    },
+    {
+      "target": "cash_reconciliations",
+      "attack": "user2 UPDATE",
+      "outcome": "BLOCKED",
+      "detail": "note now=null"
+    },
+    {
+      "target": "cash_reconciliations",
+      "attack": "user2 DELETE",
+      "outcome": "BLOCKED",
+      "detail": "row still exists=true"
+    },
+    {
+      "target": "fixed_cost_overrides",
+      "attack": "user2 SELECT by id",
+      "outcome": "BLOCKED",
+      "detail": "rows=0"
+    },
+    {
+      "target": "fixed_cost_overrides",
+      "attack": "anon SELECT by id",
+      "outcome": "BLOCKED",
+      "detail": "rows=0"
+    },
+    {
+      "target": "fixed_cost_overrides",
+      "attack": "user2 UPDATE",
+      "outcome": "BLOCKED",
+      "detail": "note now=null"
+    },
+    {
+      "target": "fixed_cost_overrides",
+      "attack": "user2 DELETE",
+      "outcome": "BLOCKED",
+      "detail": "row still exists=true"
+    },
+    {
+      "target": "stores",
+      "attack": "user2 SELECT by id",
+      "outcome": "BLOCKED",
+      "detail": "rows=0"
+    },
+    {
+      "target": "stores",
+      "attack": "anon SELECT by id",
+      "outcome": "BLOCKED",
+      "detail": "rows=0"
+    },
+    {
+      "target": "stores",
+      "attack": "user2 UPDATE",
+      "outcome": "BLOCKED",
+      "detail": "city now=\"Jaipur\""
+    },
+    {
+      "target": "stores",
+      "attack": "user2 DELETE",
+      "outcome": "BLOCKED",
+      "detail": "row still exists=true"
+    },
+    {
+      "target": "products",
+      "attack": "user2 INSERT into user1 store",
+      "outcome": "BLOCKED",
+      "detail": "new row violates row-level security policy for table \"products\""
+    },
+    {
+      "target": "customers",
+      "attack": "user2 INSERT into user1 store",
+      "outcome": "BLOCKED",
+      "detail": "new row violates row-level security policy for table \"customers\""
+    },
+    {
+      "target": "transactions",
+      "attack": "user2 INSERT into user1 store",
+      "outcome": "BLOCKED",
+      "detail": "new row violates row-level security policy for table \"transactions\""
+    },
+    {
+      "target": "transaction_items",
+      "attack": "user2 INSERT into user1 store",
+      "outcome": "BLOCKED",
+      "detail": "new row violates row-level security policy for table \"transaction_items\""
+    },
+    {
+      "target": "stock_movements",
+      "attack": "user2 INSERT into user1 store",
+      "outcome": "BLOCKED",
+      "detail": "new row violates row-level security policy for table \"stock_movements\""
+    },
+    {
+      "target": "fixed_cost_overrides",
+      "attack": "user2 INSERT into user1 store",
+      "outcome": "BLOCKED",
+      "detail": "new row violates row-level security policy for table \"fixed_cost_overrides\""
+    },
+    {
+      "target": "cash_reconciliations",
+      "attack": "user2 INSERT into user1 store",
+      "outcome": "BLOCKED",
+      "detail": "new row violates row-level security policy for table \"cash_reconciliations\""
+    },
+    {
+      "target": "stores",
+      "attack": "user2 INSERT into user1 store",
+      "outcome": "BLOCKED",
+      "detail": "new row violates row-level security policy for table \"stores\""
+    },
+    {
+      "target": "transactions",
+      "attack": "user2 own tx referencing user1 customer_id",
+      "outcome": "LEAK",
+      "detail": "FK accepted foreign customer (integrity, not read leak)"
+    },
+    {
+      "target": "inventory",
+      "attack": "user2 own inventory row for user1 product_id",
+      "outcome": "LEAK",
+      "detail": "accepted"
+    },
+    {
+      "target": "document_uploads",
+      "attack": "user1 UPDATE own row (scan status/raw json)",
+      "outcome": "NOTE",
+      "detail": "rowsUpdated=0 (0 means scan status + raw_extraction_json are never saved)"
+    },
+    {
+      "target": "kaggle_products",
+      "attack": "user2 INSERT",
+      "outcome": "LEAK",
+      "detail": "inserted=1"
+    },
+    {
+      "target": "kaggle_products",
+      "attack": "anon INSERT",
+      "outcome": "LEAK",
+      "detail": "inserted=1"
+    },
+    {
+      "target": "periodic_reports",
+      "attack": "anon enumerate share_token rows",
+      "outcome": "BLOCKED",
+      "detail": "rows=0"
+    },
+    {
+      "target": "storage:documents",
+      "attack": "user2 download user1 file",
+      "outcome": "BLOCKED",
+      "detail": "Object not found"
+    },
+    {
+      "target": "storage:documents",
+      "attack": "user2 list user1 folder",
+      "outcome": "BLOCKED",
+      "detail": "entries=0"
+    },
+    {
+      "target": "storage:documents",
+      "attack": "user2 overwrite user1 file",
+      "outcome": "BLOCKED",
+      "detail": "new row violates row-level security policy"
+    },
+    {
+      "target": "storage:documents",
+      "attack": "user2 upload into user1 folder",
+      "outcome": "BLOCKED",
+      "detail": "new row violates row-level security policy"
+    },
+    {
+      "target": "storage:documents",
+      "attack": "user2 delete user1 file",
+      "outcome": "BLOCKED",
+      "detail": "still exists=true removeResp=[]"
+    },
+    {
+      "target": "storage:documents",
+      "attack": "user1 delete OWN file (scan cleanup path)",
+      "outcome": "NOTE",
+      "detail": "still exists=true (true means no DELETE policy, orphaned scans) resp=[]"
+    },
+    {
+      "target": "storage:documents",
+      "attack": "anon download",
+      "outcome": "BLOCKED",
+      "detail": "Object not found"
+    },
+    {
+      "target": "storage",
+      "attack": "bucket inventory",
+      "outcome": "NOTE",
+      "detail": "[{\"name\":\"documents\",\"public\":false}]"
+    }
+  ]
+}
