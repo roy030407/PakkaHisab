@@ -55,3 +55,12 @@ nul
 /evidence/
 /vids/
 /testing/
+
+# audit/eval media - never commit (real bill photos, derived variants B01-B03, audio, model caches)
+/eval/fixtures/scan/img/
+/eval/cache/
+/eval/fixtures/voice/private/
+# synthetic but regenerable media (eval/fixtures/voice/generate.ts, e2e/scripts/make-fixtures.ts)
+/eval/fixtures/voice/audio/
+/e2e/fixtures/bills/
+/e2e/fixtures/voice/

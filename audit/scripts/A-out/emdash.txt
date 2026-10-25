@@ -1,0 +1,6 @@
+== source files with em dashes (count per file)
+      2 supabase/migrations/001_rls_policies.sql
+      1 supabase/migrations/004_id_defaults.sql
+      1 supabase/migrations/003_fix_share_rls.sql
+      1 prisma/schema.prisma
+== last 50 commits with an em dash in subject or body

@@ -1,0 +1,120 @@
+
+ RUN  v4.1.8 C:/Users/harwa/OneDrive/Desktop/Roy/Projects/KhaataOnline
+
+ ✓ lib/voice/command.test.ts > decideCommandAction > next saves and keeps the session when the cart has items 7ms
+ ✓ lib/voice/command.test.ts > decideCommandAction > next is a no-op when the cart is empty 1ms
+ ✓ lib/voice/command.test.ts > decideCommandAction > close saves and ends the session when the cart has items 1ms
+ ✓ lib/voice/command.test.ts > decideCommandAction > close still ends the session with an empty cart but does not save 1ms
+ ✓ lib/voice/command.test.ts > decideCommandAction > read_balance only speaks the total 1ms
+ ✓ lib/voice/command.test.ts > decideCommandAction > remove_last drops the last row when the cart has items 1ms
+ ✓ lib/voice/command.test.ts > decideCommandAction > remove_last is a no-op on an empty cart 1ms
+ ✓ lib/voice/command.test.ts > decideCommandAction > set_qty carries the spoken quantity from args 1ms
+ ✓ lib/voice/command.test.ts > decideCommandAction > set_qty is a no-op when no valid quantity was heard 2ms
+ ✓ lib/voice/command.test.ts > decideCommandAction > is a no-op for attach_customer and null 1ms
+ ✓ lib/voice/command.test.ts > buildBalanceSpeech > reads a positive total in rupees 1ms
+ ✓ lib/voice/command.test.ts > buildBalanceSpeech > says the cart is empty for a zero or negative total 0ms
+ ✓ lib/voice/parseGemini.test.ts > normalizeVoiceParse > coerces a well-formed items payload 11ms
+ ✓ lib/voice/parseGemini.test.ts > normalizeVoiceParse > defaults a missing or non-positive quantity to 1 and drops nameless items 2ms
+ ✓ lib/voice/parseGemini.test.ts > normalizeVoiceParse > recognizes a known command and infers kind when kind is absent 1ms
+ ✓ lib/voice/parseGemini.test.ts > normalizeVoiceParse > rejects an unknown command string 1ms
+ ✓ lib/voice/parseGemini.test.ts > normalizeVoiceParse > never throws on garbage and returns safe defaults 1ms
+ ✓ lib/voice/parseGemini.test.ts > normalizeVoiceParse > extracts numeric args.quantity and trimmed customerName 1ms
+ ✓ lib/voice/parseGemini.test.ts > normalizeVoiceParse > recognizes customer_balance and keeps the customerName arg 1ms
+ ✓ lib/voice/customer.test.ts > matchCustomer > matches an exact name 12ms
+ ✓ lib/voice/customer.test.ts > matchCustomer > matches a fuzzy / partial name 1ms
+ ✓ lib/voice/customer.test.ts > matchCustomer > returns null when nothing is close 2ms
+ ✓ lib/voice/customer.test.ts > matchCustomer > returns null for an empty name or empty list 1ms
+ ✓ lib/voice/customer.test.ts > buildBalanceByNameSpeech > reads what a customer owes 1ms
+ ✓ lib/voice/customer.test.ts > buildBalanceByNameSpeech > says no balance due when nothing is owed 1ms
+ ✓ lib/voice/customer.test.ts > buildBalanceByNameSpeech > says not found for a null customer 1ms
+ ✓ lib/collections/aging.test.ts > customerAge > computes sinceDays from the oldest credit sale and lastPaidDays from the last payment 6ms
+ ✓ lib/collections/aging.test.ts > customerAge > returns lastPaidDays = null when the customer has never paid 1ms
+ ✓ lib/collections/aging.test.ts > customerAge > returns 0 days for a balance opened today and a payment made today 1ms
+ ✓ lib/collections/aging.test.ts > customerAge > returns sinceDays = 0 when there is no recorded credit sale 2ms
+ ✓ lib/scan/inferQtyPrice.test.ts > inferQtyPrice > keeps explicit qty and price when present 8ms
+ ✓ lib/scan/inferQtyPrice.test.ts > inferQtyPrice > treats a currency-marked single number as price, qty defaults 1 1ms
+ ✓ lib/scan/inferQtyPrice.test.ts > inferQtyPrice > treats a multiply-marked single number as quantity, price from catalog 1ms
+ ✓ lib/scan/inferQtyPrice.test.ts > inferQtyPrice > uses catalog price: number near catalog price is the price 1ms
+ ✓ lib/scan/inferQtyPrice.test.ts > inferQtyPrice > uses catalog price: small number far from catalog price is the quantity, autofills price 1ms
+ ✓ lib/scan/inferQtyPrice.test.ts > inferQtyPrice > is ambiguous when a bare number has no catalog price to compare against 1ms
+ ✓ lib/scan/inferQtyPrice.test.ts > inferQtyPrice > derives the missing side from a total 1ms
+ ✓ lib/scan/inferQtyPrice.test.ts > inferQtyPrice > does NOT ask qty-vs-price when there are no numbers (qty 1, price 0, not ambiguous) 1ms
+ ✓ lib/scan/inferQtyPrice.test.ts > inferQtyPrice > does NOT ask qty-vs-price for a bare ZERO (nothing to disambiguate) 4ms
+ ✓ lib/scan/inferQtyPrice.test.ts > inferQtyPrice > fills the catalog price when there are no usable numbers 1ms
+ ✓ lib/transactions/reverse.test.ts > inventoryReversals > adds stock back when a sale is deleted 13ms
+ ✓ lib/transactions/reverse.test.ts > inventoryReversals > removes stock when a purchase is deleted 1ms
+ ✓ lib/transactions/reverse.test.ts > inventoryReversals > does not touch stock for expense or income 1ms
+ ✓ lib/transactions/reverse.test.ts > inventoryReversals > handles multiple line items 2ms
+ ✓ lib/transactions/reverse.test.ts > inventoryReversals > payment moves no stock 1ms
+ ✓ lib/transactions/reverse.test.ts > balanceReversalAmount > deleting a credit sale subtracts the amount from the balance (positive reversal) 1ms
+ ✓ lib/transactions/reverse.test.ts > balanceReversalAmount > a cash sale never touches the balance 1ms
+ ✓ lib/transactions/reverse.test.ts > balanceReversalAmount > is zero when there is no customer 1ms
+ ✓ lib/transactions/reverse.test.ts > balanceReversalAmount > is zero for a credit purchase 2ms
+ ✓ lib/transactions/reverse.test.ts > balanceReversalAmount > deleting a payment re-adds the amount to the balance (negative reversal) 1ms
+ ✓ lib/transactions/reverse.test.ts > balanceReversalAmount > a payment with no customer is a no-op 1ms
+ ✓ lib/transactions/reverse.test.ts > balanceReversalAmount > an expense never touches the balance 0ms
+ ✓ lib/voice/buildCartRow.test.ts > buildPendingRow > uses the matched product id and its catalog price 13ms
+ ✓ lib/voice/buildCartRow.test.ts > buildPendingRow > falls back to the top candidate for a suggest match 2ms
+ ✓ lib/voice/buildCartRow.test.ts > buildPendingRow > falls back to the top candidate for a variant_choice match 1ms
+ ✓ lib/voice/buildCartRow.test.ts > buildPendingRow > marks a true unmatched item as add-as-new with the spoken name and price 0 1ms
+ ✓ lib/voice/vad.test.ts > computeRms > is zero for silence 6ms
+ ✓ lib/voice/vad.test.ts > computeRms > is the root-mean-square of the samples 1ms
+ ✓ lib/voice/vad.test.ts > computeRms > is zero for an empty buffer 1ms
+ ✓ lib/voice/vad.test.ts > advanceVad > does not finalize on silence before any speech 5ms
+ ✓ lib/voice/vad.test.ts > advanceVad > finalizes after enough speech then ~900ms of trailing silence 2ms
+ ✓ lib/voice/vad.test.ts > advanceVad > ignores a brief blip shorter than minSpeechMs 1ms
+ ✓ lib/scan/normalize.test.ts > normalizeText > lowercases, strips punctuation, collapses spaces 10ms
+ ✓ lib/scan/normalize.test.ts > parseSizeToken > finds kg / ml sizes 2ms
+ ✓ lib/scan/normalize.test.ts > parseSizeToken > returns null when no size 1ms
+ ✓ lib/scan/normalize.test.ts > sizeNumber > extracts the numeric part of a size token 1ms
+ ✓ lib/scan/normalize.test.ts > sizeNumber > returns null when there is no size 0ms
+ ✓ lib/scan/normalize.test.ts > stripSize + baseName > removes the size from the name 1ms
+ ✓ lib/scan/normalize.test.ts > stripSize + baseName > baseName normalizes the size-stripped name 1ms
+ ✓ lib/collections/reminder.test.ts > renderTemplate > fills all three placeholders 6ms
+ ✓ lib/collections/reminder.test.ts > renderTemplate > replaces every occurrence of a placeholder 1ms
+ ✓ lib/collections/reminder.test.ts > renderTemplate > treats a missing value as an empty string 1ms
+ ✓ lib/collections/reminder.test.ts > renderTemplate > renders the seeded default without leftover braces 2ms
+ ✓ lib/collections/reminder.test.ts > buildWhatsappUrl > prefixes a 10-digit number with 91 and encodes the message 1ms
+ ✓ lib/collections/reminder.test.ts > buildWhatsappUrl > keeps a number that already has the 91 country code 1ms
+ ✓ lib/collections/reminder.test.ts > buildWhatsappUrl > strips spaces, dashes and a +91 prefix before normalizing 1ms
+ ✓ lib/collections/reminder.test.ts > buildWhatsappUrl > returns null for empty / junk phones 1ms
+ ✓ lib/reports/cashReconciliation.test.ts > computeCashPosition > sums cash in across sale, income, and payment (cash method) 7ms
+ ✓ lib/reports/cashReconciliation.test.ts > computeCashPosition > sums cash out across purchase and expense (cash method) 1ms
+ ✓ lib/reports/cashReconciliation.test.ts > computeCashPosition > applies the opening float to expected cash 1ms
+ ✓ lib/reports/cashReconciliation.test.ts > computeCashPosition > excludes credit from cash and counts UPI only in the upi tally 1ms
+ ✓ lib/reports/cashReconciliation.test.ts > computeCashPosition > a UPI purchase does not reduce cash 1ms
+ ✓ lib/reports/cashReconciliation.test.ts > computeCashPosition > an empty day leaves expected equal to opening 2ms
+ ✓ lib/reports/cashReconciliation.test.ts > cashDifference > is zero when counted equals expected 1ms
+ ✓ lib/reports/cashReconciliation.test.ts > cashDifference > is negative when short 0ms
+ ✓ lib/reports/cashReconciliation.test.ts > cashDifference > is positive when over 1ms
+ ✓ lib/scan/match.test.ts > matchItem > matches a plain family name to the most-frequent variant when size is absent 15ms
+ ✓ lib/scan/match.test.ts > matchItem > matches the exact variant when the size is present 2ms
+ ✓ lib/scan/match.test.ts > matchItem > asks for the variant when sizes tie and no size is given 3ms
+ ✓ lib/scan/match.test.ts > matchItem > suggests candidates for a fuzzy/typo name 4ms
+ ✓ lib/scan/match.test.ts > matchItem > returns unmatched for something not in the catalog 2ms
+ ✓ lib/scan/match.test.ts > matchItem > matches a single-variant family directly 1ms
+ ✓ lib/voice/cart.test.ts > addRowsToCart > appends new rows and merges duplicates by productId 10ms
+ ✓ lib/voice/cart.test.ts > addRowsToCart > does not mutate the input cart 1ms
+ ✓ lib/voice/cart.test.ts > setRowQuantity > sets the quantity of the matching row 1ms
+ ✓ lib/voice/cart.test.ts > setRowQuantity > removes the row when quantity is zero or below 3ms
+ ✓ lib/voice/cart.test.ts > cartTotal > sums unitPrice * quantity across rows 1ms
+ ✓ lib/voice/cart.test.ts > cartTotal > is zero for an empty cart 1ms
+ ✓ lib/voice/cart.test.ts > removeLastRow > drops the last row 1ms
+ ✓ lib/voice/cart.test.ts > removeLastRow > is empty-safe and does not mutate the input 3ms
+ ✓ lib/voice/cart.test.ts > setLastRowQuantity > sets the quantity of the last row only 2ms
+ ✓ lib/voice/cart.test.ts > setLastRowQuantity > removes the last row when the quantity is zero or below 1ms
+ ✓ lib/voice/cart.test.ts > setLastRowQuantity > is a no-op on an empty cart 1ms
+ ✓ lib/share/receipt.test.ts > buildReceiptText > formats an itemised cash sale 61ms
+ ✓ lib/share/receipt.test.ts > buildReceiptText > formats a credit sale with an Udhaar line and a balance line 1ms
+ ✓ lib/share/receipt.test.ts > buildReceiptText > omits the item block when there are no items 1ms
+ ✓ lib/share/receipt.test.ts > buildReceiptText > groups large amounts the Indian way 1ms
+ ✓ lib/share/receipt.test.ts > buildReceiptText > parses an ISO timestamp date and renders DD Mon YYYY 1ms
+ ✓ lib/share/receipt.test.ts > buildReceiptText > renders an empty date line for a malformed date 0ms
+ ✓ lib/share/receipt.test.ts > buildReceiptText > omits the balance line when balanceAfter is null or missing 1ms
+
+ Test Files  14 passed (14)
+      Tests  110 passed (110)
+   Start at  22:40:57
+   Duration  5.27s (transform 3.86s, setup 0ms, import 5.19s, tests 376ms, environment 7ms)
+
+vitest exit 0

@@ -1,0 +1,8 @@
+Item Name,Brand,Category,Unit,Purchase Price,MRP,GST %
+Bourbon 150g,Britannia,Biscuits,piece,28,35,18
+,NoName,Misc,piece,10,12,5
+Kurkure 90g,PepsiCo,Snacks,piece,abc,20,12
+Bad GST Item,X,Misc,piece,10,12,99
+Rs formatted item,Y,Misc,piece,"Rs. 1,250","₹1,499.00",18
+Negative price item,Z,Misc,piece,-5,-2,5
+Moong Dal 1kg,,Pulses,kg,118,140,0

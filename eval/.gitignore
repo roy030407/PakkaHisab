@@ -1,0 +1,6 @@
+# Regenerable with fixtures/scan/prepare.ts; ~9 MB
+fixtures/scan/img/X-huge-photo.jpg
+# Frame from the merchant's private screen recording
+fixtures/scan/img/X-nonbill-app-screenshot.jpg
+# TTS audio responses (~6 MB); the generated clips in fixtures/voice/audio are kept
+cache/tts/

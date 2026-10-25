@@ -1,0 +1,72 @@
+
+ RUN  v4.1.8 C:/Users/harwa/OneDrive/Desktop/Roy/Projects/KhaataOnline
+      Coverage enabled with v8
+
+
+ Test Files  14 passed (14)
+      Tests  110 passed (110)
+   Start at  23:15:15
+   Duration  2.34s (transform 2.22s, setup 0ms, import 3.74s, tests 388ms, environment 6ms)
+
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |    32.8 |    32.21 |   36.24 |   31.95 |                   
+ lib               |       0 |        0 |       0 |       0 |                   
+  ratelimit.ts     |       0 |        0 |       0 |       0 | 35-87             
+  utils.ts         |       0 |      100 |       0 |       0 | 5                 
+ lib/analytics     |       0 |        0 |       0 |       0 |                   
+  posthog.ts       |       0 |        0 |       0 |       0 | 23-51             
+ lib/anthropic     |       0 |        0 |       0 |       0 |                   
+  advisor.ts       |       0 |        0 |       0 |       0 | 29-199            
+  client.ts        |       0 |        0 |       0 |       0 | 26-38             
+  errors.ts        |       0 |        0 |       0 |       0 | 19-30             
+  extraction.ts    |       0 |        0 |       0 |       0 | 41-120            
+  insight.ts       |       0 |        0 |       0 |       0 | 32-79             
+  prompts.ts       |       0 |      100 |     100 |       0 | 19-40             
+  voiceParse.ts    |       0 |        0 |       0 |       0 | 29-92             
+ lib/collections   |   95.45 |    78.57 |     100 |     100 |                   
+  aging.ts         |   88.88 |       70 |     100 |     100 | 26-43             
+  reminder.ts      |     100 |    83.33 |     100 |     100 | 37,39-41          
+ lib/inventory     |       0 |        0 |       0 |       0 |                   
+  consumption.ts   |       0 |        0 |       0 |       0 | 29-89             
+  suggestions.ts   |       0 |        0 |       0 |       0 | 42-130            
+  updateStock.ts   |       0 |        0 |       0 |       0 | 36-83             
+ lib/parsers       |       0 |        0 |       0 |       0 |                   
+  amounts.ts       |       0 |        0 |       0 |       0 | 19-63             
+  csv.ts           |       0 |        0 |       0 |       0 | 25-68             
+  excel.ts         |       0 |        0 |       0 |       0 | 22-43             
+ lib/reports       |   10.63 |    11.47 |    5.71 |   10.11 |                   
+  buildReport.ts   |       0 |        0 |       0 |       0 | 40-170            
+  ...nciliation.ts |     100 |    77.77 |     100 |     100 | 48,53,63          
+  generatePDF.ts   |       0 |        0 |       0 |       0 | 25-144            
+  periods.ts       |       0 |        0 |       0 |       0 | 28-153            
+  profit.ts        |       0 |        0 |       0 |       0 | 35-39             
+  tax.ts           |       0 |        0 |       0 |       0 | 23-32             
+ lib/scan          |   74.56 |    62.13 |   73.07 |   75.25 |                   
+  inferQtyPrice.ts |   94.11 |       90 |     100 |   93.33 | 59,65             
+  match.ts         |   93.18 |    82.14 |     100 |   94.59 | 60,111            
+  normalize.ts     |     100 |    83.33 |     100 |     100 | 46                
+  resolve.ts       |       0 |        0 |       0 |       0 | 30-77             
+ lib/share         |   96.29 |     87.5 |     100 |     100 |                   
+  receipt.ts       |   96.29 |     87.5 |     100 |     100 | 42,45             
+ lib/supabase      |       0 |      100 |       0 |       0 |                   
+  browser.ts       |       0 |      100 |       0 |       0 | 24                
+  server.ts        |       0 |      100 |       0 |       0 | 25-54             
+ lib/transactions  |     100 |       85 |     100 |     100 |                   
+  reverse.ts       |     100 |       85 |     100 |     100 | 41,59,63          
+ lib/voice         |   91.96 |    87.25 |   95.65 |    92.3 |                   
+  buildCartRow.ts  |     100 |    66.66 |     100 |     100 | 37-39             
+  parseGemini.ts   |   96.55 |     92.5 |     100 |     100 | 43-44,62          
+  speak.ts         |       0 |        0 |       0 |       0 | 21-27             
+  vad.ts           |     100 |    83.33 |     100 |     100 | 48-50             
+-------------------|---------|----------|---------|---------|-------------------
+
+=============================== Coverage summary ===============================
+Statements   : 32.8% ( 267/814 )
+Branches     : 32.21% ( 220/683 )
+Functions    : 36.24% ( 54/149 )
+Lines        : 31.95% ( 224/701 )
+================================================================================
+exit 0

@@ -1,0 +1,148 @@
+{
+  "task": "voice",
+  "model": "gemini-flash-lite-latest",
+  "provider": "gemini",
+  "label": "drill-429",
+  "options": {
+    "delayMs": 4500,
+    "retries": 0,
+    "cache": false,
+    "only": [
+      "V01"
+    ],
+    "robustness": false,
+    "corrections": null,
+    "injectError": 429
+  },
+  "summary": {
+    "clips": 1,
+    "corpusWer": 1,
+    "meanWer": 1,
+    "devanagariTranscripts": 0,
+    "intentAcc": 0,
+    "commandIntentAcc": null,
+    "itemsIntentAcc": 0,
+    "itemPrecision": null,
+    "itemRecall": 0,
+    "cartCatalogAcc": null,
+    "jsonFailuresSwallowed": 0,
+    "httpFailures": 1,
+    "firstAttemptFailures": 0,
+    "truncated": 0,
+    "latencyMsP50": null,
+    "latencyMsP95": null,
+    "promptTokensMean": null,
+    "outputTokensMean": null,
+    "thoughtsTokensMean": null,
+    "byTag": [
+      {
+        "tag": "hinglish_numbers",
+        "clips": 1,
+        "intentAcc": 0,
+        "itemPrecision": null,
+        "itemRecall": 0,
+        "wer": 1
+      },
+      {
+        "tag": "items",
+        "clips": 1,
+        "intentAcc": 0,
+        "itemPrecision": null,
+        "itemRecall": 0,
+        "wer": 1
+      }
+    ]
+  },
+  "worst": [
+    {
+      "id": "V01",
+      "tags": [
+        "items",
+        "hinglish_numbers"
+      ],
+      "reference": "do Maggi aur ek Parle-G",
+      "transcript": "",
+      "why": [
+        "http 429: {\"error\":{\"code\":429,\"message\":\"eval-injected 429\",\"status\":\"INJECTED\"}}",
+        "intent: expected items/-, got -/- args null",
+        "\"Maggi\" not extracted",
+        "\"Parle-G\" not extracted"
+      ]
+    }
+  ],
+  "results": [
+    {
+      "id": "V01",
+      "tags": [
+        "items",
+        "hinglish_numbers"
+      ],
+      "reference": "do Maggi aur ek Parle-G",
+      "transcript": "",
+      "wer": 1,
+      "devanagari": false,
+      "error": {
+        "kind": "http",
+        "status": 429,
+        "message": "{\"error\":{\"code\":429,\"message\":\"eval-injected 429\",\"status\":\"INJECTED\"}}"
+      },
+      "telemetry": [
+        {
+          "cacheHit": false,
+          "latencyMs": 0,
+          "attempts": 1,
+          "waitedMs": 0,
+          "model": "gemini-flash-lite-latest",
+          "error": {
+            "status": 429,
+            "message": "injected"
+          }
+        }
+      ],
+      "intentOk": false,
+      "intent": {
+        "expKind": "items",
+        "kind": null,
+        "expCommand": null,
+        "command": null,
+        "args": null,
+        "customer": null
+      },
+      "expCount": 2,
+      "predCount": 0,
+      "itemMatches": 0,
+      "cartCatalogOk": 0,
+      "cartCatalogScored": 0,
+      "items": [
+        {
+          "exp": "Maggi",
+          "pred": null,
+          "qtyExp": [
+            2
+          ],
+          "qtyPred": null,
+          "ok": false,
+          "cart": null,
+          "cartOk": null,
+          "reason": "\"Maggi\" not extracted"
+        },
+        {
+          "exp": "Parle-G",
+          "pred": null,
+          "qtyExp": [
+            1
+          ],
+          "qtyPred": null,
+          "ok": false,
+          "cart": null,
+          "cartOk": null,
+          "reason": "\"Parle-G\" not extracted"
+        }
+      ],
+      "extras": [],
+      "cart": [],
+      "parsed": null
+    }
+  ],
+  "generatedAt": "2026-10-14T18:38:17.260Z"
+}

@@ -1,0 +1,1936 @@
+{
+  "task": "voice",
+  "model": "gemini-flash-lite-latest",
+  "provider": "gemini",
+  "options": {
+    "delayMs": 5000,
+    "retries": 3,
+    "cache": true,
+    "only": [
+      "V01",
+      "V02",
+      "V04",
+      "V07",
+      "V08",
+      "V11",
+      "V13",
+      "C01",
+      "C02",
+      "C05",
+      "C06",
+      "C07",
+      "R01",
+      "R03",
+      "N04",
+      "N02",
+      "X-silence",
+      "X-long60",
+      "X-empty"
+    ],
+    "robustness": false,
+    "corrections": null,
+    "injectError": null
+  },
+  "summary": {
+    "clips": 16,
+    "corpusWer": 0.257,
+    "meanWer": 0.28,
+    "devanagariTranscripts": 0,
+    "intentAcc": 0.938,
+    "commandIntentAcc": 1,
+    "itemsIntentAcc": 0.909,
+    "itemPrecision": 0.813,
+    "itemRecall": 0.65,
+    "cartCatalogAcc": 0.769,
+    "jsonFailuresSwallowed": 0,
+    "httpFailures": 1,
+    "firstAttemptFailures": 0,
+    "truncated": 0,
+    "latencyMsP50": 1678,
+    "latencyMsP95": 2205,
+    "promptTokensMean": 1327,
+    "outputTokensMean": 100,
+    "thoughtsTokensMean": null,
+    "byTag": [
+      {
+        "tag": "code_mixed_numbers",
+        "clips": 4,
+        "intentAcc": 1,
+        "itemPrecision": 0.833,
+        "itemRecall": 0.833,
+        "wer": 0.333
+      },
+      {
+        "tag": "command",
+        "clips": 5,
+        "intentAcc": 1,
+        "itemPrecision": null,
+        "itemRecall": null,
+        "wer": 0
+      },
+      {
+        "tag": "customer",
+        "clips": 1,
+        "intentAcc": 1,
+        "itemPrecision": null,
+        "itemRecall": null,
+        "wer": 0
+      },
+      {
+        "tag": "hindi_names",
+        "clips": 2,
+        "intentAcc": 1,
+        "itemPrecision": 1,
+        "itemRecall": 1,
+        "wer": 0.182
+      },
+      {
+        "tag": "hinglish_numbers",
+        "clips": 3,
+        "intentAcc": 1,
+        "itemPrecision": 0.857,
+        "itemRecall": 0.857,
+        "wer": 0.053
+      },
+      {
+        "tag": "items",
+        "clips": 11,
+        "intentAcc": 0.909,
+        "itemPrecision": 0.813,
+        "itemRecall": 0.65,
+        "wer": 0.316
+      },
+      {
+        "tag": "noise",
+        "clips": 2,
+        "intentAcc": 1,
+        "itemPrecision": 0.667,
+        "itemRecall": 0.4,
+        "wer": 0.462
+      },
+      {
+        "tag": "qty_vs_price",
+        "clips": 1,
+        "intentAcc": 1,
+        "itemPrecision": 1,
+        "itemRecall": 1,
+        "wer": 0.4
+      },
+      {
+        "tag": "real_shop_noise",
+        "clips": 3,
+        "intentAcc": 0.667,
+        "itemPrecision": 1,
+        "itemRecall": 0.25,
+        "wer": 0.556
+      },
+      {
+        "tag": "silver_label",
+        "clips": 2,
+        "intentAcc": 0.5,
+        "itemPrecision": null,
+        "itemRecall": 0,
+        "wer": 1
+      }
+    ]
+  },
+  "worst": [
+    {
+      "id": "R01",
+      "tags": [
+        "items",
+        "real_shop_noise",
+        "silver_label"
+      ],
+      "reference": "Ek Bikaji",
+      "transcript": "ho gaya",
+      "why": [
+        "intent: expected items/-, got command/close args {}",
+        "\"Bikaji\" not extracted"
+      ]
+    },
+    {
+      "id": "X-empty",
+      "tags": [
+        "robustness"
+      ],
+      "reference": "",
+      "transcript": "",
+      "why": [
+        "http 400: {\"error\":{\"code\":400,\"message\":\"Request contains an invalid argument.\",\"status\":\"INVALID_ARGUMENT\"}}",
+        "intent: expected items/-, got -/- args null"
+      ]
+    },
+    {
+      "id": "N02",
+      "tags": [
+        "items",
+        "noise"
+      ],
+      "reference": "Amul butter ek, Dairy Milk do, Kurkure teen",
+      "transcript": "Amul butter ek packet aur Maggi do packet",
+      "why": [
+        "\"Dairy Milk\" not extracted",
+        "\"Kurkure\" not extracted",
+        "extra item \"Nestlé Maggi Noodles 70g x2\""
+      ]
+    },
+    {
+      "id": "R03",
+      "tags": [
+        "items",
+        "real_shop_noise",
+        "silver_label"
+      ],
+      "reference": "Dairy Milk",
+      "transcript": "",
+      "why": [
+        "\"Dairy Milk\" not extracted"
+      ]
+    },
+    {
+      "id": "V13",
+      "tags": [
+        "items",
+        "code_mixed_numbers"
+      ],
+      "reference": "gyarah Maggi aur barah ande",
+      "transcript": "11 Maggi aur Barande",
+      "why": [
+        "\"egg\" not extracted",
+        "extra item \"Barande x1\""
+      ]
+    },
+    {
+      "id": "V02",
+      "tags": [
+        "items",
+        "hinglish_numbers"
+      ],
+      "reference": "teen Thums Up, paanch Lays",
+      "transcript": "teen Thums Up paanch",
+      "why": [
+        "\"Thums Up\" cart row -> new product, expected Thums Up 600ml",
+        "\"Lays\" not extracted",
+        "extra item \"paanch x5\""
+      ]
+    },
+    {
+      "id": "X-long60",
+      "tags": [
+        "robustness"
+      ],
+      "reference": "",
+      "transcript": "Do Maggi aur ek Parle-G",
+      "why": [
+        "\"Thums Up\" not extracted",
+        "\"Lays\" not extracted",
+        "\"sugar\" not extracted",
+        "\"rice\" not extracted",
+        "\"potato\" not extracted",
+        "\"onion\" not extracted",
+        "\"wheat flour\" not extracted",
+        "\"besan\" not extracted",
+        "\"egg\" not extracted",
+        "\"Amul Butter\" not extracted",
+        "\"Dairy Milk\" not extracted",
+        "\"Kurkure\" not extracted",
+        "\"Sprite\" not extracted",
+        "\"Bisleri\" not extracted",
+        "\"Nescafe\" not extracted",
+        "\"Vim bar\" not extracted",
+        "\"Harpic\" not extracted",
+        "\"Surf Excel\" not extracted"
+      ]
+    },
+    {
+      "id": "N04",
+      "tags": [
+        "items",
+        "noise",
+        "real_shop_noise"
+      ],
+      "reference": "teen Thums Up, paanch Lays",
+      "transcript": "teen thums up paanch reez",
+      "why": [
+        "\"Thums Up\" cart row -> new product, expected Thums Up 600ml",
+        "\"Lays\" not extracted"
+      ]
+    },
+    {
+      "id": "X-silence",
+      "tags": [
+        "robustness"
+      ],
+      "reference": "",
+      "transcript": "aur maggi dena",
+      "why": [
+        "extra item \"Nestlé Maggi Noodles 70g x1\""
+      ]
+    },
+    {
+      "id": "V11",
+      "tags": [
+        "items",
+        "qty_vs_price",
+        "code_mixed_numbers"
+      ],
+      "reference": "pachees rupaye ka Parle-G",
+      "transcript": "25 ka Parle-G",
+      "why": []
+    }
+  ],
+  "results": [
+    {
+      "id": "V01",
+      "tags": [
+        "items",
+        "hinglish_numbers"
+      ],
+      "reference": "do Maggi aur ek Parle-G",
+      "transcript": "do maggi aur ek parle g",
+      "wer": 0,
+      "devanagari": false,
+      "error": null,
+      "telemetry": [
+        {
+          "cacheHit": false,
+          "latencyMs": 1937,
+          "attempts": 1,
+          "waitedMs": 0,
+          "promptTokens": 1192,
+          "outputTokens": 136,
+          "totalTokens": 1328,
+          "finishReason": "STOP",
+          "responseText": "{\n  \"transcript\": \"do maggi aur ek parle g\",\n  \"kind\": \"items\",\n  \"items\": [\n    {\n      \"name\": \"Nestlé Maggi Noodles 70g\",\n      \"quantity\": 2,\n      \"unit\": null\n    },\n    {\n      \"name\": \"Parle-G 200g\",\n      \"quantity\": 1,\n      \"unit\": null\n    }\n  ],\n  \"command\": null,\n  \"args\": {\n    \"quantity\": null,\n    \"customerName\": null\n  }\n}",
+          "model": "gemini-flash-lite-latest"
+        }
+      ],
+      "intentOk": true,
+      "intent": {
+        "expKind": "items",
+        "kind": "items",
+        "expCommand": null,
+        "command": null,
+        "args": {},
+        "customer": null
+      },
+      "expCount": 2,
+      "predCount": 2,
+      "itemMatches": 2,
+      "cartCatalogOk": 2,
+      "cartCatalogScored": 2,
+      "items": [
+        {
+          "exp": "Maggi",
+          "pred": "Nestlé Maggi Noodles 70g",
+          "qtyExp": [
+            2
+          ],
+          "qtyPred": 2,
+          "ok": true,
+          "cart": "Maggi Noodles 70g",
+          "cartOk": true,
+          "reason": null
+        },
+        {
+          "exp": "Parle-G",
+          "pred": "Parle-G 200g",
+          "qtyExp": [
+            1
+          ],
+          "qtyPred": 1,
+          "ok": true,
+          "cart": "Parle-G 200g",
+          "cartOk": true,
+          "reason": null
+        }
+      ],
+      "extras": [],
+      "cart": [
+        {
+          "productId": "p-030",
+          "name": "Maggi Noodles 70g",
+          "quantity": 2,
+          "unitPrice": 14,
+          "addedAsNew": false
+        },
+        {
+          "productId": "p-024",
+          "name": "Parle-G 200g",
+          "quantity": 1,
+          "unitPrice": 18,
+          "addedAsNew": false
+        }
+      ],
+      "parsed": {
+        "transcript": "do maggi aur ek parle g",
+        "kind": "items",
+        "items": [
+          {
+            "name": "Nestlé Maggi Noodles 70g",
+            "quantity": 2
+          },
+          {
+            "name": "Parle-G 200g",
+            "quantity": 1
+          }
+        ],
+        "command": null,
+        "args": {}
+      }
+    },
+    {
+      "id": "V02",
+      "tags": [
+        "items",
+        "hinglish_numbers"
+      ],
+      "reference": "teen Thums Up, paanch Lays",
+      "transcript": "teen Thums Up paanch",
+      "wer": 0.2,
+      "devanagari": false,
+      "error": null,
+      "telemetry": [
+        {
+          "cacheHit": false,
+          "latencyMs": 1678,
+          "attempts": 1,
+          "waitedMs": 0,
+          "promptTokens": 1185,
+          "outputTokens": 130,
+          "totalTokens": 1315,
+          "finishReason": "STOP",
+          "responseText": "{\n  \"transcript\": \"teen Thums Up paanch\",\n  \"kind\": \"items\",\n  \"items\": [\n    {\n      \"name\": \"Coca-Cola Thums Up 600ml\",\n      \"quantity\": 3,\n      \"unit\": null\n    },\n    {\n      \"name\": \"paanch\",\n      \"quantity\": 5,\n      \"unit\": null\n    }\n  ],\n  \"command\": null,\n  \"args\": {\n    \"quantity\": null,\n    \"customerName\": null\n  }\n}",
+          "model": "gemini-flash-lite-latest"
+        }
+      ],
+      "intentOk": true,
+      "intent": {
+        "expKind": "items",
+        "kind": "items",
+        "expCommand": null,
+        "command": null,
+        "args": {},
+        "customer": null
+      },
+      "expCount": 2,
+      "predCount": 2,
+      "itemMatches": 1,
+      "cartCatalogOk": 0,
+      "cartCatalogScored": 1,
+      "items": [
+        {
+          "exp": "Thums Up",
+          "pred": "Coca-Cola Thums Up 600ml",
+          "qtyExp": [
+            3
+          ],
+          "qtyPred": 3,
+          "ok": true,
+          "cart": "Coca-Cola Thums Up 600ml",
+          "cartOk": false,
+          "reason": "\"Thums Up\" cart row -> new product, expected Thums Up 600ml"
+        },
+        {
+          "exp": "Lays",
+          "pred": null,
+          "qtyExp": [
+            5
+          ],
+          "qtyPred": null,
+          "ok": false,
+          "cart": null,
+          "cartOk": null,
+          "reason": "\"Lays\" not extracted"
+        }
+      ],
+      "extras": [
+        "paanch x5"
+      ],
+      "cart": [
+        {
+          "productId": "new:coca-cola thums up 600ml",
+          "name": "Coca-Cola Thums Up 600ml",
+          "quantity": 3,
+          "unitPrice": 0,
+          "addedAsNew": true
+        },
+        {
+          "productId": "p-002",
+          "name": "Wheat Flour (Atta) 5kg",
+          "quantity": 5,
+          "unitPrice": 230,
+          "addedAsNew": false
+        }
+      ],
+      "parsed": {
+        "transcript": "teen Thums Up paanch",
+        "kind": "items",
+        "items": [
+          {
+            "name": "Coca-Cola Thums Up 600ml",
+            "quantity": 3
+          },
+          {
+            "name": "paanch",
+            "quantity": 5
+          }
+        ],
+        "command": null,
+        "args": {}
+      }
+    },
+    {
+      "id": "V04",
+      "tags": [
+        "items",
+        "code_mixed_numbers",
+        "hindi_names"
+      ],
+      "reference": "saade teen kilo aloo aur dedh kilo pyaaz",
+      "transcript": "saade teen kilo aalu aur dedh kilo pyaaz",
+      "wer": 0.125,
+      "devanagari": false,
+      "error": null,
+      "telemetry": [
+        {
+          "cacheHit": false,
+          "latencyMs": 1733,
+          "attempts": 1,
+          "waitedMs": 0,
+          "promptTokens": 1213,
+          "outputTokens": 141,
+          "totalTokens": 1354,
+          "finishReason": "STOP",
+          "responseText": "{\n  \"transcript\": \"saade teen kilo aalu aur dedh kilo pyaaz\",\n  \"kind\": \"items\",\n  \"items\": [\n    {\n      \"name\": \"Potato (Aalu)\",\n      \"quantity\": 3.5,\n      \"unit\": \"kg\"\n    },\n    {\n      \"name\": \"Onion (Pyaaz)\",\n      \"quantity\": 1.5,\n      \"unit\": \"kg\"\n    }\n  ],\n  \"command\": null,\n  \"args\": {\n    \"quantity\": null,\n    \"customerName\": null\n  }\n}",
+          "model": "gemini-flash-lite-latest"
+        }
+      ],
+      "intentOk": true,
+      "intent": {
+        "expKind": "items",
+        "kind": "items",
+        "expCommand": null,
+        "command": null,
+        "args": {},
+        "customer": null
+      },
+      "expCount": 2,
+      "predCount": 2,
+      "itemMatches": 2,
+      "cartCatalogOk": 2,
+      "cartCatalogScored": 2,
+      "items": [
+        {
+          "exp": "potato",
+          "pred": "Potato (Aalu)",
+          "qtyExp": [
+            3.5
+          ],
+          "qtyPred": 3.5,
+          "ok": true,
+          "cart": "Potato (Aalu)",
+          "cartOk": true,
+          "reason": null
+        },
+        {
+          "exp": "onion",
+          "pred": "Onion (Pyaaz)",
+          "qtyExp": [
+            1.5
+          ],
+          "qtyPred": 1.5,
+          "ok": true,
+          "cart": "Onion (Pyaaz)",
+          "cartOk": true,
+          "reason": null
+        }
+      ],
+      "extras": [],
+      "cart": [
+        {
+          "productId": "new:potato (aalu)",
+          "name": "Potato (Aalu)",
+          "quantity": 3.5,
+          "unitPrice": 0,
+          "addedAsNew": true
+        },
+        {
+          "productId": "new:onion (pyaaz)",
+          "name": "Onion (Pyaaz)",
+          "quantity": 1.5,
+          "unitPrice": 0,
+          "addedAsNew": true
+        }
+      ],
+      "parsed": {
+        "transcript": "saade teen kilo aalu aur dedh kilo pyaaz",
+        "kind": "items",
+        "items": [
+          {
+            "name": "Potato (Aalu)",
+            "quantity": 3.5,
+            "unit": "kg"
+          },
+          {
+            "name": "Onion (Pyaaz)",
+            "quantity": 1.5,
+            "unit": "kg"
+          }
+        ],
+        "command": null,
+        "args": {}
+      }
+    },
+    {
+      "id": "V07",
+      "tags": [
+        "items",
+        "code_mixed_numbers",
+        "hindi_names"
+      ],
+      "reference": "ek darjan ande",
+      "transcript": "ek dozen ande",
+      "wer": 0.333,
+      "devanagari": false,
+      "error": null,
+      "telemetry": [
+        {
+          "cacheHit": false,
+          "latencyMs": 1572,
+          "attempts": 1,
+          "waitedMs": 0,
+          "promptTokens": 1177,
+          "outputTokens": 92,
+          "totalTokens": 1269,
+          "finishReason": "STOP",
+          "responseText": "{\n  \"transcript\": \"ek dozen ande\",\n  \"kind\": \"items\",\n  \"items\": [\n    {\n      \"name\": \"Eggs\",\n      \"quantity\": 12,\n      \"unit\": \"pieces\"\n    }\n  ],\n  \"command\": null,\n  \"args\": {\n    \"quantity\": null,\n    \"customerName\": null\n  }\n}",
+          "model": "gemini-flash-lite-latest"
+        }
+      ],
+      "intentOk": true,
+      "intent": {
+        "expKind": "items",
+        "kind": "items",
+        "expCommand": null,
+        "command": null,
+        "args": {},
+        "customer": null
+      },
+      "expCount": 1,
+      "predCount": 1,
+      "itemMatches": 1,
+      "cartCatalogOk": 0,
+      "cartCatalogScored": 1,
+      "items": [
+        {
+          "exp": "egg",
+          "pred": "Eggs",
+          "qtyExp": [
+            12
+          ],
+          "qtyPred": 12,
+          "ok": true,
+          "cart": "Pepsi 600ml",
+          "cartOk": false,
+          "reason": "\"egg\" cart row -> \"Pepsi 600ml\", expected new product"
+        }
+      ],
+      "extras": [],
+      "cart": [
+        {
+          "productId": "p-015",
+          "name": "Pepsi 600ml",
+          "quantity": 12,
+          "unitPrice": 45,
+          "addedAsNew": false
+        }
+      ],
+      "parsed": {
+        "transcript": "ek dozen ande",
+        "kind": "items",
+        "items": [
+          {
+            "name": "Eggs",
+            "quantity": 12,
+            "unit": "pieces"
+          }
+        ],
+        "command": null,
+        "args": {}
+      }
+    },
+    {
+      "id": "V08",
+      "tags": [
+        "items",
+        "hinglish_numbers"
+      ],
+      "reference": "Amul butter ek, Dairy Milk do, Kurkure teen",
+      "transcript": "amul butter ek, dairy milk do, kurkure teen",
+      "wer": 0,
+      "devanagari": false,
+      "error": null,
+      "telemetry": [
+        {
+          "cacheHit": false,
+          "latencyMs": 1677,
+          "attempts": 1,
+          "waitedMs": 0,
+          "promptTokens": 1219,
+          "outputTokens": 179,
+          "totalTokens": 1398,
+          "finishReason": "STOP",
+          "responseText": "{\n  \"transcript\": \"amul butter ek, dairy milk do, kurkure teen\",\n  \"kind\": \"items\",\n  \"items\": [\n    {\n      \"name\": \"Amul Butter 500g\",\n      \"quantity\": 1,\n      \"unit\": null\n    },\n    {\n      \"name\": \"Cadbury Dairy Milk 13g\",\n      \"quantity\": 2,\n      \"unit\": null\n    },\n    {\n      \"name\": \"PepsiCo Kurkure Masala 90g\",\n      \"quantity\": 3,\n      \"unit\": null\n    }\n  ],\n  \"command\": null,\n  \"args\": {\n    \"quantity\": null,\n    \"customerName\": null\n  }\n}",
+          "model": "gemini-flash-lite-latest"
+        }
+      ],
+      "intentOk": true,
+      "intent": {
+        "expKind": "items",
+        "kind": "items",
+        "expCommand": null,
+        "command": null,
+        "args": {},
+        "customer": null
+      },
+      "expCount": 3,
+      "predCount": 3,
+      "itemMatches": 3,
+      "cartCatalogOk": 3,
+      "cartCatalogScored": 3,
+      "items": [
+        {
+          "exp": "Amul Butter",
+          "pred": "Amul Butter 500g",
+          "qtyExp": [
+            1
+          ],
+          "qtyPred": 1,
+          "ok": true,
+          "cart": "Amul Butter 500g",
+          "cartOk": true,
+          "reason": null
+        },
+        {
+          "exp": "Dairy Milk",
+          "pred": "Cadbury Dairy Milk 13g",
+          "qtyExp": [
+            2
+          ],
+          "qtyPred": 2,
+          "ok": true,
+          "cart": "Cadbury Dairy Milk 13g",
+          "cartOk": true,
+          "reason": null
+        },
+        {
+          "exp": "Kurkure",
+          "pred": "PepsiCo Kurkure Masala 90g",
+          "qtyExp": [
+            3
+          ],
+          "qtyPred": 3,
+          "ok": true,
+          "cart": "Kurkure Masala 90g",
+          "cartOk": true,
+          "reason": null
+        }
+      ],
+      "extras": [],
+      "cart": [
+        {
+          "productId": "p-035",
+          "name": "Amul Butter 500g",
+          "quantity": 1,
+          "unitPrice": 280,
+          "addedAsNew": false
+        },
+        {
+          "productId": "p-033",
+          "name": "Cadbury Dairy Milk 13g",
+          "quantity": 2,
+          "unitPrice": 10,
+          "addedAsNew": false
+        },
+        {
+          "productId": "p-029",
+          "name": "Kurkure Masala 90g",
+          "quantity": 3,
+          "unitPrice": 35,
+          "addedAsNew": false
+        }
+      ],
+      "parsed": {
+        "transcript": "amul butter ek, dairy milk do, kurkure teen",
+        "kind": "items",
+        "items": [
+          {
+            "name": "Amul Butter 500g",
+            "quantity": 1
+          },
+          {
+            "name": "Cadbury Dairy Milk 13g",
+            "quantity": 2
+          },
+          {
+            "name": "PepsiCo Kurkure Masala 90g",
+            "quantity": 3
+          }
+        ],
+        "command": null,
+        "args": {}
+      }
+    },
+    {
+      "id": "V11",
+      "tags": [
+        "items",
+        "qty_vs_price",
+        "code_mixed_numbers"
+      ],
+      "reference": "pachees rupaye ka Parle-G",
+      "transcript": "25 ka Parle-G",
+      "wer": 0.4,
+      "devanagari": false,
+      "error": null,
+      "telemetry": [
+        {
+          "cacheHit": false,
+          "latencyMs": 1540,
+          "attempts": 1,
+          "waitedMs": 0,
+          "promptTokens": 1189,
+          "outputTokens": 100,
+          "totalTokens": 1289,
+          "finishReason": "STOP",
+          "responseText": "{\n  \"transcript\": \"25 ka Parle-G\",\n  \"kind\": \"items\",\n  \"items\": [\n    {\n      \"name\": \"Parle-G 200g\",\n      \"quantity\": 1,\n      \"unit\": null\n    }\n  ],\n  \"command\": null,\n  \"args\": {\n    \"quantity\": null,\n    \"customerName\": null\n  }\n}",
+          "model": "gemini-flash-lite-latest"
+        }
+      ],
+      "intentOk": true,
+      "intent": {
+        "expKind": "items",
+        "kind": "items",
+        "expCommand": null,
+        "command": null,
+        "args": {},
+        "customer": null
+      },
+      "expCount": 1,
+      "predCount": 1,
+      "itemMatches": 1,
+      "cartCatalogOk": 1,
+      "cartCatalogScored": 1,
+      "items": [
+        {
+          "exp": "Parle-G",
+          "pred": "Parle-G 200g",
+          "qtyExp": [
+            1
+          ],
+          "qtyPred": 1,
+          "ok": true,
+          "cart": "Parle-G 200g",
+          "cartOk": true,
+          "reason": null
+        }
+      ],
+      "extras": [],
+      "cart": [
+        {
+          "productId": "p-024",
+          "name": "Parle-G 200g",
+          "quantity": 1,
+          "unitPrice": 18,
+          "addedAsNew": false
+        }
+      ],
+      "parsed": {
+        "transcript": "25 ka Parle-G",
+        "kind": "items",
+        "items": [
+          {
+            "name": "Parle-G 200g",
+            "quantity": 1
+          }
+        ],
+        "command": null,
+        "args": {}
+      }
+    },
+    {
+      "id": "V13",
+      "tags": [
+        "items",
+        "code_mixed_numbers"
+      ],
+      "reference": "gyarah Maggi aur barah ande",
+      "transcript": "11 Maggi aur Barande",
+      "wer": 0.6,
+      "devanagari": false,
+      "error": null,
+      "telemetry": [
+        {
+          "cacheHit": false,
+          "latencyMs": 1813,
+          "attempts": 1,
+          "waitedMs": 0,
+          "promptTokens": 1358,
+          "outputTokens": 130,
+          "totalTokens": 1488,
+          "finishReason": "STOP",
+          "responseText": "{\n  \"transcript\": \"11 Maggi aur Barande\",\n  \"kind\": \"items\",\n  \"items\": [\n    {\n      \"name\": \"Nestlé Maggi Noodles 70g\",\n      \"quantity\": 11,\n      \"unit\": null\n    },\n    {\n      \"name\": \"Barande\",\n      \"quantity\": 1,\n      \"unit\": null\n    }\n  ],\n  \"command\": null,\n  \"args\": {\n    \"quantity\": null,\n    \"customerName\": null\n  }\n}",
+          "model": "gemini-flash-lite-latest"
+        }
+      ],
+      "intentOk": true,
+      "intent": {
+        "expKind": "items",
+        "kind": "items",
+        "expCommand": null,
+        "command": null,
+        "args": {},
+        "customer": null
+      },
+      "expCount": 2,
+      "predCount": 2,
+      "itemMatches": 1,
+      "cartCatalogOk": 1,
+      "cartCatalogScored": 1,
+      "items": [
+        {
+          "exp": "Maggi",
+          "pred": "Nestlé Maggi Noodles 70g",
+          "qtyExp": [
+            11
+          ],
+          "qtyPred": 11,
+          "ok": true,
+          "cart": "Maggi Noodles 70g",
+          "cartOk": true,
+          "reason": null
+        },
+        {
+          "exp": "egg",
+          "pred": null,
+          "qtyExp": [
+            12
+          ],
+          "qtyPred": null,
+          "ok": false,
+          "cart": null,
+          "cartOk": null,
+          "reason": "\"egg\" not extracted"
+        }
+      ],
+      "extras": [
+        "Barande x1"
+      ],
+      "cart": [
+        {
+          "productId": "p-030",
+          "name": "Maggi Noodles 70g",
+          "quantity": 11,
+          "unitPrice": 14,
+          "addedAsNew": false
+        },
+        {
+          "productId": "p-024",
+          "name": "Parle-G 200g",
+          "quantity": 1,
+          "unitPrice": 18,
+          "addedAsNew": false
+        }
+      ],
+      "parsed": {
+        "transcript": "11 Maggi aur Barande",
+        "kind": "items",
+        "items": [
+          {
+            "name": "Nestlé Maggi Noodles 70g",
+            "quantity": 11
+          },
+          {
+            "name": "Barande",
+            "quantity": 1
+          }
+        ],
+        "command": null,
+        "args": {}
+      }
+    },
+    {
+      "id": "C01",
+      "tags": [
+        "command"
+      ],
+      "reference": "agla customer",
+      "transcript": "Agla customer",
+      "wer": 0,
+      "devanagari": false,
+      "error": null,
+      "telemetry": [
+        {
+          "cacheHit": false,
+          "latencyMs": 1902,
+          "attempts": 1,
+          "waitedMs": 0,
+          "promptTokens": 1313,
+          "outputTokens": 58,
+          "totalTokens": 1371,
+          "finishReason": "STOP",
+          "responseText": "{\n  \"transcript\": \"Agla customer\",\n  \"kind\": \"command\",\n  \"items\": [],\n  \"command\": \"next\",\n  \"args\": {\n    \"quantity\": null,\n    \"customerName\": null\n  }\n}",
+          "model": "gemini-flash-lite-latest"
+        }
+      ],
+      "intentOk": true,
+      "intent": {
+        "expKind": "command",
+        "kind": "command",
+        "expCommand": "next",
+        "command": "next",
+        "args": {},
+        "customer": null
+      },
+      "expCount": 0,
+      "predCount": 0,
+      "itemMatches": 0,
+      "cartCatalogOk": 0,
+      "cartCatalogScored": 0,
+      "items": [],
+      "extras": [],
+      "cart": [],
+      "parsed": {
+        "transcript": "Agla customer",
+        "kind": "command",
+        "items": [],
+        "command": "next",
+        "args": {}
+      }
+    },
+    {
+      "id": "C02",
+      "tags": [
+        "command"
+      ],
+      "reference": "khatam",
+      "transcript": "khatam",
+      "wer": 0,
+      "devanagari": false,
+      "error": null,
+      "telemetry": [
+        {
+          "cacheHit": false,
+          "latencyMs": 1813,
+          "attempts": 1,
+          "waitedMs": 0,
+          "promptTokens": 1317,
+          "outputTokens": 58,
+          "totalTokens": 1375,
+          "finishReason": "STOP",
+          "responseText": "{\n  \"transcript\": \"khatam\",\n  \"kind\": \"command\",\n  \"items\": [],\n  \"command\": \"close\",\n  \"args\": {\n    \"quantity\": null,\n    \"customerName\": null\n  }\n}",
+          "model": "gemini-flash-lite-latest"
+        }
+      ],
+      "intentOk": true,
+      "intent": {
+        "expKind": "command",
+        "kind": "command",
+        "expCommand": "close",
+        "command": "close",
+        "args": {},
+        "customer": null
+      },
+      "expCount": 0,
+      "predCount": 0,
+      "itemMatches": 0,
+      "cartCatalogOk": 0,
+      "cartCatalogScored": 0,
+      "items": [],
+      "extras": [],
+      "cart": [],
+      "parsed": {
+        "transcript": "khatam",
+        "kind": "command",
+        "items": [],
+        "command": "close",
+        "args": {}
+      }
+    },
+    {
+      "id": "C05",
+      "tags": [
+        "command"
+      ],
+      "reference": "aakhri wala hata do",
+      "transcript": "aakhri wala hata do",
+      "wer": 0,
+      "devanagari": false,
+      "error": null,
+      "telemetry": [
+        {
+          "cacheHit": false,
+          "latencyMs": 1633,
+          "attempts": 1,
+          "waitedMs": 0,
+          "promptTokens": 1351,
+          "outputTokens": 63,
+          "totalTokens": 1414,
+          "finishReason": "STOP",
+          "responseText": "{\n  \"transcript\": \"aakhri wala hata do\",\n  \"kind\": \"command\",\n  \"items\": [],\n  \"command\": \"remove_last\",\n  \"args\": {\n    \"quantity\": null,\n    \"customerName\": null\n  }\n}",
+          "model": "gemini-flash-lite-latest"
+        }
+      ],
+      "intentOk": true,
+      "intent": {
+        "expKind": "command",
+        "kind": "command",
+        "expCommand": "remove_last",
+        "command": "remove_last",
+        "args": {},
+        "customer": null
+      },
+      "expCount": 0,
+      "predCount": 0,
+      "itemMatches": 0,
+      "cartCatalogOk": 0,
+      "cartCatalogScored": 0,
+      "items": [],
+      "extras": [],
+      "cart": [],
+      "parsed": {
+        "transcript": "aakhri wala hata do",
+        "kind": "command",
+        "items": [],
+        "command": "remove_last",
+        "args": {}
+      }
+    },
+    {
+      "id": "C06",
+      "tags": [
+        "command"
+      ],
+      "reference": "teen kar do",
+      "transcript": "teen kar do",
+      "wer": 0,
+      "devanagari": false,
+      "error": null,
+      "telemetry": [
+        {
+          "cacheHit": false,
+          "latencyMs": 1802,
+          "attempts": 1,
+          "waitedMs": 0,
+          "promptTokens": 1323,
+          "outputTokens": 61,
+          "totalTokens": 1384,
+          "finishReason": "STOP",
+          "responseText": "{\n  \"transcript\": \"teen kar do\",\n  \"kind\": \"command\",\n  \"items\": [],\n  \"command\": \"set_qty\",\n  \"args\": {\n    \"quantity\": 3,\n    \"customerName\": null\n  }\n}",
+          "model": "gemini-flash-lite-latest"
+        }
+      ],
+      "intentOk": true,
+      "intent": {
+        "expKind": "command",
+        "kind": "command",
+        "expCommand": "set_qty",
+        "command": "set_qty",
+        "args": {
+          "quantity": 3
+        },
+        "customer": null
+      },
+      "expCount": 0,
+      "predCount": 0,
+      "itemMatches": 0,
+      "cartCatalogOk": 0,
+      "cartCatalogScored": 0,
+      "items": [],
+      "extras": [],
+      "cart": [],
+      "parsed": {
+        "transcript": "teen kar do",
+        "kind": "command",
+        "items": [],
+        "command": "set_qty",
+        "args": {
+          "quantity": 3
+        }
+      }
+    },
+    {
+      "id": "C07",
+      "tags": [
+        "command",
+        "customer"
+      ],
+      "reference": "Ramesh ko udhaar",
+      "transcript": "Ramesh ko udhaar",
+      "wer": 0,
+      "devanagari": false,
+      "error": null,
+      "telemetry": [
+        {
+          "cacheHit": false,
+          "latencyMs": 1486,
+          "attempts": 1,
+          "waitedMs": 0,
+          "promptTokens": 1342,
+          "outputTokens": 65,
+          "totalTokens": 1407,
+          "finishReason": "STOP",
+          "responseText": "{\n  \"transcript\": \"Ramesh ko udhaar\",\n  \"kind\": \"command\",\n  \"items\": [],\n  \"command\": \"attach_customer\",\n  \"args\": {\n    \"quantity\": null,\n    \"customerName\": \"Ramesh\"\n  }\n}",
+          "model": "gemini-flash-lite-latest"
+        }
+      ],
+      "intentOk": true,
+      "intent": {
+        "expKind": "command",
+        "kind": "command",
+        "expCommand": "attach_customer",
+        "command": "attach_customer",
+        "args": {
+          "customerName": "Ramesh"
+        },
+        "customer": "Ramesh Kumar"
+      },
+      "expCount": 0,
+      "predCount": 0,
+      "itemMatches": 0,
+      "cartCatalogOk": 0,
+      "cartCatalogScored": 0,
+      "items": [],
+      "extras": [],
+      "cart": [],
+      "parsed": {
+        "transcript": "Ramesh ko udhaar",
+        "kind": "command",
+        "items": [],
+        "command": "attach_customer",
+        "args": {
+          "customerName": "Ramesh"
+        }
+      }
+    },
+    {
+      "id": "N02",
+      "tags": [
+        "items",
+        "noise"
+      ],
+      "reference": "Amul butter ek, Dairy Milk do, Kurkure teen",
+      "transcript": "Amul butter ek packet aur Maggi do packet",
+      "wer": 0.625,
+      "devanagari": false,
+      "error": null,
+      "telemetry": [
+        {
+          "cacheHit": false,
+          "latencyMs": 1579,
+          "attempts": 1,
+          "waitedMs": 0,
+          "promptTokens": 1219,
+          "outputTokens": 142,
+          "totalTokens": 1361,
+          "finishReason": "STOP",
+          "responseText": "{\n  \"transcript\": \"Amul butter ek packet aur Maggi do packet\",\n  \"kind\": \"items\",\n  \"items\": [\n    {\n      \"name\": \"Amul Butter 500g\",\n      \"quantity\": 1,\n      \"unit\": \"packet\"\n    },\n    {\n      \"name\": \"Nestlé Maggi Noodles 70g\",\n      \"quantity\": 2,\n      \"unit\": \"packet\"\n    }\n  ],\n  \"command\": null,\n  \"args\": {\n    \"quantity\": null,\n    \"customerName\": null\n  }\n}",
+          "model": "gemini-flash-lite-latest"
+        }
+      ],
+      "intentOk": true,
+      "intent": {
+        "expKind": "items",
+        "kind": "items",
+        "expCommand": null,
+        "command": null,
+        "args": {},
+        "customer": null
+      },
+      "expCount": 3,
+      "predCount": 2,
+      "itemMatches": 1,
+      "cartCatalogOk": 1,
+      "cartCatalogScored": 1,
+      "items": [
+        {
+          "exp": "Amul Butter",
+          "pred": "Amul Butter 500g",
+          "qtyExp": [
+            1
+          ],
+          "qtyPred": 1,
+          "ok": true,
+          "cart": "Amul Butter 500g",
+          "cartOk": true,
+          "reason": null
+        },
+        {
+          "exp": "Dairy Milk",
+          "pred": null,
+          "qtyExp": [
+            2
+          ],
+          "qtyPred": null,
+          "ok": false,
+          "cart": null,
+          "cartOk": null,
+          "reason": "\"Dairy Milk\" not extracted"
+        },
+        {
+          "exp": "Kurkure",
+          "pred": null,
+          "qtyExp": [
+            3
+          ],
+          "qtyPred": null,
+          "ok": false,
+          "cart": null,
+          "cartOk": null,
+          "reason": "\"Kurkure\" not extracted"
+        }
+      ],
+      "extras": [
+        "Nestlé Maggi Noodles 70g x2"
+      ],
+      "cart": [
+        {
+          "productId": "p-035",
+          "name": "Amul Butter 500g",
+          "quantity": 1,
+          "unitPrice": 280,
+          "addedAsNew": false
+        },
+        {
+          "productId": "p-030",
+          "name": "Maggi Noodles 70g",
+          "quantity": 2,
+          "unitPrice": 14,
+          "addedAsNew": false
+        }
+      ],
+      "parsed": {
+        "transcript": "Amul butter ek packet aur Maggi do packet",
+        "kind": "items",
+        "items": [
+          {
+            "name": "Amul Butter 500g",
+            "quantity": 1,
+            "unit": "packet"
+          },
+          {
+            "name": "Nestlé Maggi Noodles 70g",
+            "quantity": 2,
+            "unit": "packet"
+          }
+        ],
+        "command": null,
+        "args": {}
+      }
+    },
+    {
+      "id": "N04",
+      "tags": [
+        "items",
+        "noise",
+        "real_shop_noise"
+      ],
+      "reference": "teen Thums Up, paanch Lays",
+      "transcript": "teen thums up paanch reez",
+      "wer": 0.2,
+      "devanagari": false,
+      "error": null,
+      "telemetry": [
+        {
+          "cacheHit": false,
+          "latencyMs": 1626,
+          "attempts": 1,
+          "waitedMs": 0,
+          "promptTokens": 1185,
+          "outputTokens": 103,
+          "totalTokens": 1288,
+          "finishReason": "STOP",
+          "responseText": "{\n  \"transcript\": \"teen thums up paanch reez\",\n  \"kind\": \"items\",\n  \"items\": [\n    {\n      \"name\": \"Coca-Cola Thums Up 600ml\",\n      \"quantity\": 3,\n      \"unit\": null\n    }\n  ],\n  \"command\": null,\n  \"args\": {\n    \"quantity\": null,\n    \"customerName\": null\n  }\n}",
+          "model": "gemini-flash-lite-latest"
+        }
+      ],
+      "intentOk": true,
+      "intent": {
+        "expKind": "items",
+        "kind": "items",
+        "expCommand": null,
+        "command": null,
+        "args": {},
+        "customer": null
+      },
+      "expCount": 2,
+      "predCount": 1,
+      "itemMatches": 1,
+      "cartCatalogOk": 0,
+      "cartCatalogScored": 1,
+      "items": [
+        {
+          "exp": "Thums Up",
+          "pred": "Coca-Cola Thums Up 600ml",
+          "qtyExp": [
+            3
+          ],
+          "qtyPred": 3,
+          "ok": true,
+          "cart": "Coca-Cola Thums Up 600ml",
+          "cartOk": false,
+          "reason": "\"Thums Up\" cart row -> new product, expected Thums Up 600ml"
+        },
+        {
+          "exp": "Lays",
+          "pred": null,
+          "qtyExp": [
+            5
+          ],
+          "qtyPred": null,
+          "ok": false,
+          "cart": null,
+          "cartOk": null,
+          "reason": "\"Lays\" not extracted"
+        }
+      ],
+      "extras": [],
+      "cart": [
+        {
+          "productId": "new:coca-cola thums up 600ml",
+          "name": "Coca-Cola Thums Up 600ml",
+          "quantity": 3,
+          "unitPrice": 0,
+          "addedAsNew": true
+        }
+      ],
+      "parsed": {
+        "transcript": "teen thums up paanch reez",
+        "kind": "items",
+        "items": [
+          {
+            "name": "Coca-Cola Thums Up 600ml",
+            "quantity": 3
+          }
+        ],
+        "command": null,
+        "args": {}
+      }
+    },
+    {
+      "id": "R01",
+      "tags": [
+        "items",
+        "real_shop_noise",
+        "silver_label"
+      ],
+      "reference": "Ek Bikaji",
+      "transcript": "ho gaya",
+      "wer": 1,
+      "devanagari": false,
+      "error": null,
+      "telemetry": [
+        {
+          "cacheHit": false,
+          "latencyMs": 1652,
+          "attempts": 1,
+          "waitedMs": 0,
+          "promptTokens": 1208,
+          "outputTokens": 57,
+          "totalTokens": 1265,
+          "finishReason": "STOP",
+          "responseText": "{\n  \"transcript\": \"ho gaya\",\n  \"kind\": \"command\",\n  \"items\": [],\n  \"command\": \"close\",\n  \"args\": {\n    \"quantity\": null,\n    \"customerName\": null\n  }\n}",
+          "model": "gemini-flash-lite-latest"
+        }
+      ],
+      "intentOk": false,
+      "intent": {
+        "expKind": "items",
+        "kind": "command",
+        "expCommand": null,
+        "command": "close",
+        "args": {},
+        "customer": null
+      },
+      "expCount": 1,
+      "predCount": 0,
+      "itemMatches": 0,
+      "cartCatalogOk": 0,
+      "cartCatalogScored": 0,
+      "items": [
+        {
+          "exp": "Bikaji",
+          "pred": null,
+          "qtyExp": [
+            1
+          ],
+          "qtyPred": null,
+          "ok": false,
+          "cart": null,
+          "cartOk": null,
+          "reason": "\"Bikaji\" not extracted"
+        }
+      ],
+      "extras": [],
+      "cart": [],
+      "parsed": {
+        "transcript": "ho gaya",
+        "kind": "command",
+        "items": [],
+        "command": "close",
+        "args": {}
+      }
+    },
+    {
+      "id": "R03",
+      "tags": [
+        "items",
+        "real_shop_noise",
+        "silver_label"
+      ],
+      "reference": "Dairy Milk",
+      "transcript": "",
+      "wer": 1,
+      "devanagari": false,
+      "error": null,
+      "telemetry": [
+        {
+          "cacheHit": false,
+          "latencyMs": 1957,
+          "attempts": 1,
+          "waitedMs": 0,
+          "promptTokens": 1253,
+          "outputTokens": 53,
+          "totalTokens": 1306,
+          "finishReason": "STOP",
+          "responseText": "{\n  \"transcript\": \"\",\n  \"kind\": \"items\",\n  \"items\": [],\n  \"command\": null,\n  \"args\": {\n    \"quantity\": null,\n    \"customerName\": null\n  }\n}",
+          "model": "gemini-flash-lite-latest"
+        }
+      ],
+      "intentOk": true,
+      "intent": {
+        "expKind": "items",
+        "kind": "items",
+        "expCommand": null,
+        "command": null,
+        "args": {},
+        "customer": null
+      },
+      "expCount": 1,
+      "predCount": 0,
+      "itemMatches": 0,
+      "cartCatalogOk": 0,
+      "cartCatalogScored": 0,
+      "items": [
+        {
+          "exp": "Dairy Milk",
+          "pred": null,
+          "qtyExp": [
+            1
+          ],
+          "qtyPred": null,
+          "ok": false,
+          "cart": null,
+          "cartOk": null,
+          "reason": "\"Dairy Milk\" not extracted"
+        }
+      ],
+      "extras": [],
+      "cart": [],
+      "parsed": {
+        "transcript": "",
+        "kind": "items",
+        "items": [],
+        "command": null,
+        "args": {}
+      }
+    },
+    {
+      "id": "X-silence",
+      "tags": [
+        "robustness"
+      ],
+      "reference": "",
+      "transcript": "aur maggi dena",
+      "wer": null,
+      "devanagari": false,
+      "error": null,
+      "telemetry": [
+        {
+          "cacheHit": false,
+          "latencyMs": 1431,
+          "attempts": 1,
+          "waitedMs": 0,
+          "promptTokens": 1195,
+          "outputTokens": 97,
+          "totalTokens": 1292,
+          "finishReason": "STOP",
+          "responseText": "{\n  \"transcript\": \"aur maggi dena\",\n  \"kind\": \"items\",\n  \"items\": [\n    {\n      \"name\": \"Nestlé Maggi Noodles 70g\",\n      \"quantity\": 1,\n      \"unit\": null\n    }\n  ],\n  \"command\": null,\n  \"args\": {\n    \"quantity\": null,\n    \"customerName\": null\n  }\n}",
+          "model": "gemini-flash-lite-latest"
+        }
+      ],
+      "intentOk": true,
+      "intent": {
+        "expKind": "items",
+        "kind": "items",
+        "expCommand": null,
+        "command": null,
+        "args": {},
+        "customer": null
+      },
+      "expCount": 0,
+      "predCount": 1,
+      "itemMatches": 0,
+      "cartCatalogOk": 0,
+      "cartCatalogScored": 0,
+      "items": [],
+      "extras": [
+        "Nestlé Maggi Noodles 70g x1"
+      ],
+      "cart": [
+        {
+          "productId": "p-030",
+          "name": "Maggi Noodles 70g",
+          "quantity": 1,
+          "unitPrice": 14,
+          "addedAsNew": false
+        }
+      ],
+      "parsed": {
+        "transcript": "aur maggi dena",
+        "kind": "items",
+        "items": [
+          {
+            "name": "Nestlé Maggi Noodles 70g",
+            "quantity": 1
+          }
+        ],
+        "command": null,
+        "args": {}
+      }
+    },
+    {
+      "id": "X-long60",
+      "tags": [
+        "robustness"
+      ],
+      "reference": "",
+      "transcript": "Do Maggi aur ek Parle-G",
+      "wer": null,
+      "devanagari": false,
+      "error": null,
+      "telemetry": [
+        {
+          "cacheHit": false,
+          "latencyMs": 2205,
+          "attempts": 1,
+          "waitedMs": 0,
+          "promptTokens": 2644,
+          "outputTokens": 138,
+          "totalTokens": 2782,
+          "finishReason": "STOP",
+          "responseText": "{\n  \"transcript\": \"Do Maggi aur ek Parle-G\",\n  \"kind\": \"items\",\n  \"items\": [\n    {\n      \"name\": \"Nestlé Maggi Noodles 70g\",\n      \"quantity\": 2,\n      \"unit\": null\n    },\n    {\n      \"name\": \"Parle-G 200g\",\n      \"quantity\": 1,\n      \"unit\": null\n    }\n  ],\n  \"command\": null,\n  \"args\": {\n    \"quantity\": null,\n    \"customerName\": null\n  }\n}",
+          "model": "gemini-flash-lite-latest"
+        }
+      ],
+      "intentOk": true,
+      "intent": {
+        "expKind": "items",
+        "kind": "items",
+        "expCommand": null,
+        "command": null,
+        "args": {},
+        "customer": null
+      },
+      "expCount": 20,
+      "predCount": 2,
+      "itemMatches": 2,
+      "cartCatalogOk": 2,
+      "cartCatalogScored": 2,
+      "items": [
+        {
+          "exp": "Maggi",
+          "pred": "Nestlé Maggi Noodles 70g",
+          "qtyExp": [],
+          "qtyPred": 2,
+          "ok": true,
+          "cart": "Maggi Noodles 70g",
+          "cartOk": true,
+          "reason": null
+        },
+        {
+          "exp": "Parle-G",
+          "pred": "Parle-G 200g",
+          "qtyExp": [],
+          "qtyPred": 1,
+          "ok": true,
+          "cart": "Parle-G 200g",
+          "cartOk": true,
+          "reason": null
+        },
+        {
+          "exp": "Thums Up",
+          "pred": null,
+          "qtyExp": [],
+          "qtyPred": null,
+          "ok": false,
+          "cart": null,
+          "cartOk": null,
+          "reason": "\"Thums Up\" not extracted"
+        },
+        {
+          "exp": "Lays",
+          "pred": null,
+          "qtyExp": [],
+          "qtyPred": null,
+          "ok": false,
+          "cart": null,
+          "cartOk": null,
+          "reason": "\"Lays\" not extracted"
+        },
+        {
+          "exp": "sugar",
+          "pred": null,
+          "qtyExp": [],
+          "qtyPred": null,
+          "ok": false,
+          "cart": null,
+          "cartOk": null,
+          "reason": "\"sugar\" not extracted"
+        },
+        {
+          "exp": "rice",
+          "pred": null,
+          "qtyExp": [],
+          "qtyPred": null,
+          "ok": false,
+          "cart": null,
+          "cartOk": null,
+          "reason": "\"rice\" not extracted"
+        },
+        {
+          "exp": "potato",
+          "pred": null,
+          "qtyExp": [],
+          "qtyPred": null,
+          "ok": false,
+          "cart": null,
+          "cartOk": null,
+          "reason": "\"potato\" not extracted"
+        },
+        {
+          "exp": "onion",
+          "pred": null,
+          "qtyExp": [],
+          "qtyPred": null,
+          "ok": false,
+          "cart": null,
+          "cartOk": null,
+          "reason": "\"onion\" not extracted"
+        },
+        {
+          "exp": "wheat flour",
+          "pred": null,
+          "qtyExp": [],
+          "qtyPred": null,
+          "ok": false,
+          "cart": null,
+          "cartOk": null,
+          "reason": "\"wheat flour\" not extracted"
+        },
+        {
+          "exp": "besan",
+          "pred": null,
+          "qtyExp": [],
+          "qtyPred": null,
+          "ok": false,
+          "cart": null,
+          "cartOk": null,
+          "reason": "\"besan\" not extracted"
+        },
+        {
+          "exp": "egg",
+          "pred": null,
+          "qtyExp": [],
+          "qtyPred": null,
+          "ok": false,
+          "cart": null,
+          "cartOk": null,
+          "reason": "\"egg\" not extracted"
+        },
+        {
+          "exp": "Amul Butter",
+          "pred": null,
+          "qtyExp": [],
+          "qtyPred": null,
+          "ok": false,
+          "cart": null,
+          "cartOk": null,
+          "reason": "\"Amul Butter\" not extracted"
+        },
+        {
+          "exp": "Dairy Milk",
+          "pred": null,
+          "qtyExp": [],
+          "qtyPred": null,
+          "ok": false,
+          "cart": null,
+          "cartOk": null,
+          "reason": "\"Dairy Milk\" not extracted"
+        },
+        {
+          "exp": "Kurkure",
+          "pred": null,
+          "qtyExp": [],
+          "qtyPred": null,
+          "ok": false,
+          "cart": null,
+          "cartOk": null,
+          "reason": "\"Kurkure\" not extracted"
+        },
+        {
+          "exp": "Sprite",
+          "pred": null,
+          "qtyExp": [],
+          "qtyPred": null,
+          "ok": false,
+          "cart": null,
+          "cartOk": null,
+          "reason": "\"Sprite\" not extracted"
+        },
+        {
+          "exp": "Bisleri",
+          "pred": null,
+          "qtyExp": [],
+          "qtyPred": null,
+          "ok": false,
+          "cart": null,
+          "cartOk": null,
+          "reason": "\"Bisleri\" not extracted"
+        },
+        {
+          "exp": "Nescafe",
+          "pred": null,
+          "qtyExp": [],
+          "qtyPred": null,
+          "ok": false,
+          "cart": null,
+          "cartOk": null,
+          "reason": "\"Nescafe\" not extracted"
+        },
+        {
+          "exp": "Vim bar",
+          "pred": null,
+          "qtyExp": [],
+          "qtyPred": null,
+          "ok": false,
+          "cart": null,
+          "cartOk": null,
+          "reason": "\"Vim bar\" not extracted"
+        },
+        {
+          "exp": "Harpic",
+          "pred": null,
+          "qtyExp": [],
+          "qtyPred": null,
+          "ok": false,
+          "cart": null,
+          "cartOk": null,
+          "reason": "\"Harpic\" not extracted"
+        },
+        {
+          "exp": "Surf Excel",
+          "pred": null,
+          "qtyExp": [],
+          "qtyPred": null,
+          "ok": false,
+          "cart": null,
+          "cartOk": null,
+          "reason": "\"Surf Excel\" not extracted"
+        }
+      ],
+      "extras": [],
+      "cart": [
+        {
+          "productId": "p-030",
+          "name": "Maggi Noodles 70g",
+          "quantity": 2,
+          "unitPrice": 14,
+          "addedAsNew": false
+        },
+        {
+          "productId": "p-024",
+          "name": "Parle-G 200g",
+          "quantity": 1,
+          "unitPrice": 18,
+          "addedAsNew": false
+        }
+      ],
+      "parsed": {
+        "transcript": "Do Maggi aur ek Parle-G",
+        "kind": "items",
+        "items": [
+          {
+            "name": "Nestlé Maggi Noodles 70g",
+            "quantity": 2
+          },
+          {
+            "name": "Parle-G 200g",
+            "quantity": 1
+          }
+        ],
+        "command": null,
+        "args": {}
+      }
+    },
+    {
+      "id": "X-empty",
+      "tags": [
+        "robustness"
+      ],
+      "reference": "",
+      "transcript": "",
+      "wer": null,
+      "devanagari": false,
+      "error": {
+        "kind": "http",
+        "status": 400,
+        "message": "{\"error\":{\"code\":400,\"message\":\"Request contains an invalid argument.\",\"status\":\"INVALID_ARGUMENT\"}}"
+      },
+      "telemetry": [
+        {
+          "cacheHit": false,
+          "latencyMs": 649,
+          "attempts": 1,
+          "waitedMs": 0,
+          "model": "gemini-flash-lite-latest",
+          "error": {
+            "status": 400,
+            "message": "{\"error\":{\"code\":400,\"message\":\"Request contains an invalid argument.\",\"status\":\"INVALID_ARGUMENT\"}}"
+          }
+        }
+      ],
+      "intentOk": false,
+      "intent": {
+        "expKind": "items",
+        "kind": null,
+        "expCommand": null,
+        "command": null,
+        "args": null,
+        "customer": null
+      },
+      "expCount": 0,
+      "predCount": 0,
+      "itemMatches": 0,
+      "cartCatalogOk": 0,
+      "cartCatalogScored": 0,
+      "items": [],
+      "extras": [],
+      "cart": [],
+      "parsed": null
+    }
+  ],
+  "generatedAt": "2026-10-14T18:39:19.954Z"
+}

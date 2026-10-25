@@ -1,0 +1,58 @@
+{
+  "/": {
+    "finalUrl": "http://localhost:3001/",
+    "performance": 65,
+    "accessibility": 100,
+    "bestPractices": 100,
+    "FCP": 1415,
+    "LCP": 3094,
+    "TBT": 2494,
+    "CLS": "0.000",
+    "SI": 2075,
+    "TTI": 12122,
+    "totalBytes": "1663 KiB",
+    "a11yFailures": [],
+    "over3s": [
+      "LCP 3.094s",
+      "TTI 12.122s"
+    ]
+  },
+  "/login": {
+    "finalUrl": "http://localhost:3001/login",
+    "performance": 70,
+    "accessibility": 95,
+    "bestPractices": 100,
+    "FCP": 1417,
+    "LCP": 1724,
+    "TBT": 2947,
+    "CLS": "0.000",
+    "SI": 1417,
+    "TTI": 16470,
+    "totalBytes": "2397 KiB",
+    "a11yFailures": [
+      "color-contrast: Background and foreground colors do not have a sufficient contrast ratio."
+    ],
+    "over3s": [
+      "TTI 16.47s"
+    ]
+  },
+  "/signup": {
+    "finalUrl": "http://localhost:3001/signup",
+    "performance": 70,
+    "accessibility": 96,
+    "bestPractices": 100,
+    "FCP": 1409,
+    "LCP": 1708,
+    "TBT": 2766,
+    "CLS": "0.000",
+    "SI": 1409,
+    "TTI": 16466,
+    "totalBytes": "2397 KiB",
+    "a11yFailures": [
+      "color-contrast: Background and foreground colors do not have a sufficient contrast ratio."
+    ],
+    "over3s": [
+      "TTI 16.466s"
+    ]
+  }
+}

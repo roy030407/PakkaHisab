@@ -1,0 +1,2439 @@
+{
+  "task": "scan",
+  "model": "gemini-3.1-flash-lite",
+  "provider": "gemini",
+  "label": "corr-none",
+  "options": {
+    "delayMs": 5000,
+    "retries": 3,
+    "cache": true,
+    "only": [
+      "H01-rotated-list",
+      "H03-list-sizes-words",
+      "H04-circled-qty",
+      "H05-brands",
+      "H06-overwritten",
+      "H08-single",
+      "H09-prices-total",
+      "H11-hindi-mixed"
+    ],
+    "robustness": false,
+    "corrections": null,
+    "injectError": null
+  },
+  "summary": {
+    "fixtures": 8,
+    "gtItems": 27,
+    "predItems": 27,
+    "itemPrecision": 0.852,
+    "itemRecall": 0.852,
+    "namePrecision": 0.963,
+    "nameRecall": 0.963,
+    "qtyAcc": 0.885,
+    "qtyScored": 26,
+    "priceAcc": 0.25,
+    "priceScored": 4,
+    "totalAcc": 1,
+    "totalScored": 1,
+    "cartValueAcc": 0,
+    "cartValueScored": 1,
+    "catalogAcc": 0.64,
+    "catalogScored": 25,
+    "jsonParseFailures": 0,
+    "httpFailures": 0,
+    "otherFailures": 0,
+    "firstAttemptFailures": 4,
+    "truncated": 0,
+    "misroutedAsLedger": 0,
+    "ambiguousAsked": 1,
+    "latencyMsP50": 11319,
+    "latencyMsP95": 93207,
+    "promptTokensMean": 1627,
+    "outputTokensMean": 348,
+    "thoughtsTokensMean": null,
+    "totalTokensMean": 1975,
+    "causeCounts": {
+      "catalog_no_auto_match": 8,
+      "catalog_false_match": 1,
+      "missing": 1,
+      "price_read_as_qty": 2,
+      "price_from_catalog": 2,
+      "qty_ambiguous_asked": 1,
+      "price_missing": 1,
+      "extra_item": 1
+    },
+    "byTag": [
+      {
+        "tag": "abbreviations",
+        "fixtures": 3,
+        "gtItems": 11,
+        "itemPrecision": 0.909,
+        "itemRecall": 0.909,
+        "nameRecall": 0.909,
+        "qtyAcc": 1,
+        "priceAcc": null,
+        "catalogAcc": 0.6
+      },
+      {
+        "tag": "circled_qty",
+        "fixtures": 5,
+        "gtItems": 16,
+        "itemPrecision": 0.938,
+        "itemRecall": 0.938,
+        "nameRecall": 0.938,
+        "qtyAcc": 1,
+        "priceAcc": null,
+        "catalogAcc": 0.643
+      },
+      {
+        "tag": "handwriting",
+        "fixtures": 8,
+        "gtItems": 27,
+        "itemPrecision": 0.852,
+        "itemRecall": 0.852,
+        "nameRecall": 0.963,
+        "qtyAcc": 0.885,
+        "priceAcc": 0.25,
+        "catalogAcc": 0.64
+      },
+      {
+        "tag": "hindi_names",
+        "fixtures": 2,
+        "gtItems": 8,
+        "itemPrecision": 1,
+        "itemRecall": 1,
+        "nameRecall": 1,
+        "qtyAcc": 1,
+        "priceAcc": null,
+        "catalogAcc": 0.429
+      },
+      {
+        "tag": "qty_vs_price",
+        "fixtures": 1,
+        "gtItems": 4,
+        "itemPrecision": 0.25,
+        "itemRecall": 0.25,
+        "nameRecall": 1,
+        "qtyAcc": 0.25,
+        "priceAcc": 0.25,
+        "catalogAcc": 0.75
+      },
+      {
+        "tag": "rotated",
+        "fixtures": 1,
+        "gtItems": 3,
+        "itemPrecision": 1,
+        "itemRecall": 1,
+        "nameRecall": 1,
+        "qtyAcc": 1,
+        "priceAcc": null,
+        "catalogAcc": 1
+      },
+      {
+        "tag": "size_as_qty",
+        "fixtures": 1,
+        "gtItems": 3,
+        "itemPrecision": 1,
+        "itemRecall": 1,
+        "nameRecall": 1,
+        "qtyAcc": 1,
+        "priceAcc": null,
+        "catalogAcc": 1
+      }
+    ]
+  },
+  "worst": [
+    {
+      "id": "H09-prices-total",
+      "f1": 0.25,
+      "tags": [
+        "handwriting",
+        "qty_vs_price"
+      ],
+      "why": [
+        "price 80 read as quantity",
+        "unit price 68 came from the catalog, bill says 80",
+        "price 28 read as quantity",
+        "unit price 12 came from the catalog, bill says 28",
+        "qty left for the merchant (ambiguous), expected 1",
+        "no unit price read (bill says 150)",
+        "not auto-matched (unmatched), expected \"Rin Powder 500g\""
+      ]
+    },
+    {
+      "id": "H05-brands",
+      "f1": 0.667,
+      "tags": [
+        "handwriting",
+        "circled_qty",
+        "abbreviations"
+      ],
+      "why": [
+        "\"Chings Schezwan\" not extracted",
+        "extra item \"chips\" (qty 1, price 58)"
+      ]
+    },
+    {
+      "id": "H03-list-sizes-words",
+      "f1": 1,
+      "tags": [
+        "handwriting",
+        "abbreviations"
+      ],
+      "why": [
+        "not auto-matched (suggest), expected \"Sooji (Rava) 500g\"",
+        "auto-matched to \"Thums Up 600ml\" but the bill item is not in the catalog",
+        "not auto-matched (suggest), expected \"Besan 500g\""
+      ]
+    },
+    {
+      "id": "H04-circled-qty",
+      "f1": 1,
+      "tags": [
+        "handwriting",
+        "circled_qty",
+        "hindi_names"
+      ],
+      "why": [
+        "not auto-matched (unmatched), expected \"Poha 500g\"",
+        "not auto-matched (unmatched), expected \"Toor Dal 1kg\""
+      ]
+    },
+    {
+      "id": "H11-hindi-mixed",
+      "f1": 1,
+      "tags": [
+        "handwriting",
+        "circled_qty",
+        "hindi_names"
+      ],
+      "why": [
+        "not auto-matched (unmatched), expected \"Gillette Mach3 Razor\"",
+        "not auto-matched (unmatched), expected \"Haldiram Aloo Bhujia 200g\""
+      ]
+    },
+    {
+      "id": "H06-overwritten",
+      "f1": 1,
+      "tags": [
+        "handwriting",
+        "circled_qty",
+        "abbreviations"
+      ],
+      "why": [
+        "not auto-matched (unmatched), expected \"Ariel Powder 500g\""
+      ]
+    },
+    {
+      "id": "H01-rotated-list",
+      "f1": 1,
+      "tags": [
+        "handwriting",
+        "rotated",
+        "size_as_qty"
+      ],
+      "why": []
+    },
+    {
+      "id": "H08-single",
+      "f1": 1,
+      "tags": [
+        "handwriting",
+        "circled_qty"
+      ],
+      "why": []
+    }
+  ],
+  "results": [
+    {
+      "id": "H01-rotated-list",
+      "tags": [
+        "handwriting",
+        "rotated",
+        "size_as_qty"
+      ],
+      "gtCount": 3,
+      "predCount": 3,
+      "strictMatches": 3,
+      "nameMatches": 3,
+      "f1": 1,
+      "totalOk": null,
+      "totalPred": null,
+      "totalGt": null,
+      "cartValueOk": null,
+      "cartValuePred": 160,
+      "cartValueGt": null,
+      "items": [
+        {
+          "gt": "Basmati Rice",
+          "pred": "basmati rice",
+          "predRaw": "basmati rice",
+          "nameOk": true,
+          "qty": {
+            "gt": 1,
+            "pred": 1,
+            "ok": true
+          },
+          "price": {
+            "gt": null,
+            "pred": 80,
+            "ok": null,
+            "fillSource": "catalog"
+          },
+          "catalog": {
+            "gt": "Basmati Rice 1kg",
+            "pred": "Basmati Rice 1kg",
+            "state": "matched",
+            "ok": true,
+            "suggested": true
+          },
+          "strict": true,
+          "causes": [],
+          "reasons": []
+        },
+        {
+          "gt": "Sugar 1kg",
+          "pred": "sugar",
+          "predRaw": "Sugar - 1kg",
+          "nameOk": true,
+          "qty": {
+            "gt": 1,
+            "pred": 1,
+            "ok": true
+          },
+          "price": {
+            "gt": null,
+            "pred": 42,
+            "ok": null,
+            "fillSource": "catalog"
+          },
+          "catalog": {
+            "gt": "Sugar 1kg",
+            "pred": "Sugar 1kg",
+            "state": "matched",
+            "ok": true,
+            "suggested": true
+          },
+          "strict": true,
+          "causes": [],
+          "reasons": []
+        },
+        {
+          "gt": "Sprite 600ml",
+          "pred": "sprite",
+          "predRaw": "Sprite - 600ml",
+          "nameOk": true,
+          "qty": {
+            "gt": 1,
+            "pred": 1,
+            "ok": true
+          },
+          "price": {
+            "gt": null,
+            "pred": 38,
+            "ok": null,
+            "fillSource": "catalog"
+          },
+          "catalog": {
+            "gt": "Sprite 600ml",
+            "pred": "Sprite 600ml",
+            "state": "matched",
+            "ok": true,
+            "suggested": true
+          },
+          "strict": true,
+          "causes": [],
+          "reasons": []
+        }
+      ],
+      "extras": [],
+      "error": null,
+      "telemetry": [
+        {
+          "cacheHit": false,
+          "latencyMs": 4650,
+          "attempts": 1,
+          "waitedMs": 0,
+          "promptTokens": 1648,
+          "outputTokens": 213,
+          "totalTokens": 1861,
+          "finishReason": "STOP",
+          "responseText": "{\n  \"document_type\": \"single_bill\",\n  \"vendor_name\": null,\n  \"date\": null,\n  \"total_amount\": null,\n  \"confidence\": \"high\",\n  \"items\": [\n    {\n      \"product_name_raw\": \"basmati rice\",\n      \"normalized_name\": \"basmati rice\",\n      \"size_token\": null,\n      \"number_tokens\": []\n    },\n    {\n      \"product_name_raw\": \"Sugar - 1kg\",\n      \"normalized_name\": \"sugar\",\n      \"size_token\": \"1kg\",\n      \"number_tokens\": []\n    },\n    {\n      \"product_name_raw\": \"Sprite - 600ml\",\n      \"normalized_name\": \"sprite\",\n      \"size_token\": \"600ml\",\n      \"number_tokens\": []\n    }\n  ]\n}",
+          "model": "gemini-3.1-flash-lite"
+        }
+      ],
+      "raw": {
+        "documentType": "single_bill",
+        "confidence": "high",
+        "rawItems": [
+          {
+            "productNameRaw": "basmati rice",
+            "normalizedName": "basmati rice",
+            "sizeToken": null,
+            "numberTokens": []
+          },
+          {
+            "productNameRaw": "Sugar - 1kg",
+            "normalizedName": "sugar",
+            "sizeToken": "1kg",
+            "numberTokens": []
+          },
+          {
+            "productNameRaw": "Sprite - 600ml",
+            "normalizedName": "sprite",
+            "sizeToken": "600ml",
+            "numberTokens": []
+          }
+        ]
+      },
+      "resolved": [
+        {
+          "productNameRaw": "basmati rice",
+          "normalizedName": "basmati rice",
+          "sizeToken": null,
+          "matchedProductId": "p-001",
+          "matchedProductName": "Basmati Rice 1kg",
+          "matchState": "matched",
+          "candidates": [
+            {
+              "productId": "p-001",
+              "name": "Basmati Rice 1kg",
+              "unitPrice": 80,
+              "sizeToken": "1kg"
+            }
+          ],
+          "quantity": 1,
+          "unitPrice": 80,
+          "totalPrice": 80,
+          "fillSource": "catalog",
+          "needsVerify": true,
+          "ambiguousQtyPrice": false,
+          "numberTokens": []
+        },
+        {
+          "productNameRaw": "Sugar - 1kg",
+          "normalizedName": "sugar",
+          "sizeToken": "1kg",
+          "matchedProductId": "p-006",
+          "matchedProductName": "Sugar 1kg",
+          "matchState": "matched",
+          "candidates": [
+            {
+              "productId": "p-006",
+              "name": "Sugar 1kg",
+              "unitPrice": 42,
+              "sizeToken": "1kg"
+            }
+          ],
+          "quantity": 1,
+          "unitPrice": 42,
+          "totalPrice": 42,
+          "fillSource": "catalog",
+          "needsVerify": true,
+          "ambiguousQtyPrice": false,
+          "numberTokens": []
+        },
+        {
+          "productNameRaw": "Sprite - 600ml",
+          "normalizedName": "sprite",
+          "sizeToken": "600ml",
+          "matchedProductId": "p-014",
+          "matchedProductName": "Sprite 600ml",
+          "matchState": "matched",
+          "candidates": [
+            {
+              "productId": "p-014",
+              "name": "Sprite 600ml",
+              "unitPrice": 38,
+              "sizeToken": "600ml"
+            }
+          ],
+          "quantity": 1,
+          "unitPrice": 38,
+          "totalPrice": 38,
+          "fillSource": "catalog",
+          "needsVerify": true,
+          "ambiguousQtyPrice": false,
+          "numberTokens": []
+        }
+      ]
+    },
+    {
+      "id": "H03-list-sizes-words",
+      "tags": [
+        "handwriting",
+        "abbreviations"
+      ],
+      "gtCount": 4,
+      "predCount": 4,
+      "strictMatches": 4,
+      "nameMatches": 4,
+      "f1": 1,
+      "totalOk": null,
+      "totalPred": null,
+      "totalGt": null,
+      "cartValueOk": null,
+      "cartValuePred": 168,
+      "cartValueGt": null,
+      "items": [
+        {
+          "gt": "Sooji",
+          "pred": "semolina",
+          "predRaw": "Sooji",
+          "nameOk": true,
+          "qty": {
+            "gt": 1,
+            "pred": 1,
+            "ok": true
+          },
+          "price": {
+            "gt": null,
+            "pred": 0,
+            "ok": null,
+            "fillSource": "inferred"
+          },
+          "catalog": {
+            "gt": "Sooji (Rava) 500g",
+            "pred": null,
+            "state": "suggest",
+            "ok": false,
+            "suggested": false
+          },
+          "strict": true,
+          "causes": [
+            "catalog_no_auto_match"
+          ],
+          "reasons": [
+            "not auto-matched (suggest), expected \"Sooji (Rava) 500g\""
+          ]
+        },
+        {
+          "gt": "Coca Cola Big",
+          "pred": "coca cola",
+          "predRaw": "coca cola - Big",
+          "nameOk": true,
+          "qty": {
+            "gt": 1,
+            "pred": 1,
+            "ok": true
+          },
+          "price": {
+            "gt": null,
+            "pred": 38,
+            "ok": null,
+            "fillSource": "catalog"
+          },
+          "catalog": {
+            "gt": null,
+            "pred": "Thums Up 600ml",
+            "state": "matched",
+            "ok": false,
+            "suggested": false
+          },
+          "strict": true,
+          "causes": [
+            "catalog_false_match"
+          ],
+          "reasons": [
+            "auto-matched to \"Thums Up 600ml\" but the bill item is not in the catalog"
+          ]
+        },
+        {
+          "gt": "Besan small",
+          "pred": "gram flour",
+          "predRaw": "Besan - small",
+          "nameOk": true,
+          "qty": {
+            "gt": 1,
+            "pred": 1,
+            "ok": true
+          },
+          "price": {
+            "gt": null,
+            "pred": 0,
+            "ok": null,
+            "fillSource": "inferred"
+          },
+          "catalog": {
+            "gt": "Besan 500g",
+            "pred": null,
+            "state": "suggest",
+            "ok": false,
+            "suggested": false
+          },
+          "strict": true,
+          "causes": [
+            "catalog_no_auto_match"
+          ],
+          "reasons": [
+            "not auto-matched (suggest), expected \"Besan 500g\""
+          ]
+        },
+        {
+          "gt": "Sunflower Oil",
+          "pred": "sunflower oil",
+          "predRaw": "oil - sunflower",
+          "nameOk": true,
+          "qty": {
+            "gt": 1,
+            "pred": 1,
+            "ok": true
+          },
+          "price": {
+            "gt": null,
+            "pred": 130,
+            "ok": null,
+            "fillSource": "catalog"
+          },
+          "catalog": {
+            "gt": "Sunflower Oil 1L",
+            "pred": "Sunflower Oil 1L",
+            "state": "matched",
+            "ok": true,
+            "suggested": true
+          },
+          "strict": true,
+          "causes": [],
+          "reasons": []
+        }
+      ],
+      "extras": [],
+      "error": null,
+      "telemetry": [
+        {
+          "cacheHit": false,
+          "latencyMs": 8287,
+          "attempts": 1,
+          "waitedMs": 0,
+          "promptTokens": 1628,
+          "outputTokens": 253,
+          "totalTokens": 1881,
+          "finishReason": "STOP",
+          "responseText": "{\n  \"document_type\": \"single_bill\",\n  \"vendor_name\": null,\n  \"date\": null,\n  \"total_amount\": null,\n  \"confidence\": \"high\",\n  \"items\": [\n    {\n      \"product_name_raw\": \"Sooji\",\n      \"normalized_name\": \"semolina\",\n      \"size_token\": null,\n      \"number_tokens\": []\n    },\n    {\n      \"product_name_raw\": \"coca cola - Big\",\n      \"normalized_name\": \"coca cola\",\n      \"size_token\": null,\n      \"number_tokens\": []\n    },\n    {\n      \"product_name_raw\": \"Besan - small\",\n      \"normalized_name\": \"gram flour\",\n      \"size_token\": null,\n      \"number_tokens\": []\n    },\n    {\n      \"product_name_raw\": \"oil - sunflower\",\n      \"normalized_name\": \"sunflower oil\",\n      \"size_token\": null,\n      \"number_tokens\": []\n    }\n  ]\n}",
+          "model": "gemini-3.1-flash-lite"
+        }
+      ],
+      "raw": {
+        "documentType": "single_bill",
+        "confidence": "high",
+        "rawItems": [
+          {
+            "productNameRaw": "Sooji",
+            "normalizedName": "semolina",
+            "sizeToken": null,
+            "numberTokens": []
+          },
+          {
+            "productNameRaw": "coca cola - Big",
+            "normalizedName": "coca cola",
+            "sizeToken": null,
+            "numberTokens": []
+          },
+          {
+            "productNameRaw": "Besan - small",
+            "normalizedName": "gram flour",
+            "sizeToken": null,
+            "numberTokens": []
+          },
+          {
+            "productNameRaw": "oil - sunflower",
+            "normalizedName": "sunflower oil",
+            "sizeToken": null,
+            "numberTokens": []
+          }
+        ]
+      },
+      "resolved": [
+        {
+          "productNameRaw": "Sooji",
+          "normalizedName": "semolina",
+          "sizeToken": null,
+          "matchState": "suggest",
+          "candidates": [
+            {
+              "productId": "p-049",
+              "name": "Vaseline Petroleum Jelly 50ml",
+              "unitPrice": 68,
+              "sizeToken": "50ml"
+            },
+            {
+              "productId": "p-036",
+              "name": "Amul Cheese Slices 200g",
+              "unitPrice": 90,
+              "sizeToken": "200g"
+            },
+            {
+              "productId": "p-056",
+              "name": "Colin Glass Cleaner 500ml",
+              "unitPrice": 95,
+              "sizeToken": "500ml"
+            }
+          ],
+          "quantity": 1,
+          "unitPrice": 0,
+          "totalPrice": 0,
+          "fillSource": "inferred",
+          "needsVerify": true,
+          "ambiguousQtyPrice": false,
+          "numberTokens": []
+        },
+        {
+          "productNameRaw": "coca cola - Big",
+          "normalizedName": "coca cola",
+          "sizeToken": null,
+          "matchedProductId": "p-013",
+          "matchedProductName": "Thums Up 600ml",
+          "matchState": "matched",
+          "candidates": [
+            {
+              "productId": "p-013",
+              "name": "Thums Up 600ml",
+              "unitPrice": 38,
+              "sizeToken": "600ml"
+            }
+          ],
+          "quantity": 1,
+          "unitPrice": 38,
+          "totalPrice": 38,
+          "fillSource": "catalog",
+          "needsVerify": true,
+          "ambiguousQtyPrice": false,
+          "numberTokens": []
+        },
+        {
+          "productNameRaw": "Besan - small",
+          "normalizedName": "gram flour",
+          "sizeToken": null,
+          "matchState": "suggest",
+          "candidates": [
+            {
+              "productId": "p-002",
+              "name": "Wheat Flour (Atta) 5kg",
+              "unitPrice": 200,
+              "sizeToken": "5kg"
+            },
+            {
+              "productId": "p-032",
+              "name": "Haldiram Aloo Bhujia 200g",
+              "unitPrice": 55,
+              "sizeToken": "200g"
+            },
+            {
+              "productId": "p-009",
+              "name": "Groundnut Oil 1L",
+              "unitPrice": 145,
+              "sizeToken": "1l"
+            }
+          ],
+          "quantity": 1,
+          "unitPrice": 0,
+          "totalPrice": 0,
+          "fillSource": "inferred",
+          "needsVerify": true,
+          "ambiguousQtyPrice": false,
+          "numberTokens": []
+        },
+        {
+          "productNameRaw": "oil - sunflower",
+          "normalizedName": "sunflower oil",
+          "sizeToken": null,
+          "matchedProductId": "p-008",
+          "matchedProductName": "Sunflower Oil 1L",
+          "matchState": "matched",
+          "candidates": [
+            {
+              "productId": "p-008",
+              "name": "Sunflower Oil 1L",
+              "unitPrice": 130,
+              "sizeToken": "1l"
+            }
+          ],
+          "quantity": 1,
+          "unitPrice": 130,
+          "totalPrice": 130,
+          "fillSource": "catalog",
+          "needsVerify": true,
+          "ambiguousQtyPrice": false,
+          "numberTokens": []
+        }
+      ]
+    },
+    {
+      "id": "H04-circled-qty",
+      "tags": [
+        "handwriting",
+        "circled_qty",
+        "hindi_names"
+      ],
+      "gtCount": 4,
+      "predCount": 4,
+      "strictMatches": 4,
+      "nameMatches": 4,
+      "f1": 1,
+      "totalOk": null,
+      "totalPred": null,
+      "totalGt": null,
+      "cartValueOk": null,
+      "cartValuePred": 36,
+      "cartValueGt": null,
+      "items": [
+        {
+          "gt": "Poha",
+          "pred": "flattened rice",
+          "predRaw": "Poha - 1",
+          "nameOk": true,
+          "qty": {
+            "gt": 1,
+            "pred": 1,
+            "ok": true
+          },
+          "price": {
+            "gt": null,
+            "pred": 0,
+            "ok": null,
+            "fillSource": "bill"
+          },
+          "catalog": {
+            "gt": "Poha 500g",
+            "pred": null,
+            "state": "unmatched",
+            "ok": false,
+            "suggested": false
+          },
+          "strict": true,
+          "causes": [
+            "catalog_no_auto_match"
+          ],
+          "reasons": [
+            "not auto-matched (unmatched), expected \"Poha 500g\""
+          ]
+        },
+        {
+          "gt": "Salt",
+          "pred": "salt",
+          "predRaw": "Salt - 2",
+          "nameOk": true,
+          "qty": {
+            "gt": 2,
+            "pred": 2,
+            "ok": true
+          },
+          "price": {
+            "gt": null,
+            "pred": 18,
+            "ok": null,
+            "fillSource": "catalog"
+          },
+          "catalog": {
+            "gt": "Salt 1kg",
+            "pred": "Salt 1kg",
+            "state": "matched",
+            "ok": true,
+            "suggested": true
+          },
+          "strict": true,
+          "causes": [],
+          "reasons": []
+        },
+        {
+          "gt": "Toor Dal 1kg",
+          "pred": "pigeon pea lentils",
+          "predRaw": "Toor daal - 1kg",
+          "nameOk": true,
+          "qty": {
+            "gt": 1,
+            "pred": 1,
+            "ok": true
+          },
+          "price": {
+            "gt": null,
+            "pred": 0,
+            "ok": null,
+            "fillSource": "inferred"
+          },
+          "catalog": {
+            "gt": "Toor Dal 1kg",
+            "pred": null,
+            "state": "unmatched",
+            "ok": false,
+            "suggested": false
+          },
+          "strict": true,
+          "causes": [
+            "catalog_no_auto_match"
+          ],
+          "reasons": [
+            "not auto-matched (unmatched), expected \"Toor Dal 1kg\""
+          ]
+        },
+        {
+          "gt": "Chana",
+          "pred": "chickpeas",
+          "predRaw": "chana - 1",
+          "nameOk": true,
+          "qty": {
+            "gt": 1,
+            "pred": 1,
+            "ok": true
+          },
+          "price": {
+            "gt": null,
+            "pred": 0,
+            "ok": null,
+            "fillSource": "bill"
+          },
+          "catalog": {
+            "gt": "*",
+            "pred": null,
+            "state": "suggest",
+            "ok": null,
+            "suggested": false
+          },
+          "strict": true,
+          "causes": [],
+          "reasons": []
+        }
+      ],
+      "extras": [],
+      "error": null,
+      "telemetry": [
+        {
+          "cacheHit": false,
+          "latencyMs": 4709,
+          "attempts": 1,
+          "waitedMs": 0,
+          "promptTokens": 1621,
+          "outputTokens": 435,
+          "totalTokens": 2056,
+          "finishReason": "STOP",
+          "responseText": "{\n  \"document_type\": \"single_bill\",\n  \"vendor_name\": null,\n  \"date\": null,\n  \"total_amount\": null,\n  \"confidence\": \"high\",\n  \"items\": [\n    {\n      \"product_name_raw\": \"Poha - 1\",\n      \"normalized_name\": \"flattened rice\",\n      \"size_token\": null,\n      \"number_tokens\": [\n        {\n          \"value\": 1,\n          \"guessed_role\": \"quantity\",\n          \"has_currency_marker\": false,\n          \"has_multiply_marker\": false,\n          \"confidence\": \"high\"\n        }\n      ]\n    },\n    {\n      \"product_name_raw\": \"Salt - 2\",\n      \"normalized_name\": \"salt\",\n      \"size_token\": null,\n      \"number_tokens\": [\n        {\n          \"value\": 2,\n          \"guessed_role\": \"quantity\",\n          \"has_currency_marker\": false,\n          \"has_multiply_marker\": false,\n          \"confidence\": \"high\"\n        }\n      ]\n    },\n    {\n      \"product_name_raw\": \"Toor daal - 1kg\",\n      \"normalized_name\": \"pigeon pea lentils\",\n      \"size_token\": \"1kg\",\n      \"number_tokens\": []\n    },\n    {\n      \"product_name_raw\": \"chana - 1\",\n      \"normalized_name\": \"chickpeas\",\n      \"size_token\": null,\n      \"number_tokens\": [\n        {\n          \"value\": 1,\n          \"guessed_role\": \"quantity\",\n          \"has_currency_marker\": false,\n          \"has_multiply_marker\": false,\n          \"confidence\": \"high\"\n        }\n      ]\n    }\n  ]\n}",
+          "model": "gemini-3.1-flash-lite"
+        }
+      ],
+      "raw": {
+        "documentType": "single_bill",
+        "confidence": "high",
+        "rawItems": [
+          {
+            "productNameRaw": "Poha - 1",
+            "normalizedName": "flattened rice",
+            "sizeToken": null,
+            "numberTokens": [
+              {
+                "value": 1,
+                "guessedRole": "quantity",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "high"
+              }
+            ]
+          },
+          {
+            "productNameRaw": "Salt - 2",
+            "normalizedName": "salt",
+            "sizeToken": null,
+            "numberTokens": [
+              {
+                "value": 2,
+                "guessedRole": "quantity",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "high"
+              }
+            ]
+          },
+          {
+            "productNameRaw": "Toor daal - 1kg",
+            "normalizedName": "pigeon pea lentils",
+            "sizeToken": "1kg",
+            "numberTokens": []
+          },
+          {
+            "productNameRaw": "chana - 1",
+            "normalizedName": "chickpeas",
+            "sizeToken": null,
+            "numberTokens": [
+              {
+                "value": 1,
+                "guessedRole": "quantity",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "high"
+              }
+            ]
+          }
+        ]
+      },
+      "resolved": [
+        {
+          "productNameRaw": "Poha - 1",
+          "normalizedName": "flattened rice",
+          "sizeToken": null,
+          "matchState": "unmatched",
+          "candidates": [],
+          "quantity": 1,
+          "unitPrice": 0,
+          "totalPrice": 0,
+          "fillSource": "bill",
+          "needsVerify": true,
+          "ambiguousQtyPrice": false,
+          "numberTokens": [
+            {
+              "value": 1,
+              "guessedRole": "quantity",
+              "hasCurrencyMarker": false,
+              "hasMultiplyMarker": false,
+              "confidence": "high"
+            }
+          ]
+        },
+        {
+          "productNameRaw": "Salt - 2",
+          "normalizedName": "salt",
+          "sizeToken": null,
+          "matchedProductId": "p-007",
+          "matchedProductName": "Salt 1kg",
+          "matchState": "matched",
+          "candidates": [
+            {
+              "productId": "p-007",
+              "name": "Salt 1kg",
+              "unitPrice": 18,
+              "sizeToken": "1kg"
+            }
+          ],
+          "quantity": 2,
+          "unitPrice": 18,
+          "totalPrice": 36,
+          "fillSource": "catalog",
+          "needsVerify": true,
+          "ambiguousQtyPrice": false,
+          "numberTokens": [
+            {
+              "value": 2,
+              "guessedRole": "quantity",
+              "hasCurrencyMarker": false,
+              "hasMultiplyMarker": false,
+              "confidence": "high"
+            }
+          ]
+        },
+        {
+          "productNameRaw": "Toor daal - 1kg",
+          "normalizedName": "pigeon pea lentils",
+          "sizeToken": "1kg",
+          "matchState": "unmatched",
+          "candidates": [],
+          "quantity": 1,
+          "unitPrice": 0,
+          "totalPrice": 0,
+          "fillSource": "inferred",
+          "needsVerify": true,
+          "ambiguousQtyPrice": false,
+          "numberTokens": []
+        },
+        {
+          "productNameRaw": "chana - 1",
+          "normalizedName": "chickpeas",
+          "sizeToken": null,
+          "matchState": "suggest",
+          "candidates": [
+            {
+              "productId": "p-068",
+              "name": "Chings Schezwan Sauce 250g",
+              "unitPrice": 58,
+              "sizeToken": "250g"
+            },
+            {
+              "productId": "p-023",
+              "name": "Horlicks 500g",
+              "unitPrice": 195,
+              "sizeToken": "500g"
+            },
+            {
+              "productId": "p-025",
+              "name": "Hide & Seek 100g",
+              "unitPrice": 22,
+              "sizeToken": "100g"
+            }
+          ],
+          "quantity": 1,
+          "unitPrice": 0,
+          "totalPrice": 0,
+          "fillSource": "bill",
+          "needsVerify": true,
+          "ambiguousQtyPrice": false,
+          "numberTokens": [
+            {
+              "value": 1,
+              "guessedRole": "quantity",
+              "hasCurrencyMarker": false,
+              "hasMultiplyMarker": false,
+              "confidence": "high"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "H05-brands",
+      "tags": [
+        "handwriting",
+        "circled_qty",
+        "abbreviations"
+      ],
+      "gtCount": 3,
+      "predCount": 3,
+      "strictMatches": 2,
+      "nameMatches": 2,
+      "f1": 0.667,
+      "totalOk": null,
+      "totalPred": null,
+      "totalGt": null,
+      "cartValueOk": null,
+      "cartValuePred": 303,
+      "cartValueGt": null,
+      "items": [
+        {
+          "gt": "Amul Butter",
+          "pred": "butter",
+          "predRaw": "Amul butter",
+          "nameOk": true,
+          "qty": {
+            "gt": 1,
+            "pred": 1,
+            "ok": true
+          },
+          "price": {
+            "gt": null,
+            "pred": 245,
+            "ok": null,
+            "fillSource": "catalog"
+          },
+          "catalog": {
+            "gt": "Amul Butter 500g",
+            "pred": "Amul Butter 500g",
+            "state": "matched",
+            "ok": true,
+            "suggested": true
+          },
+          "strict": true,
+          "causes": [],
+          "reasons": []
+        },
+        {
+          "gt": "Bread",
+          "pred": "bread",
+          "predRaw": "Bread",
+          "nameOk": true,
+          "qty": {
+            "gt": 1,
+            "pred": 1,
+            "ok": true
+          },
+          "price": {
+            "gt": null,
+            "pred": 0,
+            "ok": null,
+            "fillSource": "inferred"
+          },
+          "catalog": {
+            "gt": null,
+            "pred": null,
+            "state": "suggest",
+            "ok": true,
+            "suggested": false
+          },
+          "strict": true,
+          "causes": [],
+          "reasons": []
+        },
+        {
+          "gt": "Chings Schezwan",
+          "pred": null,
+          "predRaw": null,
+          "nameOk": false,
+          "qty": {
+            "gt": 1,
+            "pred": null,
+            "ok": false
+          },
+          "price": {
+            "gt": null,
+            "pred": null,
+            "ok": null
+          },
+          "catalog": {
+            "gt": "Chings Schezwan Sauce 250g",
+            "pred": null,
+            "state": null,
+            "ok": null,
+            "suggested": false
+          },
+          "strict": false,
+          "causes": [
+            "missing"
+          ],
+          "reasons": [
+            "\"Chings Schezwan\" not extracted"
+          ]
+        }
+      ],
+      "extras": [
+        {
+          "name": "chips",
+          "qty": 1,
+          "price": 58
+        }
+      ],
+      "error": null,
+      "telemetry": [
+        {
+          "cacheHit": false,
+          "latencyMs": 5921,
+          "attempts": 3,
+          "waitedMs": 15753,
+          "promptTokens": 1655,
+          "outputTokens": 256,
+          "totalTokens": 1911,
+          "finishReason": "STOP",
+          "responseText": "{\n  \"document_type\": \"single_bill\",\n  \"vendor_name\": null,\n  \"date\": null,\n  \"total_amount\": null,\n  \"confidence\": \"low\",\n  \"items\": [\n    {\n      \"product_name_raw\": \"Amul butter\",\n      \"normalized_name\": \"butter\",\n      \"size_token\": null,\n      \"number_tokens\": []\n    },\n    {\n      \"product_name_raw\": \"Bread\",\n      \"normalized_name\": \"bread\",\n      \"size_token\": null,\n      \"number_tokens\": []\n    },\n    {\n      \"product_name_raw\": \"Chips schwen- (1)\",\n      \"normalized_name\": \"chips\",\n      \"size_token\": null,\n      \"number_tokens\": [\n        {\n          \"value\": 1,\n          \"guessed_role\": \"quantity\",\n          \"has_currency_marker\": false,\n          \"has_multiply_marker\": false,\n          \"confidence\": \"high\"\n        }\n      ]\n    }\n  ]\n}",
+          "model": "gemini-3.1-flash-lite"
+        }
+      ],
+      "raw": {
+        "documentType": "single_bill",
+        "confidence": "low",
+        "rawItems": [
+          {
+            "productNameRaw": "Amul butter",
+            "normalizedName": "butter",
+            "sizeToken": null,
+            "numberTokens": []
+          },
+          {
+            "productNameRaw": "Bread",
+            "normalizedName": "bread",
+            "sizeToken": null,
+            "numberTokens": []
+          },
+          {
+            "productNameRaw": "Chips schwen- (1)",
+            "normalizedName": "chips",
+            "sizeToken": null,
+            "numberTokens": [
+              {
+                "value": 1,
+                "guessedRole": "quantity",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "high"
+              }
+            ]
+          }
+        ]
+      },
+      "resolved": [
+        {
+          "productNameRaw": "Amul butter",
+          "normalizedName": "butter",
+          "sizeToken": null,
+          "matchedProductId": "p-035",
+          "matchedProductName": "Amul Butter 500g",
+          "matchState": "matched",
+          "candidates": [
+            {
+              "productId": "p-035",
+              "name": "Amul Butter 500g",
+              "unitPrice": 245,
+              "sizeToken": "500g"
+            }
+          ],
+          "quantity": 1,
+          "unitPrice": 245,
+          "totalPrice": 245,
+          "fillSource": "catalog",
+          "needsVerify": true,
+          "ambiguousQtyPrice": false,
+          "numberTokens": []
+        },
+        {
+          "productNameRaw": "Bread",
+          "normalizedName": "bread",
+          "sizeToken": null,
+          "matchState": "suggest",
+          "candidates": [
+            {
+              "productId": "p-002",
+              "name": "Wheat Flour (Atta) 5kg",
+              "unitPrice": 200,
+              "sizeToken": "5kg"
+            },
+            {
+              "productId": "p-032",
+              "name": "Haldiram Aloo Bhujia 200g",
+              "unitPrice": 55,
+              "sizeToken": "200g"
+            },
+            {
+              "productId": "p-033",
+              "name": "Cadbury Dairy Milk 13g",
+              "unitPrice": 9,
+              "sizeToken": "13g"
+            }
+          ],
+          "quantity": 1,
+          "unitPrice": 0,
+          "totalPrice": 0,
+          "fillSource": "inferred",
+          "needsVerify": true,
+          "ambiguousQtyPrice": false,
+          "numberTokens": []
+        },
+        {
+          "productNameRaw": "Chips schwen- (1)",
+          "normalizedName": "chips",
+          "sizeToken": null,
+          "matchedProductId": "p-068",
+          "matchedProductName": "Chings Schezwan Sauce 250g",
+          "matchState": "matched",
+          "candidates": [
+            {
+              "productId": "p-068",
+              "name": "Chings Schezwan Sauce 250g",
+              "unitPrice": 58,
+              "sizeToken": "250g"
+            }
+          ],
+          "quantity": 1,
+          "unitPrice": 58,
+          "totalPrice": 58,
+          "fillSource": "catalog",
+          "needsVerify": true,
+          "ambiguousQtyPrice": false,
+          "numberTokens": [
+            {
+              "value": 1,
+              "guessedRole": "quantity",
+              "hasCurrencyMarker": false,
+              "hasMultiplyMarker": false,
+              "confidence": "high"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "H06-overwritten",
+      "tags": [
+        "handwriting",
+        "circled_qty",
+        "abbreviations"
+      ],
+      "gtCount": 4,
+      "predCount": 4,
+      "strictMatches": 4,
+      "nameMatches": 4,
+      "f1": 1,
+      "totalOk": null,
+      "totalPred": null,
+      "totalGt": null,
+      "cartValueOk": null,
+      "cartValuePred": 200,
+      "cartValueGt": null,
+      "items": [
+        {
+          "gt": "Dairy Milk small",
+          "pred": "Dairy Milk",
+          "predRaw": "Dairy milk -small",
+          "nameOk": true,
+          "qty": {
+            "gt": 2,
+            "pred": 2,
+            "ok": true
+          },
+          "price": {
+            "gt": null,
+            "pred": 9,
+            "ok": null,
+            "fillSource": "catalog"
+          },
+          "catalog": {
+            "gt": "Cadbury Dairy Milk 13g",
+            "pred": "Cadbury Dairy Milk 13g",
+            "state": "matched",
+            "ok": true,
+            "suggested": true
+          },
+          "strict": true,
+          "causes": [],
+          "reasons": []
+        },
+        {
+          "gt": "Lifebuoy",
+          "pred": "Lifebuoy soap",
+          "predRaw": "Lifeboy",
+          "nameOk": true,
+          "qty": {
+            "gt": 5,
+            "pred": 5,
+            "ok": true
+          },
+          "price": {
+            "gt": null,
+            "pred": 24,
+            "ok": null,
+            "fillSource": "catalog"
+          },
+          "catalog": {
+            "gt": "Lifebuoy Soap 100g",
+            "pred": "Lifebuoy Soap 100g",
+            "state": "matched",
+            "ok": true,
+            "suggested": true
+          },
+          "strict": true,
+          "causes": [],
+          "reasons": []
+        },
+        {
+          "gt": "Ariel",
+          "pred": "Ariel detergent",
+          "predRaw": "Ariel",
+          "nameOk": true,
+          "qty": {
+            "gt": 1,
+            "pred": 1,
+            "ok": true
+          },
+          "price": {
+            "gt": null,
+            "pred": 0,
+            "ok": null,
+            "fillSource": "bill"
+          },
+          "catalog": {
+            "gt": "Ariel Powder 500g",
+            "pred": null,
+            "state": "unmatched",
+            "ok": false,
+            "suggested": false
+          },
+          "strict": true,
+          "causes": [
+            "catalog_no_auto_match"
+          ],
+          "reasons": [
+            "not auto-matched (unmatched), expected \"Ariel Powder 500g\""
+          ]
+        },
+        {
+          "gt": "Kissan Jam",
+          "pred": "Kissan jam",
+          "predRaw": "kis. Jam",
+          "nameOk": true,
+          "qty": {
+            "gt": 1,
+            "pred": 1,
+            "ok": true
+          },
+          "price": {
+            "gt": null,
+            "pred": 62,
+            "ok": null,
+            "fillSource": "catalog"
+          },
+          "catalog": {
+            "gt": "Kissan Jam 200g",
+            "pred": "Kissan Jam 200g",
+            "state": "matched",
+            "ok": true,
+            "suggested": true
+          },
+          "strict": true,
+          "causes": [],
+          "reasons": []
+        }
+      ],
+      "extras": [],
+      "error": null,
+      "telemetry": [
+        {
+          "cacheHit": false,
+          "latencyMs": 93207,
+          "attempts": 2,
+          "waitedMs": 5253,
+          "promptTokens": 1628,
+          "outputTokens": 480,
+          "totalTokens": 2108,
+          "finishReason": "STOP",
+          "responseText": "{\n  \"document_type\": \"single_bill\",\n  \"vendor_name\": null,\n  \"date\": null,\n  \"total_amount\": null,\n  \"confidence\": \"high\",\n  \"items\": [\n    {\n      \"product_name_raw\": \"Dairy milk -small\",\n      \"normalized_name\": \"Dairy Milk\",\n      \"size_token\": null,\n      \"number_tokens\": [\n        {\n          \"value\": 2,\n          \"guessed_role\": \"quantity\",\n          \"has_currency_marker\": false,\n          \"has_multiply_marker\": false,\n          \"confidence\": \"high\"\n        }\n      ]\n    },\n    {\n      \"product_name_raw\": \"Lifeboy\",\n      \"normalized_name\": \"Lifebuoy soap\",\n      \"size_token\": null,\n      \"number_tokens\": [\n        {\n          \"value\": 5,\n          \"guessed_role\": \"quantity\",\n          \"has_currency_marker\": false,\n          \"has_multiply_marker\": false,\n          \"confidence\": \"high\"\n        }\n      ]\n    },\n    {\n      \"product_name_raw\": \"Ariel\",\n      \"normalized_name\": \"Ariel detergent\",\n      \"size_token\": null,\n      \"number_tokens\": [\n        {\n          \"value\": 1,\n          \"guessed_role\": \"quantity\",\n          \"has_currency_marker\": false,\n          \"has_multiply_marker\": false,\n          \"confidence\": \"high\"\n        }\n      ]\n    },\n    {\n      \"product_name_raw\": \"kis. Jam\",\n      \"normalized_name\": \"Kissan jam\",\n      \"size_token\": null,\n      \"number_tokens\": [\n        {\n          \"value\": 1,\n          \"guessed_role\": \"quantity\",\n          \"has_currency_marker\": false,\n          \"has_multiply_marker\": false,\n          \"confidence\": \"high\"\n        }\n      ]\n    }\n  ]\n}",
+          "model": "gemini-3.1-flash-lite"
+        }
+      ],
+      "raw": {
+        "documentType": "single_bill",
+        "confidence": "high",
+        "rawItems": [
+          {
+            "productNameRaw": "Dairy milk -small",
+            "normalizedName": "Dairy Milk",
+            "sizeToken": null,
+            "numberTokens": [
+              {
+                "value": 2,
+                "guessedRole": "quantity",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "high"
+              }
+            ]
+          },
+          {
+            "productNameRaw": "Lifeboy",
+            "normalizedName": "Lifebuoy soap",
+            "sizeToken": null,
+            "numberTokens": [
+              {
+                "value": 5,
+                "guessedRole": "quantity",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "high"
+              }
+            ]
+          },
+          {
+            "productNameRaw": "Ariel",
+            "normalizedName": "Ariel detergent",
+            "sizeToken": null,
+            "numberTokens": [
+              {
+                "value": 1,
+                "guessedRole": "quantity",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "high"
+              }
+            ]
+          },
+          {
+            "productNameRaw": "kis. Jam",
+            "normalizedName": "Kissan jam",
+            "sizeToken": null,
+            "numberTokens": [
+              {
+                "value": 1,
+                "guessedRole": "quantity",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "high"
+              }
+            ]
+          }
+        ]
+      },
+      "resolved": [
+        {
+          "productNameRaw": "Dairy milk -small",
+          "normalizedName": "Dairy Milk",
+          "sizeToken": null,
+          "matchedProductId": "p-033",
+          "matchedProductName": "Cadbury Dairy Milk 13g",
+          "matchState": "matched",
+          "candidates": [
+            {
+              "productId": "p-033",
+              "name": "Cadbury Dairy Milk 13g",
+              "unitPrice": 9,
+              "sizeToken": "13g"
+            }
+          ],
+          "quantity": 2,
+          "unitPrice": 9,
+          "totalPrice": 18,
+          "fillSource": "catalog",
+          "needsVerify": true,
+          "ambiguousQtyPrice": false,
+          "numberTokens": [
+            {
+              "value": 2,
+              "guessedRole": "quantity",
+              "hasCurrencyMarker": false,
+              "hasMultiplyMarker": false,
+              "confidence": "high"
+            }
+          ]
+        },
+        {
+          "productNameRaw": "Lifeboy",
+          "normalizedName": "Lifebuoy soap",
+          "sizeToken": null,
+          "matchedProductId": "p-039",
+          "matchedProductName": "Lifebuoy Soap 100g",
+          "matchState": "matched",
+          "candidates": [
+            {
+              "productId": "p-039",
+              "name": "Lifebuoy Soap 100g",
+              "unitPrice": 24,
+              "sizeToken": "100g"
+            }
+          ],
+          "quantity": 5,
+          "unitPrice": 24,
+          "totalPrice": 120,
+          "fillSource": "catalog",
+          "needsVerify": true,
+          "ambiguousQtyPrice": false,
+          "numberTokens": [
+            {
+              "value": 5,
+              "guessedRole": "quantity",
+              "hasCurrencyMarker": false,
+              "hasMultiplyMarker": false,
+              "confidence": "high"
+            }
+          ]
+        },
+        {
+          "productNameRaw": "Ariel",
+          "normalizedName": "Ariel detergent",
+          "sizeToken": null,
+          "matchState": "unmatched",
+          "candidates": [],
+          "quantity": 1,
+          "unitPrice": 0,
+          "totalPrice": 0,
+          "fillSource": "bill",
+          "needsVerify": true,
+          "ambiguousQtyPrice": false,
+          "numberTokens": [
+            {
+              "value": 1,
+              "guessedRole": "quantity",
+              "hasCurrencyMarker": false,
+              "hasMultiplyMarker": false,
+              "confidence": "high"
+            }
+          ]
+        },
+        {
+          "productNameRaw": "kis. Jam",
+          "normalizedName": "Kissan jam",
+          "sizeToken": null,
+          "matchedProductId": "p-062",
+          "matchedProductName": "Kissan Jam 200g",
+          "matchState": "matched",
+          "candidates": [
+            {
+              "productId": "p-062",
+              "name": "Kissan Jam 200g",
+              "unitPrice": 62,
+              "sizeToken": "200g"
+            }
+          ],
+          "quantity": 1,
+          "unitPrice": 62,
+          "totalPrice": 62,
+          "fillSource": "catalog",
+          "needsVerify": true,
+          "ambiguousQtyPrice": false,
+          "numberTokens": [
+            {
+              "value": 1,
+              "guessedRole": "quantity",
+              "hasCurrencyMarker": false,
+              "hasMultiplyMarker": false,
+              "confidence": "high"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "H08-single",
+      "tags": [
+        "handwriting",
+        "circled_qty"
+      ],
+      "gtCount": 1,
+      "predCount": 1,
+      "strictMatches": 1,
+      "nameMatches": 1,
+      "f1": 1,
+      "totalOk": null,
+      "totalPred": null,
+      "totalGt": null,
+      "cartValueOk": null,
+      "cartValuePred": 200,
+      "cartValueGt": null,
+      "items": [
+        {
+          "gt": "Tata Tea",
+          "pred": "Tea",
+          "predRaw": "Tea - Tata",
+          "nameOk": true,
+          "qty": {
+            "gt": 1,
+            "pred": 1,
+            "ok": true
+          },
+          "price": {
+            "gt": null,
+            "pred": 200,
+            "ok": null,
+            "fillSource": "catalog"
+          },
+          "catalog": {
+            "gt": "Tata Tea Gold 500g",
+            "pred": "Tata Tea Gold 500g",
+            "state": "matched",
+            "ok": true,
+            "suggested": true
+          },
+          "strict": true,
+          "causes": [],
+          "reasons": []
+        }
+      ],
+      "extras": [],
+      "error": null,
+      "telemetry": [
+        {
+          "cacheHit": false,
+          "latencyMs": 11319,
+          "attempts": 2,
+          "waitedMs": 5292,
+          "promptTokens": 1604,
+          "outputTokens": 161,
+          "totalTokens": 1765,
+          "finishReason": "STOP",
+          "responseText": "{\n  \"document_type\": \"single_bill\",\n  \"vendor_name\": null,\n  \"date\": null,\n  \"total_amount\": null,\n  \"confidence\": \"high\",\n  \"items\": [\n    {\n      \"product_name_raw\": \"Tea - Tata\",\n      \"normalized_name\": \"Tea\",\n      \"size_token\": null,\n      \"number_tokens\": [\n        {\n          \"value\": 1,\n          \"guessed_role\": \"quantity\",\n          \"has_currency_marker\": false,\n          \"has_multiply_marker\": false,\n          \"confidence\": \"high\"\n        }\n      ]\n    }\n  ]\n}",
+          "model": "gemini-3.1-flash-lite"
+        }
+      ],
+      "raw": {
+        "documentType": "single_bill",
+        "confidence": "high",
+        "rawItems": [
+          {
+            "productNameRaw": "Tea - Tata",
+            "normalizedName": "Tea",
+            "sizeToken": null,
+            "numberTokens": [
+              {
+                "value": 1,
+                "guessedRole": "quantity",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "high"
+              }
+            ]
+          }
+        ]
+      },
+      "resolved": [
+        {
+          "productNameRaw": "Tea - Tata",
+          "normalizedName": "Tea",
+          "sizeToken": null,
+          "matchedProductId": "p-020",
+          "matchedProductName": "Tata Tea Gold 500g",
+          "matchState": "matched",
+          "candidates": [
+            {
+              "productId": "p-020",
+              "name": "Tata Tea Gold 500g",
+              "unitPrice": 200,
+              "sizeToken": "500g"
+            }
+          ],
+          "quantity": 1,
+          "unitPrice": 200,
+          "totalPrice": 200,
+          "fillSource": "catalog",
+          "needsVerify": true,
+          "ambiguousQtyPrice": false,
+          "numberTokens": [
+            {
+              "value": 1,
+              "guessedRole": "quantity",
+              "hasCurrencyMarker": false,
+              "hasMultiplyMarker": false,
+              "confidence": "high"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "H09-prices-total",
+      "tags": [
+        "handwriting",
+        "qty_vs_price"
+      ],
+      "gtCount": 4,
+      "predCount": 4,
+      "strictMatches": 1,
+      "nameMatches": 4,
+      "f1": 0.25,
+      "totalOk": true,
+      "totalPred": 488,
+      "totalGt": 488,
+      "cartValueOk": false,
+      "cartValuePred": 6006,
+      "cartValueGt": 488,
+      "items": [
+        {
+          "gt": "Vaseline",
+          "pred": "vaseline",
+          "predRaw": "Vaseline",
+          "nameOk": true,
+          "qty": {
+            "gt": 1,
+            "pred": 80,
+            "ok": false
+          },
+          "price": {
+            "gt": 80,
+            "pred": 68,
+            "ok": false,
+            "fillSource": "catalog"
+          },
+          "catalog": {
+            "gt": "Vaseline Petroleum Jelly 50ml",
+            "pred": "Vaseline Petroleum Jelly 50ml",
+            "state": "matched",
+            "ok": true,
+            "suggested": true
+          },
+          "strict": false,
+          "causes": [
+            "price_read_as_qty",
+            "price_from_catalog"
+          ],
+          "reasons": [
+            "price 80 read as quantity",
+            "unit price 68 came from the catalog, bill says 80"
+          ]
+        },
+        {
+          "gt": "Atta",
+          "pred": "wheat flour",
+          "predRaw": "Atta",
+          "nameOk": true,
+          "qty": {
+            "gt": 1,
+            "pred": 1,
+            "ok": true
+          },
+          "price": {
+            "gt": 230,
+            "pred": 230,
+            "ok": true,
+            "fillSource": "bill"
+          },
+          "catalog": {
+            "gt": "Wheat Flour (Atta) 5kg",
+            "pred": "Wheat Flour (Atta) 5kg",
+            "state": "matched",
+            "ok": true,
+            "suggested": true
+          },
+          "strict": true,
+          "causes": [],
+          "reasons": []
+        },
+        {
+          "gt": "Yippee",
+          "pred": "yippee noodles",
+          "predRaw": "Yoppee",
+          "nameOk": true,
+          "qty": {
+            "gt": 1,
+            "pred": 28,
+            "ok": false
+          },
+          "price": {
+            "gt": 28,
+            "pred": 12,
+            "ok": false,
+            "fillSource": "catalog"
+          },
+          "catalog": {
+            "gt": "Yippee Noodles 75g",
+            "pred": "Yippee Noodles 75g",
+            "state": "matched",
+            "ok": true,
+            "suggested": true
+          },
+          "strict": false,
+          "causes": [
+            "price_read_as_qty",
+            "price_from_catalog"
+          ],
+          "reasons": [
+            "price 28 read as quantity",
+            "unit price 12 came from the catalog, bill says 28"
+          ]
+        },
+        {
+          "gt": "Rin",
+          "pred": "rin detergent",
+          "predRaw": "Rin",
+          "nameOk": true,
+          "qty": {
+            "gt": 1,
+            "pred": 0,
+            "ok": false
+          },
+          "price": {
+            "gt": 150,
+            "pred": 0,
+            "ok": false,
+            "fillSource": "inferred"
+          },
+          "catalog": {
+            "gt": "Rin Powder 500g",
+            "pred": null,
+            "state": "unmatched",
+            "ok": false,
+            "suggested": false
+          },
+          "strict": false,
+          "causes": [
+            "qty_ambiguous_asked",
+            "price_missing",
+            "catalog_no_auto_match"
+          ],
+          "reasons": [
+            "qty left for the merchant (ambiguous), expected 1",
+            "no unit price read (bill says 150)",
+            "not auto-matched (unmatched), expected \"Rin Powder 500g\""
+          ]
+        }
+      ],
+      "extras": [],
+      "error": null,
+      "telemetry": [
+        {
+          "cacheHit": false,
+          "latencyMs": 22566,
+          "attempts": 2,
+          "waitedMs": 5022,
+          "promptTokens": 1623,
+          "outputTokens": 485,
+          "totalTokens": 2108,
+          "finishReason": "STOP",
+          "responseText": "{\n  \"document_type\": \"single_bill\",\n  \"vendor_name\": null,\n  \"date\": null,\n  \"total_amount\": 488,\n  \"confidence\": \"high\",\n  \"items\": [\n    {\n      \"product_name_raw\": \"Vaseline\",\n      \"normalized_name\": \"vaseline\",\n      \"size_token\": null,\n      \"number_tokens\": [\n        {\n          \"value\": 80,\n          \"guessed_role\": \"total\",\n          \"has_currency_marker\": false,\n          \"has_multiply_marker\": false,\n          \"confidence\": \"high\"\n        }\n      ]\n    },\n    {\n      \"product_name_raw\": \"Atta\",\n      \"normalized_name\": \"wheat flour\",\n      \"size_token\": null,\n      \"number_tokens\": [\n        {\n          \"value\": 230,\n          \"guessed_role\": \"total\",\n          \"has_currency_marker\": false,\n          \"has_multiply_marker\": false,\n          \"confidence\": \"high\"\n        }\n      ]\n    },\n    {\n      \"product_name_raw\": \"Yoppee\",\n      \"normalized_name\": \"yippee noodles\",\n      \"size_token\": null,\n      \"number_tokens\": [\n        {\n          \"value\": 28,\n          \"guessed_role\": \"total\",\n          \"has_currency_marker\": false,\n          \"has_multiply_marker\": false,\n          \"confidence\": \"high\"\n        }\n      ]\n    },\n    {\n      \"product_name_raw\": \"Rin\",\n      \"normalized_name\": \"rin detergent\",\n      \"size_token\": null,\n      \"number_tokens\": [\n        {\n          \"value\": 150,\n          \"guessed_role\": \"total\",\n          \"has_currency_marker\": false,\n          \"has_multiply_marker\": false,\n          \"confidence\": \"high\"\n        }\n      ]\n    }\n  ]\n}",
+          "model": "gemini-3.1-flash-lite"
+        }
+      ],
+      "raw": {
+        "documentType": "single_bill",
+        "totalAmount": 488,
+        "confidence": "high",
+        "rawItems": [
+          {
+            "productNameRaw": "Vaseline",
+            "normalizedName": "vaseline",
+            "sizeToken": null,
+            "numberTokens": [
+              {
+                "value": 80,
+                "guessedRole": "total",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "high"
+              }
+            ]
+          },
+          {
+            "productNameRaw": "Atta",
+            "normalizedName": "wheat flour",
+            "sizeToken": null,
+            "numberTokens": [
+              {
+                "value": 230,
+                "guessedRole": "total",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "high"
+              }
+            ]
+          },
+          {
+            "productNameRaw": "Yoppee",
+            "normalizedName": "yippee noodles",
+            "sizeToken": null,
+            "numberTokens": [
+              {
+                "value": 28,
+                "guessedRole": "total",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "high"
+              }
+            ]
+          },
+          {
+            "productNameRaw": "Rin",
+            "normalizedName": "rin detergent",
+            "sizeToken": null,
+            "numberTokens": [
+              {
+                "value": 150,
+                "guessedRole": "total",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "high"
+              }
+            ]
+          }
+        ]
+      },
+      "resolved": [
+        {
+          "productNameRaw": "Vaseline",
+          "normalizedName": "vaseline",
+          "sizeToken": null,
+          "matchedProductId": "p-049",
+          "matchedProductName": "Vaseline Petroleum Jelly 50ml",
+          "matchState": "matched",
+          "candidates": [
+            {
+              "productId": "p-049",
+              "name": "Vaseline Petroleum Jelly 50ml",
+              "unitPrice": 68,
+              "sizeToken": "50ml"
+            }
+          ],
+          "quantity": 80,
+          "unitPrice": 68,
+          "totalPrice": 5440,
+          "fillSource": "catalog",
+          "needsVerify": true,
+          "ambiguousQtyPrice": false,
+          "numberTokens": [
+            {
+              "value": 80,
+              "guessedRole": "total",
+              "hasCurrencyMarker": false,
+              "hasMultiplyMarker": false,
+              "confidence": "high"
+            }
+          ]
+        },
+        {
+          "productNameRaw": "Atta",
+          "normalizedName": "wheat flour",
+          "sizeToken": null,
+          "matchedProductId": "p-002",
+          "matchedProductName": "Wheat Flour (Atta) 5kg",
+          "matchState": "matched",
+          "candidates": [
+            {
+              "productId": "p-002",
+              "name": "Wheat Flour (Atta) 5kg",
+              "unitPrice": 200,
+              "sizeToken": "5kg"
+            }
+          ],
+          "quantity": 1,
+          "unitPrice": 230,
+          "totalPrice": 230,
+          "fillSource": "bill",
+          "needsVerify": true,
+          "ambiguousQtyPrice": false,
+          "numberTokens": [
+            {
+              "value": 230,
+              "guessedRole": "total",
+              "hasCurrencyMarker": false,
+              "hasMultiplyMarker": false,
+              "confidence": "high"
+            }
+          ]
+        },
+        {
+          "productNameRaw": "Yoppee",
+          "normalizedName": "yippee noodles",
+          "sizeToken": null,
+          "matchedProductId": "p-031",
+          "matchedProductName": "Yippee Noodles 75g",
+          "matchState": "matched",
+          "candidates": [
+            {
+              "productId": "p-031",
+              "name": "Yippee Noodles 75g",
+              "unitPrice": 12,
+              "sizeToken": "75g"
+            }
+          ],
+          "quantity": 28,
+          "unitPrice": 12,
+          "totalPrice": 336,
+          "fillSource": "catalog",
+          "needsVerify": true,
+          "ambiguousQtyPrice": false,
+          "numberTokens": [
+            {
+              "value": 28,
+              "guessedRole": "total",
+              "hasCurrencyMarker": false,
+              "hasMultiplyMarker": false,
+              "confidence": "high"
+            }
+          ]
+        },
+        {
+          "productNameRaw": "Rin",
+          "normalizedName": "rin detergent",
+          "sizeToken": null,
+          "matchState": "unmatched",
+          "candidates": [],
+          "quantity": 0,
+          "unitPrice": 0,
+          "totalPrice": 0,
+          "fillSource": "inferred",
+          "needsVerify": true,
+          "ambiguousQtyPrice": true,
+          "numberTokens": [
+            {
+              "value": 150,
+              "guessedRole": "total",
+              "hasCurrencyMarker": false,
+              "hasMultiplyMarker": false,
+              "confidence": "high"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "H11-hindi-mixed",
+      "tags": [
+        "handwriting",
+        "circled_qty",
+        "hindi_names"
+      ],
+      "gtCount": 4,
+      "predCount": 4,
+      "strictMatches": 4,
+      "nameMatches": 4,
+      "f1": 1,
+      "totalOk": null,
+      "totalPred": null,
+      "totalGt": null,
+      "cartValueOk": null,
+      "cartValuePred": 86,
+      "cartValueGt": null,
+      "items": [
+        {
+          "gt": "Dettol",
+          "pred": "Dettol",
+          "predRaw": "Dettol - 1",
+          "nameOk": true,
+          "qty": {
+            "gt": 1,
+            "pred": 1,
+            "ok": true
+          },
+          "price": {
+            "gt": null,
+            "pred": 58,
+            "ok": null,
+            "fillSource": "catalog"
+          },
+          "catalog": {
+            "gt": "Dettol Original 250ml",
+            "pred": "Dettol Original 250ml",
+            "state": "matched",
+            "ok": true,
+            "suggested": true
+          },
+          "strict": true,
+          "causes": [],
+          "reasons": []
+        },
+        {
+          "gt": "Gillette Razor",
+          "pred": "Razor-Gillette",
+          "predRaw": "Razor-Gillette - 1",
+          "nameOk": true,
+          "qty": {
+            "gt": 1,
+            "pred": 1,
+            "ok": true
+          },
+          "price": {
+            "gt": null,
+            "pred": 0,
+            "ok": null,
+            "fillSource": "bill"
+          },
+          "catalog": {
+            "gt": "Gillette Mach3 Razor",
+            "pred": null,
+            "state": "unmatched",
+            "ok": false,
+            "suggested": false
+          },
+          "strict": true,
+          "causes": [
+            "catalog_no_auto_match"
+          ],
+          "reasons": [
+            "not auto-matched (unmatched), expected \"Gillette Mach3 Razor\""
+          ]
+        },
+        {
+          "gt": "Aloo Bhujia",
+          "pred": "Potato snack",
+          "predRaw": "Aloo bhujia - 2",
+          "nameOk": true,
+          "qty": {
+            "gt": 2,
+            "pred": 2,
+            "ok": true
+          },
+          "price": {
+            "gt": null,
+            "pred": 0,
+            "ok": null,
+            "fillSource": "bill"
+          },
+          "catalog": {
+            "gt": "Haldiram Aloo Bhujia 200g",
+            "pred": null,
+            "state": "unmatched",
+            "ok": false,
+            "suggested": false
+          },
+          "strict": true,
+          "causes": [
+            "catalog_no_auto_match"
+          ],
+          "reasons": [
+            "not auto-matched (unmatched), expected \"Haldiram Aloo Bhujia 200g\""
+          ]
+        },
+        {
+          "gt": "Kurkure",
+          "pred": "Kurkure",
+          "predRaw": "Kurkure - 1",
+          "nameOk": true,
+          "qty": {
+            "gt": 1,
+            "pred": 1,
+            "ok": true
+          },
+          "price": {
+            "gt": null,
+            "pred": 28,
+            "ok": null,
+            "fillSource": "catalog"
+          },
+          "catalog": {
+            "gt": "Kurkure Masala 90g",
+            "pred": "Kurkure Masala 90g",
+            "state": "matched",
+            "ok": true,
+            "suggested": true
+          },
+          "strict": true,
+          "causes": [],
+          "reasons": []
+        }
+      ],
+      "extras": [],
+      "error": null,
+      "telemetry": [
+        {
+          "cacheHit": false,
+          "latencyMs": 66833,
+          "attempts": 1,
+          "waitedMs": 0,
+          "promptTokens": 1612,
+          "outputTokens": 497,
+          "totalTokens": 2109,
+          "finishReason": "STOP",
+          "responseText": "{\n  \"document_type\": \"single_bill\",\n  \"vendor_name\": null,\n  \"date\": null,\n  \"total_amount\": null,\n  \"confidence\": \"high\",\n  \"items\": [\n    {\n      \"product_name_raw\": \"Dettol - 1\",\n      \"normalized_name\": \"Dettol\",\n      \"size_token\": null,\n      \"number_tokens\": [\n        {\n          \"value\": 1,\n          \"guessed_role\": \"quantity\",\n          \"has_currency_marker\": false,\n          \"has_multiply_marker\": false,\n          \"confidence\": \"high\"\n        }\n      ]\n    },\n    {\n      \"product_name_raw\": \"Razor-Gillette - 1\",\n      \"normalized_name\": \"Razor-Gillette\",\n      \"size_token\": null,\n      \"number_tokens\": [\n        {\n          \"value\": 1,\n          \"guessed_role\": \"quantity\",\n          \"has_currency_marker\": false,\n          \"has_multiply_marker\": false,\n          \"confidence\": \"high\"\n        }\n      ]\n    },\n    {\n      \"product_name_raw\": \"Aloo bhujia - 2\",\n      \"normalized_name\": \"Potato snack\",\n      \"size_token\": null,\n      \"number_tokens\": [\n        {\n          \"value\": 2,\n          \"guessed_role\": \"quantity\",\n          \"has_currency_marker\": false,\n          \"has_multiply_marker\": false,\n          \"confidence\": \"high\"\n        }\n      ]\n    },\n    {\n      \"product_name_raw\": \"Kurkure - 1\",\n      \"normalized_name\": \"Kurkure\",\n      \"size_token\": null,\n      \"number_tokens\": [\n        {\n          \"value\": 1,\n          \"guessed_role\": \"quantity\",\n          \"has_currency_marker\": false,\n          \"has_multiply_marker\": false,\n          \"confidence\": \"high\"\n        }\n      ]\n    }\n  ]\n}",
+          "model": "gemini-3.1-flash-lite"
+        }
+      ],
+      "raw": {
+        "documentType": "single_bill",
+        "confidence": "high",
+        "rawItems": [
+          {
+            "productNameRaw": "Dettol - 1",
+            "normalizedName": "Dettol",
+            "sizeToken": null,
+            "numberTokens": [
+              {
+                "value": 1,
+                "guessedRole": "quantity",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "high"
+              }
+            ]
+          },
+          {
+            "productNameRaw": "Razor-Gillette - 1",
+            "normalizedName": "Razor-Gillette",
+            "sizeToken": null,
+            "numberTokens": [
+              {
+                "value": 1,
+                "guessedRole": "quantity",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "high"
+              }
+            ]
+          },
+          {
+            "productNameRaw": "Aloo bhujia - 2",
+            "normalizedName": "Potato snack",
+            "sizeToken": null,
+            "numberTokens": [
+              {
+                "value": 2,
+                "guessedRole": "quantity",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "high"
+              }
+            ]
+          },
+          {
+            "productNameRaw": "Kurkure - 1",
+            "normalizedName": "Kurkure",
+            "sizeToken": null,
+            "numberTokens": [
+              {
+                "value": 1,
+                "guessedRole": "quantity",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "high"
+              }
+            ]
+          }
+        ]
+      },
+      "resolved": [
+        {
+          "productNameRaw": "Dettol - 1",
+          "normalizedName": "Dettol",
+          "sizeToken": null,
+          "matchedProductId": "p-041",
+          "matchedProductName": "Dettol Original 250ml",
+          "matchState": "matched",
+          "candidates": [
+            {
+              "productId": "p-041",
+              "name": "Dettol Original 250ml",
+              "unitPrice": 58,
+              "sizeToken": "250ml"
+            }
+          ],
+          "quantity": 1,
+          "unitPrice": 58,
+          "totalPrice": 58,
+          "fillSource": "catalog",
+          "needsVerify": true,
+          "ambiguousQtyPrice": false,
+          "numberTokens": [
+            {
+              "value": 1,
+              "guessedRole": "quantity",
+              "hasCurrencyMarker": false,
+              "hasMultiplyMarker": false,
+              "confidence": "high"
+            }
+          ]
+        },
+        {
+          "productNameRaw": "Razor-Gillette - 1",
+          "normalizedName": "Razor-Gillette",
+          "sizeToken": null,
+          "matchState": "unmatched",
+          "candidates": [],
+          "quantity": 1,
+          "unitPrice": 0,
+          "totalPrice": 0,
+          "fillSource": "bill",
+          "needsVerify": true,
+          "ambiguousQtyPrice": false,
+          "numberTokens": [
+            {
+              "value": 1,
+              "guessedRole": "quantity",
+              "hasCurrencyMarker": false,
+              "hasMultiplyMarker": false,
+              "confidence": "high"
+            }
+          ]
+        },
+        {
+          "productNameRaw": "Aloo bhujia - 2",
+          "normalizedName": "Potato snack",
+          "sizeToken": null,
+          "matchState": "unmatched",
+          "candidates": [],
+          "quantity": 2,
+          "unitPrice": 0,
+          "totalPrice": 0,
+          "fillSource": "bill",
+          "needsVerify": true,
+          "ambiguousQtyPrice": false,
+          "numberTokens": [
+            {
+              "value": 2,
+              "guessedRole": "quantity",
+              "hasCurrencyMarker": false,
+              "hasMultiplyMarker": false,
+              "confidence": "high"
+            }
+          ]
+        },
+        {
+          "productNameRaw": "Kurkure - 1",
+          "normalizedName": "Kurkure",
+          "sizeToken": null,
+          "matchedProductId": "p-029",
+          "matchedProductName": "Kurkure Masala 90g",
+          "matchState": "matched",
+          "candidates": [
+            {
+              "productId": "p-029",
+              "name": "Kurkure Masala 90g",
+              "unitPrice": 28,
+              "sizeToken": "90g"
+            }
+          ],
+          "quantity": 1,
+          "unitPrice": 28,
+          "totalPrice": 28,
+          "fillSource": "catalog",
+          "needsVerify": true,
+          "ambiguousQtyPrice": false,
+          "numberTokens": [
+            {
+              "value": 1,
+              "guessedRole": "quantity",
+              "hasCurrencyMarker": false,
+              "hasMultiplyMarker": false,
+              "confidence": "high"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "generatedAt": "2026-10-14T18:44:39.499Z"
+}

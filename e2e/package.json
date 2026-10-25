@@ -1,0 +1,19 @@
+{
+  "name": "pakkahisab-e2e-audit-d",
+  "private": true,
+  "description": "Session D audit: Playwright journeys. Self-contained so the app package.json stays untouched.",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.1",
+    "@supabase/supabase-js": "2.108.0",
+    "@types/node": "^22.18.0",
+    "chrome-launcher": "1.2.1",
+    "dotenv": "17.2.3",
+    "lighthouse": "12.8.2",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "xlsx": "0.18.5"
+  }
+}

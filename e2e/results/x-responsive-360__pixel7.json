@@ -1,0 +1,267 @@
+{
+  "journey": "x-responsive-360",
+  "project": "pixel7",
+  "finishedAt": "2026-10-14T19:06:31.506Z",
+  "steps": [
+    {
+      "name": "/ tap targets",
+      "status": "info",
+      "detail": "7/9 under 44px: a\"Login\" 73x36, a\"Read our privacy promise →\" 193x23, a\"Shuru karo\" 67x19, a\"Login\" 34x19, a\"harwaniroy@gmail.com\" 146x19, a\"Privacy\" 37x16, a\"Terms\" 31x16"
+    },
+    {
+      "name": "/login tap targets",
+      "status": "info",
+      "detail": "7/7 under 44px: label\"Email\" 296x14, input\"you@example.com\" 296x32, label\"Password\" 296x14, input\"Your password\" 296x32, button\"Log in\" 296x32, a\"Create account\" 102x17, button\"Try a demo account\" 296x16"
+    },
+    {
+      "name": "/signup tap targets",
+      "status": "info",
+      "detail": "10/10 under 44px: label\"Email\" 296x14, input\"you@example.com\" 296x32, label\"Password\" 296x14, input\"At least 6 characters\" 296x32, label\"Confirm password\" 296x14, input\"Re-enter password\" 296x32, button\"Create account\" 296x32, a\"Log in\" 41x17"
+    },
+    {
+      "name": "/privacy tap targets",
+      "status": "info",
+      "detail": "3/3 under 44px: a\"₹ PakkaHisab\" 143x36, a\"← Home\" 54x20, a\"harwaniroy@gmail.com\" 151x19"
+    },
+    {
+      "name": "/terms tap targets",
+      "status": "info",
+      "detail": "4/4 under 44px: a\"₹ PakkaHisab\" 143x36, a\"Home\" 39x20, a\"privacy page\" 80x19, a\"harwaniroy@gmail.com\" 151x19"
+    }
+  ],
+  "consoleErrors": [
+    "Failed to fetch RSC payload for http://localhost:3001/login. Falling back to browser navigation. TypeError: Failed to fetch\n    at fetchServerResponse (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/router-reducer/fetch-server-response.js:59:27)\n    at fastRefresh",
+    "Failed to fetch RSC payload for http://localhost:3001/signup. Falling back to browser navigation. TypeError: Failed to fetch\n    at fetchServerResponse (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/router-reducer/fetch-server-response.js:59:27)\n    at fastRefres",
+    "Failed to fetch RSC payload for http://localhost:3001/privacy. Falling back to browser navigation. TypeError: Failed to fetch\n    at fetchServerResponse (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/router-reducer/fetch-server-response.js:59:27)\n    at fastRefre"
+  ],
+  "pageErrors": [],
+  "serverErrors": [],
+  "pages": {
+    "/": {
+      "overflowX": 0,
+      "wide": [
+        "div.landing-marquee.flex right=4467",
+        "span.px-4 right=2064",
+        "span.px-4 right=4467"
+      ],
+      "total": 9,
+      "small": [
+        {
+          "tag": "a",
+          "label": "Login",
+          "w": 73,
+          "h": 36
+        },
+        {
+          "tag": "a",
+          "label": "Read our privacy promise →",
+          "w": 193,
+          "h": 23
+        },
+        {
+          "tag": "a",
+          "label": "Shuru karo",
+          "w": 67,
+          "h": 19
+        },
+        {
+          "tag": "a",
+          "label": "Login",
+          "w": 34,
+          "h": 19
+        },
+        {
+          "tag": "a",
+          "label": "harwaniroy@gmail.com",
+          "w": 146,
+          "h": 19
+        },
+        {
+          "tag": "a",
+          "label": "Privacy",
+          "w": 37,
+          "h": 16
+        },
+        {
+          "tag": "a",
+          "label": "Terms",
+          "w": 31,
+          "h": 16
+        }
+      ]
+    },
+    "/login": {
+      "overflowX": 0,
+      "wide": [],
+      "total": 7,
+      "small": [
+        {
+          "tag": "label",
+          "label": "Email",
+          "w": 296,
+          "h": 14
+        },
+        {
+          "tag": "input",
+          "label": "you@example.com",
+          "w": 296,
+          "h": 32
+        },
+        {
+          "tag": "label",
+          "label": "Password",
+          "w": 296,
+          "h": 14
+        },
+        {
+          "tag": "input",
+          "label": "Your password",
+          "w": 296,
+          "h": 32
+        },
+        {
+          "tag": "button",
+          "label": "Log in",
+          "w": 296,
+          "h": 32
+        },
+        {
+          "tag": "a",
+          "label": "Create account",
+          "w": 102,
+          "h": 17
+        },
+        {
+          "tag": "button",
+          "label": "Try a demo account",
+          "w": 296,
+          "h": 16
+        }
+      ]
+    },
+    "/signup": {
+      "overflowX": 0,
+      "wide": [],
+      "total": 10,
+      "small": [
+        {
+          "tag": "label",
+          "label": "Email",
+          "w": 296,
+          "h": 14
+        },
+        {
+          "tag": "input",
+          "label": "you@example.com",
+          "w": 296,
+          "h": 32
+        },
+        {
+          "tag": "label",
+          "label": "Password",
+          "w": 296,
+          "h": 14
+        },
+        {
+          "tag": "input",
+          "label": "At least 6 characters",
+          "w": 296,
+          "h": 32
+        },
+        {
+          "tag": "label",
+          "label": "Confirm password",
+          "w": 296,
+          "h": 14
+        },
+        {
+          "tag": "input",
+          "label": "Re-enter password",
+          "w": 296,
+          "h": 32
+        },
+        {
+          "tag": "button",
+          "label": "Create account",
+          "w": 296,
+          "h": 32
+        },
+        {
+          "tag": "a",
+          "label": "Log in",
+          "w": 41,
+          "h": 17
+        },
+        {
+          "tag": "a",
+          "label": "Terms",
+          "w": 35,
+          "h": 15
+        },
+        {
+          "tag": "a",
+          "label": "Privacy Policy",
+          "w": 159,
+          "h": 31
+        }
+      ]
+    },
+    "/privacy": {
+      "overflowX": 0,
+      "wide": [],
+      "total": 3,
+      "small": [
+        {
+          "tag": "a",
+          "label": "₹ PakkaHisab",
+          "w": 143,
+          "h": 36
+        },
+        {
+          "tag": "a",
+          "label": "← Home",
+          "w": 54,
+          "h": 20
+        },
+        {
+          "tag": "a",
+          "label": "harwaniroy@gmail.com",
+          "w": 151,
+          "h": 19
+        }
+      ]
+    },
+    "/terms": {
+      "overflowX": 0,
+      "wide": [],
+      "total": 4,
+      "small": [
+        {
+          "tag": "a",
+          "label": "₹ PakkaHisab",
+          "w": 143,
+          "h": 36
+        },
+        {
+          "tag": "a",
+          "label": "Home",
+          "w": 39,
+          "h": 20
+        },
+        {
+          "tag": "a",
+          "label": "privacy page",
+          "w": 80,
+          "h": 19
+        },
+        {
+          "tag": "a",
+          "label": "harwaniroy@gmail.com",
+          "w": 151,
+          "h": 19
+        }
+      ]
+    }
+  },
+  "scope": "public"
+}

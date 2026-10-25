@@ -1,0 +1,148 @@
+{
+  "task": "voice",
+  "model": "gemini-fake-model-404",
+  "provider": "gemini",
+  "label": "drill-404",
+  "options": {
+    "delayMs": 4500,
+    "retries": 0,
+    "cache": false,
+    "only": [
+      "V01"
+    ],
+    "robustness": false,
+    "corrections": null,
+    "injectError": null
+  },
+  "summary": {
+    "clips": 1,
+    "corpusWer": 1,
+    "meanWer": 1,
+    "devanagariTranscripts": 0,
+    "intentAcc": 0,
+    "commandIntentAcc": null,
+    "itemsIntentAcc": 0,
+    "itemPrecision": null,
+    "itemRecall": 0,
+    "cartCatalogAcc": null,
+    "jsonFailuresSwallowed": 0,
+    "httpFailures": 1,
+    "firstAttemptFailures": 0,
+    "truncated": 0,
+    "latencyMsP50": null,
+    "latencyMsP95": null,
+    "promptTokensMean": null,
+    "outputTokensMean": null,
+    "thoughtsTokensMean": null,
+    "byTag": [
+      {
+        "tag": "hinglish_numbers",
+        "clips": 1,
+        "intentAcc": 0,
+        "itemPrecision": null,
+        "itemRecall": 0,
+        "wer": 1
+      },
+      {
+        "tag": "items",
+        "clips": 1,
+        "intentAcc": 0,
+        "itemPrecision": null,
+        "itemRecall": 0,
+        "wer": 1
+      }
+    ]
+  },
+  "worst": [
+    {
+      "id": "V01",
+      "tags": [
+        "items",
+        "hinglish_numbers"
+      ],
+      "reference": "do Maggi aur ek Parle-G",
+      "transcript": "",
+      "why": [
+        "http 404: {\"error\":{\"code\":404,\"message\":\"models/gemini-fake-model-404 is not found for API version v1beta, or is not supported for generateContent. C",
+        "intent: expected items/-, got -/- args null",
+        "\"Maggi\" not extracted",
+        "\"Parle-G\" not extracted"
+      ]
+    }
+  ],
+  "results": [
+    {
+      "id": "V01",
+      "tags": [
+        "items",
+        "hinglish_numbers"
+      ],
+      "reference": "do Maggi aur ek Parle-G",
+      "transcript": "",
+      "wer": 1,
+      "devanagari": false,
+      "error": {
+        "kind": "http",
+        "status": 404,
+        "message": "{\"error\":{\"code\":404,\"message\":\"models/gemini-fake-model-404 is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.\",\"status\":\"NOT_FOUND\"}}"
+      },
+      "telemetry": [
+        {
+          "cacheHit": false,
+          "latencyMs": 670,
+          "attempts": 1,
+          "waitedMs": 0,
+          "model": "gemini-fake-model-404",
+          "error": {
+            "status": 404,
+            "message": "{\"error\":{\"code\":404,\"message\":\"models/gemini-fake-model-404 is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.\",\"status\":\"NOT_FOUND\"}}"
+          }
+        }
+      ],
+      "intentOk": false,
+      "intent": {
+        "expKind": "items",
+        "kind": null,
+        "expCommand": null,
+        "command": null,
+        "args": null,
+        "customer": null
+      },
+      "expCount": 2,
+      "predCount": 0,
+      "itemMatches": 0,
+      "cartCatalogOk": 0,
+      "cartCatalogScored": 0,
+      "items": [
+        {
+          "exp": "Maggi",
+          "pred": null,
+          "qtyExp": [
+            2
+          ],
+          "qtyPred": null,
+          "ok": false,
+          "cart": null,
+          "cartOk": null,
+          "reason": "\"Maggi\" not extracted"
+        },
+        {
+          "exp": "Parle-G",
+          "pred": null,
+          "qtyExp": [
+            1
+          ],
+          "qtyPred": null,
+          "ok": false,
+          "cart": null,
+          "cartOk": null,
+          "reason": "\"Parle-G\" not extracted"
+        }
+      ],
+      "extras": [],
+      "cart": [],
+      "parsed": null
+    }
+  ],
+  "generatedAt": "2026-10-14T18:38:09.565Z"
+}

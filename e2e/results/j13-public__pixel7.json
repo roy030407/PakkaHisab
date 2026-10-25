@@ -1,0 +1,60 @@
+{
+  "journey": "j13-public",
+  "project": "pixel7",
+  "finishedAt": "2026-10-14T19:07:10.688Z",
+  "steps": [
+    {
+      "name": "/privacy renders",
+      "status": "fail",
+      "detail": "\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed | Locator: getByRole('heading', { level: 1 }) | Expected pattern: \u001b[32m/privacy/i\u001b[39m | Received string:  \u001b[31m\"How your data is handled\"\u001b[39m",
+      "screenshot": "audit/screens/j13-public/pixel7-01-fail-privacy-renders.png"
+    },
+    {
+      "name": "/terms renders",
+      "status": "pass",
+      "detail": "1816 chars",
+      "screenshot": "audit/screens/j13-public/pixel7-02-terms-renders.png"
+    },
+    {
+      "name": "privacy/terms linked from signup",
+      "status": "pass",
+      "screenshot": "audit/screens/j13-public/pixel7-03-privacy-terms-linked-from-signup.png"
+    },
+    {
+      "name": "unknown page shows a helpful 404 with a way home",
+      "status": "pass",
+      "screenshot": "audit/screens/j13-public/pixel7-04-unknown-page-shows-a-helpful-404-with-a-way-home.png"
+    },
+    {
+      "name": "unknown API route returns JSON 404",
+      "status": "pass",
+      "detail": "status 404 content-type text/html; charset=utf-8",
+      "screenshot": "audit/screens/j13-public/pixel7-05-unknown-api-route-returns-json-404.png"
+    },
+    {
+      "name": "logged-out access to a dashboard route redirects to /login",
+      "status": "pass",
+      "screenshot": "audit/screens/j13-public/pixel7-06-logged-out-access-to-a-dashboard-route-redirects-to-login.png"
+    },
+    {
+      "name": "logged-out API call returns 401 JSON",
+      "status": "pass",
+      "screenshot": "audit/screens/j13-public/pixel7-07-logged-out-api-call-returns-401-json.png"
+    },
+    {
+      "name": "/api/health reflects database reachability",
+      "status": "pass",
+      "detail": "200 {\"status\":\"ok\",\"timestamp\":\"2026-10-14T19:07:10.279Z\"}",
+      "screenshot": "audit/screens/j13-public/pixel7-08-api-health-reflects-database-reachability.png"
+    }
+  ],
+  "consoleErrors": [
+    "Failed to fetch RSC payload for http://localhost:3001/terms. Falling back to browser navigation. TypeError: Failed to fetch\n    at fetchServerResponse (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/router-reducer/fetch-server-response.js:59:27)\n    at fastRefresh",
+    "Failed to fetch RSC payload for http://localhost:3001/signup. Falling back to browser navigation. TypeError: Failed to fetch\n    at fetchServerResponse (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/router-reducer/fetch-server-response.js:59:27)\n    at fastRefres",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ],
+  "pageErrors": [
+    "Invalid or unexpected token"
+  ],
+  "serverErrors": []
+}

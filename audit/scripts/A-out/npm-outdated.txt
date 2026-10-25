@@ -1,0 +1,10 @@
+Package                Current       Wanted       Latest  Location                            Depended by
+@google/genai            2.8.0       2.29.1       2.29.1  node_modules/@google/genai          KhaataOnline
+@prisma/client           7.8.0       7.10.0       7.10.0  node_modules/@prisma/client         KhaataOnline
+@supabase/ssr           0.10.3       0.10.3       0.12.7  node_modules/@supabase/ssr          KhaataOnline
+@supabase/supabase-js  2.108.0      2.117.3      2.117.3  node_modules/@supabase/supabase-js  @supabase/ssr
+@supabase/supabase-js  2.108.0      2.117.3      2.117.3  node_modules/@supabase/supabase-js  KhaataOnline
+eslint-config-next     14.2.35      14.2.35       16.4.1  node_modules/eslint-config-next     KhaataOnline
+next                   14.2.35      14.2.35       16.4.0  node_modules/next                   KhaataOnline
+prisma                   7.8.0  8.0.0-rc.22  8.0.0-rc.22  node_modules/prisma                 @prisma/client
+prisma                   7.8.0       7.10.0  8.0.0-rc.22  node_modules/prisma                 KhaataOnline

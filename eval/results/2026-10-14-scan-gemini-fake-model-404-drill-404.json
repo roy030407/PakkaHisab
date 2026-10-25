@@ -1,0 +1,327 @@
+{
+  "task": "scan",
+  "model": "gemini-fake-model-404",
+  "provider": "gemini",
+  "label": "drill-404",
+  "options": {
+    "delayMs": 4500,
+    "retries": 0,
+    "cache": false,
+    "only": [
+      "P03-thermal"
+    ],
+    "robustness": false,
+    "corrections": null,
+    "injectError": null
+  },
+  "summary": {
+    "fixtures": 1,
+    "gtItems": 6,
+    "predItems": 0,
+    "itemPrecision": null,
+    "itemRecall": 0,
+    "namePrecision": null,
+    "nameRecall": 0,
+    "qtyAcc": null,
+    "qtyScored": 0,
+    "priceAcc": null,
+    "priceScored": 0,
+    "totalAcc": 0,
+    "totalScored": 1,
+    "cartValueAcc": 0,
+    "cartValueScored": 1,
+    "catalogAcc": null,
+    "catalogScored": 0,
+    "jsonParseFailures": 0,
+    "httpFailures": 1,
+    "otherFailures": 0,
+    "firstAttemptFailures": 0,
+    "truncated": 0,
+    "misroutedAsLedger": 0,
+    "ambiguousAsked": 0,
+    "latencyMsP50": null,
+    "latencyMsP95": null,
+    "promptTokensMean": null,
+    "outputTokensMean": null,
+    "thoughtsTokensMean": null,
+    "totalTokensMean": null,
+    "causeCounts": {
+      "missing": 6,
+      "extra_item": 0
+    },
+    "byTag": [
+      {
+        "tag": "gst",
+        "fixtures": 1,
+        "gtItems": 6,
+        "itemPrecision": null,
+        "itemRecall": 0,
+        "nameRecall": 0,
+        "qtyAcc": null,
+        "priceAcc": null,
+        "catalogAcc": null
+      },
+      {
+        "tag": "multi_column",
+        "fixtures": 1,
+        "gtItems": 6,
+        "itemPrecision": null,
+        "itemRecall": 0,
+        "nameRecall": 0,
+        "qtyAcc": null,
+        "priceAcc": null,
+        "catalogAcc": null
+      },
+      {
+        "tag": "printed",
+        "fixtures": 1,
+        "gtItems": 6,
+        "itemPrecision": null,
+        "itemRecall": 0,
+        "nameRecall": 0,
+        "qtyAcc": null,
+        "priceAcc": null,
+        "catalogAcc": null
+      }
+    ]
+  },
+  "worst": [
+    {
+      "id": "P03-thermal",
+      "f1": 0,
+      "tags": [
+        "printed",
+        "multi_column",
+        "gst"
+      ],
+      "why": [
+        "http 404: {\"error\":{\"code\":404,\"message\":\"models/gemini-fake-model-404 is not found for API version v1beta, or is not supported for generateContent. Call ModelService.Lis"
+      ]
+    }
+  ],
+  "results": [
+    {
+      "id": "P03-thermal",
+      "tags": [
+        "printed",
+        "multi_column",
+        "gst"
+      ],
+      "gtCount": 6,
+      "predCount": 0,
+      "strictMatches": 0,
+      "nameMatches": 0,
+      "f1": 0,
+      "totalOk": false,
+      "totalPred": null,
+      "totalGt": 785.4,
+      "cartValueOk": false,
+      "cartValuePred": 0,
+      "cartValueGt": 748,
+      "items": [
+        {
+          "gt": "Tata Salt 1kg",
+          "pred": null,
+          "predRaw": null,
+          "nameOk": false,
+          "qty": {
+            "gt": 1,
+            "pred": null,
+            "ok": false
+          },
+          "price": {
+            "gt": 30,
+            "pred": null,
+            "ok": false
+          },
+          "catalog": {
+            "gt": "Salt 1kg",
+            "pred": null,
+            "state": null,
+            "ok": null,
+            "suggested": false
+          },
+          "strict": false,
+          "causes": [
+            "missing"
+          ],
+          "reasons": [
+            "\"Tata Salt 1kg\" not extracted"
+          ]
+        },
+        {
+          "gt": "Aashirvaad Atta 5kg",
+          "pred": null,
+          "predRaw": null,
+          "nameOk": false,
+          "qty": {
+            "gt": 1,
+            "pred": null,
+            "ok": false
+          },
+          "price": {
+            "gt": 58,
+            "pred": null,
+            "ok": false
+          },
+          "catalog": {
+            "gt": "Wheat Flour (Atta) 5kg",
+            "pred": null,
+            "state": null,
+            "ok": null,
+            "suggested": false
+          },
+          "strict": false,
+          "causes": [
+            "missing"
+          ],
+          "reasons": [
+            "\"Aashirvaad Atta 5kg\" not extracted"
+          ]
+        },
+        {
+          "gt": "Amul Butter 500g",
+          "pred": null,
+          "predRaw": null,
+          "nameOk": false,
+          "qty": {
+            "gt": 1,
+            "pred": null,
+            "ok": false
+          },
+          "price": {
+            "gt": 285,
+            "pred": null,
+            "ok": false
+          },
+          "catalog": {
+            "gt": "Amul Butter 500g",
+            "pred": null,
+            "state": null,
+            "ok": null,
+            "suggested": false
+          },
+          "strict": false,
+          "causes": [
+            "missing"
+          ],
+          "reasons": [
+            "\"Amul Butter 500g\" not extracted"
+          ]
+        },
+        {
+          "gt": "Parle-G Biscuits",
+          "pred": null,
+          "predRaw": null,
+          "nameOk": false,
+          "qty": {
+            "gt": 2,
+            "pred": null,
+            "ok": false
+          },
+          "price": {
+            "gt": 25,
+            "pred": null,
+            "ok": false
+          },
+          "catalog": {
+            "gt": "Parle-G 200g",
+            "pred": null,
+            "state": null,
+            "ok": null,
+            "suggested": false
+          },
+          "strict": false,
+          "causes": [
+            "missing"
+          ],
+          "reasons": [
+            "\"Parle-G Biscuits\" not extracted"
+          ]
+        },
+        {
+          "gt": "Surf Excel 1kg",
+          "pred": null,
+          "predRaw": null,
+          "nameOk": false,
+          "qty": {
+            "gt": 1,
+            "pred": null,
+            "ok": false
+          },
+          "price": {
+            "gt": 235,
+            "pred": null,
+            "ok": false
+          },
+          "catalog": {
+            "gt": null,
+            "pred": null,
+            "state": null,
+            "ok": null,
+            "suggested": false
+          },
+          "strict": false,
+          "causes": [
+            "missing"
+          ],
+          "reasons": [
+            "\"Surf Excel 1kg\" not extracted"
+          ]
+        },
+        {
+          "gt": "Thums Up 500ml",
+          "pred": null,
+          "predRaw": null,
+          "nameOk": false,
+          "qty": {
+            "gt": 2,
+            "pred": null,
+            "ok": false
+          },
+          "price": {
+            "gt": 45,
+            "pred": null,
+            "ok": false
+          },
+          "catalog": {
+            "gt": null,
+            "pred": null,
+            "state": null,
+            "ok": null,
+            "suggested": false
+          },
+          "strict": false,
+          "causes": [
+            "missing"
+          ],
+          "reasons": [
+            "\"Thums Up 500ml\" not extracted"
+          ]
+        }
+      ],
+      "extras": [],
+      "error": {
+        "kind": "http",
+        "status": 404,
+        "message": "{\"error\":{\"code\":404,\"message\":\"models/gemini-fake-model-404 is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.\",\"status\":\"NOT_FOUND\"}}"
+      },
+      "telemetry": [
+        {
+          "cacheHit": false,
+          "latencyMs": 774,
+          "attempts": 1,
+          "waitedMs": 0,
+          "model": "gemini-fake-model-404",
+          "error": {
+            "status": 404,
+            "message": "{\"error\":{\"code\":404,\"message\":\"models/gemini-fake-model-404 is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.\",\"status\":\"NOT_FOUND\"}}"
+          }
+        }
+      ],
+      "raw": null,
+      "resolved": []
+    }
+  ],
+  "generatedAt": "2026-10-14T18:38:04.920Z"
+}

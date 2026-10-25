@@ -1,0 +1,887 @@
+{
+  "task": "scan",
+  "model": "gemini-3.1-flash-lite",
+  "provider": "gemini",
+  "label": "robustness",
+  "options": {
+    "delayMs": 4500,
+    "retries": 0,
+    "cache": true,
+    "only": [
+      "X-nonbill-app-screenshot",
+      "X-blank-page",
+      "X-huge-photo"
+    ],
+    "robustness": false,
+    "corrections": null,
+    "injectError": null
+  },
+  "summary": {
+    "fixtures": 3,
+    "gtItems": 0,
+    "predItems": 9,
+    "itemPrecision": 0,
+    "itemRecall": null,
+    "namePrecision": 0,
+    "nameRecall": null,
+    "qtyAcc": null,
+    "qtyScored": 0,
+    "priceAcc": null,
+    "priceScored": 0,
+    "totalAcc": null,
+    "totalScored": 0,
+    "cartValueAcc": null,
+    "cartValueScored": 0,
+    "catalogAcc": null,
+    "catalogScored": 0,
+    "jsonParseFailures": 0,
+    "httpFailures": 0,
+    "otherFailures": 0,
+    "firstAttemptFailures": 0,
+    "truncated": 0,
+    "misroutedAsLedger": 0,
+    "ambiguousAsked": 0,
+    "latencyMsP50": 5872,
+    "latencyMsP95": 17774,
+    "promptTokensMean": 1624,
+    "outputTokensMean": 570,
+    "thoughtsTokensMean": null,
+    "totalTokensMean": 2193,
+    "causeCounts": {
+      "extra_item": 9
+    },
+    "byTag": [
+      {
+        "tag": "robustness",
+        "fixtures": 3,
+        "gtItems": 0,
+        "itemPrecision": 0,
+        "itemRecall": null,
+        "nameRecall": null,
+        "qtyAcc": null,
+        "priceAcc": null,
+        "catalogAcc": null
+      }
+    ]
+  },
+  "worst": [
+    {
+      "id": "X-nonbill-app-screenshot",
+      "f1": 0,
+      "tags": [
+        "robustness"
+      ],
+      "why": [
+        "extra item \"unknown\" (qty 1, price 0)",
+        "extra item \"unknown\" (qty 0, price 0)"
+      ]
+    },
+    {
+      "id": "X-blank-page",
+      "f1": 0,
+      "tags": [
+        "robustness"
+      ],
+      "why": [
+        "extra item \"Binding\" (qty 0, price 0)"
+      ]
+    },
+    {
+      "id": "X-huge-photo",
+      "f1": 0,
+      "tags": [
+        "robustness"
+      ],
+      "why": [
+        "extra item \"salt\" (qty 1, price 30)",
+        "extra item \"wheat flour\" (qty 1, price 58)",
+        "extra item \"butter\" (qty 1, price 285)",
+        "extra item \"biscuits\" (qty 2, price 25)",
+        "extra item \"detergent\" (qty 1, price 235)",
+        "extra item \"soft drink\" (qty 2, price 45)"
+      ]
+    }
+  ],
+  "results": [
+    {
+      "id": "X-nonbill-app-screenshot",
+      "tags": [
+        "robustness"
+      ],
+      "gtCount": 0,
+      "predCount": 2,
+      "strictMatches": 0,
+      "nameMatches": 0,
+      "f1": 0,
+      "totalOk": null,
+      "totalPred": null,
+      "totalGt": null,
+      "cartValueOk": null,
+      "cartValuePred": 0,
+      "cartValueGt": null,
+      "items": [],
+      "extras": [
+        {
+          "name": "unknown",
+          "qty": 1,
+          "price": 0
+        },
+        {
+          "name": "unknown",
+          "qty": 0,
+          "price": 0
+        }
+      ],
+      "error": null,
+      "telemetry": [
+        {
+          "cacheHit": true,
+          "latencyMs": 5486,
+          "attempts": 1,
+          "waitedMs": 0,
+          "promptTokens": 1626,
+          "outputTokens": 321,
+          "totalTokens": 1947,
+          "finishReason": "STOP",
+          "responseText": "{\n  \"document_type\": \"single_bill\",\n  \"vendor_name\": null,\n  \"date\": null,\n  \"total_amount\": null,\n  \"confidence\": \"low\",\n  \"items\": [\n    {\n      \"product_name_raw\": \"5-15\",\n      \"normalized_name\": \"unknown\",\n      \"size_token\": null,\n      \"number_tokens\": [\n        {\n          \"value\": 5,\n          \"guessed_role\": \"unknown\",\n          \"has_currency_marker\": false,\n          \"has_multiply_marker\": false,\n          \"confidence\": \"low\"\n        },\n        {\n          \"value\": 15,\n          \"guessed_role\": \"unknown\",\n          \"has_currency_marker\": false,\n          \"has_multiply_marker\": false,\n          \"confidence\": \"low\"\n        }\n      ]\n    },\n    {\n      \"product_name_raw\": \"16\",\n      \"normalized_name\": \"unknown\",\n      \"size_token\": null,\n      \"number_tokens\": [\n        {\n          \"value\": 16,\n          \"guessed_role\": \"unknown\",\n          \"has_currency_marker\": false,\n          \"has_multiply_marker\": false,\n          \"confidence\": \"low\"\n        }\n      ]\n    }\n  ]\n}",
+          "model": "gemini-3.1-flash-lite"
+        }
+      ],
+      "raw": {
+        "documentType": "single_bill",
+        "confidence": "low",
+        "rawItems": [
+          {
+            "productNameRaw": "5-15",
+            "normalizedName": "unknown",
+            "sizeToken": null,
+            "numberTokens": [
+              {
+                "value": 5,
+                "guessedRole": "unknown",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "low"
+              },
+              {
+                "value": 15,
+                "guessedRole": "unknown",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "low"
+              }
+            ]
+          },
+          {
+            "productNameRaw": "16",
+            "normalizedName": "unknown",
+            "sizeToken": null,
+            "numberTokens": [
+              {
+                "value": 16,
+                "guessedRole": "unknown",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "low"
+              }
+            ]
+          }
+        ]
+      },
+      "resolved": [
+        {
+          "productNameRaw": "5-15",
+          "normalizedName": "unknown",
+          "sizeToken": null,
+          "matchState": "suggest",
+          "candidates": [
+            {
+              "productId": "p-008",
+              "name": "Sunflower Oil 1L",
+              "unitPrice": 130,
+              "sizeToken": "1l"
+            },
+            {
+              "productId": "p-009",
+              "name": "Groundnut Oil 1L",
+              "unitPrice": 145,
+              "sizeToken": "1l"
+            },
+            {
+              "productId": "p-053",
+              "name": "Rin Powder 500g",
+              "unitPrice": 42,
+              "sizeToken": "500g"
+            }
+          ],
+          "quantity": 1,
+          "unitPrice": 0,
+          "totalPrice": 0,
+          "fillSource": "inferred",
+          "needsVerify": true,
+          "ambiguousQtyPrice": false,
+          "numberTokens": [
+            {
+              "value": 5,
+              "guessedRole": "unknown",
+              "hasCurrencyMarker": false,
+              "hasMultiplyMarker": false,
+              "confidence": "low"
+            },
+            {
+              "value": 15,
+              "guessedRole": "unknown",
+              "hasCurrencyMarker": false,
+              "hasMultiplyMarker": false,
+              "confidence": "low"
+            }
+          ]
+        },
+        {
+          "productNameRaw": "16",
+          "normalizedName": "unknown",
+          "sizeToken": null,
+          "matchState": "suggest",
+          "candidates": [
+            {
+              "productId": "p-008",
+              "name": "Sunflower Oil 1L",
+              "unitPrice": 130,
+              "sizeToken": "1l"
+            },
+            {
+              "productId": "p-009",
+              "name": "Groundnut Oil 1L",
+              "unitPrice": 145,
+              "sizeToken": "1l"
+            },
+            {
+              "productId": "p-053",
+              "name": "Rin Powder 500g",
+              "unitPrice": 42,
+              "sizeToken": "500g"
+            }
+          ],
+          "quantity": 0,
+          "unitPrice": 0,
+          "totalPrice": 0,
+          "fillSource": "inferred",
+          "needsVerify": true,
+          "ambiguousQtyPrice": true,
+          "numberTokens": [
+            {
+              "value": 16,
+              "guessedRole": "unknown",
+              "hasCurrencyMarker": false,
+              "hasMultiplyMarker": false,
+              "confidence": "low"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-blank-page",
+      "tags": [
+        "robustness"
+      ],
+      "gtCount": 0,
+      "predCount": 1,
+      "strictMatches": 0,
+      "nameMatches": 0,
+      "f1": 0,
+      "totalOk": null,
+      "totalPred": 100,
+      "totalGt": null,
+      "cartValueOk": null,
+      "cartValuePred": 0,
+      "cartValueGt": null,
+      "items": [],
+      "extras": [
+        {
+          "name": "Binding",
+          "qty": 0,
+          "price": 0
+        }
+      ],
+      "error": null,
+      "telemetry": [
+        {
+          "cacheHit": true,
+          "latencyMs": 5872,
+          "attempts": 1,
+          "waitedMs": 0,
+          "promptTokens": 1612,
+          "outputTokens": 171,
+          "totalTokens": 1783,
+          "finishReason": "STOP",
+          "responseText": "{\n  \"document_type\": \"single_bill\",\n  \"vendor_name\": \"OM SAI STATIONERY & PHOTOSTATE\",\n  \"date\": null,\n  \"total_amount\": 100,\n  \"confidence\": \"high\",\n  \"items\": [\n    {\n      \"product_name_raw\": \"Binding\",\n      \"normalized_name\": \"Binding\",\n      \"size_token\": null,\n      \"number_tokens\": [\n        {\n          \"value\": 100,\n          \"guessed_role\": \"total\",\n          \"has_currency_marker\": false,\n          \"has_multiply_marker\": false,\n          \"confidence\": \"high\"\n        }\n      ]\n    }\n  ]\n}",
+          "model": "gemini-3.1-flash-lite"
+        }
+      ],
+      "raw": {
+        "documentType": "single_bill",
+        "vendorName": "OM SAI STATIONERY & PHOTOSTATE",
+        "totalAmount": 100,
+        "confidence": "high",
+        "rawItems": [
+          {
+            "productNameRaw": "Binding",
+            "normalizedName": "Binding",
+            "sizeToken": null,
+            "numberTokens": [
+              {
+                "value": 100,
+                "guessedRole": "total",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "high"
+              }
+            ]
+          }
+        ]
+      },
+      "resolved": [
+        {
+          "productNameRaw": "Binding",
+          "normalizedName": "Binding",
+          "sizeToken": null,
+          "matchState": "suggest",
+          "candidates": [
+            {
+              "productId": "p-066",
+              "name": "Nilgiris Honey 250g",
+              "unitPrice": 90,
+              "sizeToken": "250g"
+            },
+            {
+              "productId": "p-068",
+              "name": "Chings Schezwan Sauce 250g",
+              "unitPrice": 58,
+              "sizeToken": "250g"
+            },
+            {
+              "productId": "p-001",
+              "name": "Basmati Rice 1kg",
+              "unitPrice": 80,
+              "sizeToken": "1kg"
+            }
+          ],
+          "quantity": 0,
+          "unitPrice": 0,
+          "totalPrice": 0,
+          "fillSource": "inferred",
+          "needsVerify": true,
+          "ambiguousQtyPrice": true,
+          "numberTokens": [
+            {
+              "value": 100,
+              "guessedRole": "total",
+              "hasCurrencyMarker": false,
+              "hasMultiplyMarker": false,
+              "confidence": "high"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-huge-photo",
+      "tags": [
+        "robustness"
+      ],
+      "gtCount": 0,
+      "predCount": 6,
+      "strictMatches": 0,
+      "nameMatches": 0,
+      "f1": 0,
+      "totalOk": null,
+      "totalPred": 785.4,
+      "totalGt": null,
+      "cartValueOk": null,
+      "cartValuePred": 748,
+      "cartValueGt": null,
+      "items": [],
+      "extras": [
+        {
+          "name": "salt",
+          "qty": 1,
+          "price": 30
+        },
+        {
+          "name": "wheat flour",
+          "qty": 1,
+          "price": 58
+        },
+        {
+          "name": "butter",
+          "qty": 1,
+          "price": 285
+        },
+        {
+          "name": "biscuits",
+          "qty": 2,
+          "price": 25
+        },
+        {
+          "name": "detergent",
+          "qty": 1,
+          "price": 235
+        },
+        {
+          "name": "soft drink",
+          "qty": 2,
+          "price": 45
+        }
+      ],
+      "error": null,
+      "telemetry": [
+        {
+          "cacheHit": true,
+          "latencyMs": 17774,
+          "attempts": 1,
+          "waitedMs": 0,
+          "promptTokens": 1633,
+          "outputTokens": 1217,
+          "totalTokens": 2850,
+          "finishReason": "STOP",
+          "responseText": "{\n  \"document_type\": \"single_bill\",\n  \"vendor_name\": null,\n  \"date\": null,\n  \"total_amount\": 785.4,\n  \"confidence\": \"high\",\n  \"items\": [\n    {\n      \"product_name_raw\": \"TATA SALT 1KG\",\n      \"normalized_name\": \"salt\",\n      \"size_token\": \"1kg\",\n      \"number_tokens\": [\n        { \"value\": 1, \"guessed_role\": \"quantity\", \"has_currency_marker\": false, \"has_multiply_marker\": false, \"confidence\": \"high\" },\n        { \"value\": 30.00, \"guessed_role\": \"price\", \"has_currency_marker\": false, \"has_multiply_marker\": false, \"confidence\": \"high\" },\n        { \"value\": 30.00, \"guessed_role\": \"total\", \"has_currency_marker\": false, \"has_multiply_marker\": false, \"confidence\": \"high\" }\n      ]\n    },\n    {\n      \"product_name_raw\": \"AASHIRVAAD ATTA 5KG\",\n      \"normalized_name\": \"wheat flour\",\n      \"size_token\": \"5kg\",\n      \"number_tokens\": [\n        { \"value\": 1, \"guessed_role\": \"quantity\", \"has_currency_marker\": false, \"has_multiply_marker\": false, \"confidence\": \"high\" },\n        { \"value\": 58.00, \"guessed_role\": \"price\", \"has_currency_marker\": false, \"has_multiply_marker\": false, \"confidence\": \"high\" },\n        { \"value\": 58.00, \"guessed_role\": \"total\", \"has_currency_marker\": false, \"has_multiply_marker\": false, \"confidence\": \"high\" }\n      ]\n    },\n    {\n      \"product_name_raw\": \"AMUL BUTTER 500G\",\n      \"normalized_name\": \"butter\",\n      \"size_token\": \"500g\",\n      \"number_tokens\": [\n        { \"value\": 1, \"guessed_role\": \"quantity\", \"has_currency_marker\": false, \"has_multiply_marker\": false, \"confidence\": \"high\" },\n        { \"value\": 285.00, \"guessed_role\": \"price\", \"has_currency_marker\": false, \"has_multiply_marker\": false, \"confidence\": \"high\" },\n        { \"value\": 285.00, \"guessed_role\": \"total\", \"has_currency_marker\": false, \"has_multiply_marker\": false, \"confidence\": \"high\" }\n      ]\n    },\n    {\n      \"product_name_raw\": \"PARLE-G BISCUITS\",\n      \"normalized_name\": \"biscuits\",\n      \"size_token\": null,\n      \"number_tokens\": [\n        { \"value\": 2, \"guessed_role\": \"quantity\", \"has_currency_marker\": false, \"has_multiply_marker\": false, \"confidence\": \"high\" },\n        { \"value\": 25.00, \"guessed_role\": \"price\", \"has_currency_marker\": false, \"has_multiply_marker\": false, \"confidence\": \"high\" },\n        { \"value\": 50.00, \"guessed_role\": \"total\", \"has_currency_marker\": false, \"has_multiply_marker\": false, \"confidence\": \"high\" }\n      ]\n    },\n    {\n      \"product_name_raw\": \"SURF EXCEL 1KG\",\n      \"normalized_name\": \"detergent\",\n      \"size_token\": \"1kg\",\n      \"number_tokens\": [\n        { \"value\": 1, \"guessed_role\": \"quantity\", \"has_currency_marker\": false, \"has_multiply_marker\": false, \"confidence\": \"high\" },\n        { \"value\": 235.00, \"guessed_role\": \"price\", \"has_currency_marker\": false, \"has_multiply_marker\": false, \"confidence\": \"high\" },\n        { \"value\": 235.00, \"guessed_role\": \"total\", \"has_currency_marker\": false, \"has_multiply_marker\": false, \"confidence\": \"high\" }\n      ]\n    },\n    {\n      \"product_name_raw\": \"THUMS UP 500ML\",\n      \"normalized_name\": \"soft drink\",\n      \"size_token\": \"500ml\",\n      \"number_tokens\": [\n        { \"value\": 2, \"guessed_role\": \"quantity\", \"has_currency_marker\": false, \"has_multiply_marker\": false, \"confidence\": \"high\" },\n        { \"value\": 45.00, \"guessed_role\": \"price\", \"has_currency_marker\": false, \"has_multiply_marker\": false, \"confidence\": \"high\" },\n        { \"value\": 90.00, \"guessed_role\": \"total\", \"has_currency_marker\": false, \"has_multiply_marker\": false, \"confidence\": \"high\" }\n      ]\n    }\n  ]\n}",
+          "model": "gemini-3.1-flash-lite"
+        }
+      ],
+      "raw": {
+        "documentType": "single_bill",
+        "totalAmount": 785.4,
+        "confidence": "high",
+        "rawItems": [
+          {
+            "productNameRaw": "TATA SALT 1KG",
+            "normalizedName": "salt",
+            "sizeToken": "1kg",
+            "numberTokens": [
+              {
+                "value": 1,
+                "guessedRole": "quantity",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "high"
+              },
+              {
+                "value": 30,
+                "guessedRole": "price",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "high"
+              },
+              {
+                "value": 30,
+                "guessedRole": "total",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "high"
+              }
+            ]
+          },
+          {
+            "productNameRaw": "AASHIRVAAD ATTA 5KG",
+            "normalizedName": "wheat flour",
+            "sizeToken": "5kg",
+            "numberTokens": [
+              {
+                "value": 1,
+                "guessedRole": "quantity",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "high"
+              },
+              {
+                "value": 58,
+                "guessedRole": "price",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "high"
+              },
+              {
+                "value": 58,
+                "guessedRole": "total",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "high"
+              }
+            ]
+          },
+          {
+            "productNameRaw": "AMUL BUTTER 500G",
+            "normalizedName": "butter",
+            "sizeToken": "500g",
+            "numberTokens": [
+              {
+                "value": 1,
+                "guessedRole": "quantity",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "high"
+              },
+              {
+                "value": 285,
+                "guessedRole": "price",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "high"
+              },
+              {
+                "value": 285,
+                "guessedRole": "total",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "high"
+              }
+            ]
+          },
+          {
+            "productNameRaw": "PARLE-G BISCUITS",
+            "normalizedName": "biscuits",
+            "sizeToken": null,
+            "numberTokens": [
+              {
+                "value": 2,
+                "guessedRole": "quantity",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "high"
+              },
+              {
+                "value": 25,
+                "guessedRole": "price",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "high"
+              },
+              {
+                "value": 50,
+                "guessedRole": "total",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "high"
+              }
+            ]
+          },
+          {
+            "productNameRaw": "SURF EXCEL 1KG",
+            "normalizedName": "detergent",
+            "sizeToken": "1kg",
+            "numberTokens": [
+              {
+                "value": 1,
+                "guessedRole": "quantity",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "high"
+              },
+              {
+                "value": 235,
+                "guessedRole": "price",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "high"
+              },
+              {
+                "value": 235,
+                "guessedRole": "total",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "high"
+              }
+            ]
+          },
+          {
+            "productNameRaw": "THUMS UP 500ML",
+            "normalizedName": "soft drink",
+            "sizeToken": "500ml",
+            "numberTokens": [
+              {
+                "value": 2,
+                "guessedRole": "quantity",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "high"
+              },
+              {
+                "value": 45,
+                "guessedRole": "price",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "high"
+              },
+              {
+                "value": 90,
+                "guessedRole": "total",
+                "hasCurrencyMarker": false,
+                "hasMultiplyMarker": false,
+                "confidence": "high"
+              }
+            ]
+          }
+        ]
+      },
+      "resolved": [
+        {
+          "productNameRaw": "TATA SALT 1KG",
+          "normalizedName": "salt",
+          "sizeToken": "1kg",
+          "matchedProductId": "p-007",
+          "matchedProductName": "Salt 1kg",
+          "matchState": "matched",
+          "candidates": [
+            {
+              "productId": "p-007",
+              "name": "Salt 1kg",
+              "unitPrice": 18,
+              "sizeToken": "1kg"
+            }
+          ],
+          "quantity": 1,
+          "unitPrice": 30,
+          "totalPrice": 30,
+          "fillSource": "inferred",
+          "needsVerify": true,
+          "ambiguousQtyPrice": false,
+          "numberTokens": [
+            {
+              "value": 30,
+              "guessedRole": "price",
+              "hasCurrencyMarker": false,
+              "hasMultiplyMarker": false,
+              "confidence": "high"
+            },
+            {
+              "value": 30,
+              "guessedRole": "total",
+              "hasCurrencyMarker": false,
+              "hasMultiplyMarker": false,
+              "confidence": "high"
+            }
+          ]
+        },
+        {
+          "productNameRaw": "AASHIRVAAD ATTA 5KG",
+          "normalizedName": "wheat flour",
+          "sizeToken": "5kg",
+          "matchedProductId": "p-002",
+          "matchedProductName": "Wheat Flour (Atta) 5kg",
+          "matchState": "matched",
+          "candidates": [
+            {
+              "productId": "p-002",
+              "name": "Wheat Flour (Atta) 5kg",
+              "unitPrice": 200,
+              "sizeToken": "5kg"
+            }
+          ],
+          "quantity": 1,
+          "unitPrice": 58,
+          "totalPrice": 58,
+          "fillSource": "bill",
+          "needsVerify": false,
+          "ambiguousQtyPrice": false,
+          "numberTokens": [
+            {
+              "value": 1,
+              "guessedRole": "quantity",
+              "hasCurrencyMarker": false,
+              "hasMultiplyMarker": false,
+              "confidence": "high"
+            },
+            {
+              "value": 58,
+              "guessedRole": "price",
+              "hasCurrencyMarker": false,
+              "hasMultiplyMarker": false,
+              "confidence": "high"
+            },
+            {
+              "value": 58,
+              "guessedRole": "total",
+              "hasCurrencyMarker": false,
+              "hasMultiplyMarker": false,
+              "confidence": "high"
+            }
+          ]
+        },
+        {
+          "productNameRaw": "AMUL BUTTER 500G",
+          "normalizedName": "butter",
+          "sizeToken": "500g",
+          "matchedProductId": "p-035",
+          "matchedProductName": "Amul Butter 500g",
+          "matchState": "matched",
+          "candidates": [
+            {
+              "productId": "p-035",
+              "name": "Amul Butter 500g",
+              "unitPrice": 245,
+              "sizeToken": "500g"
+            }
+          ],
+          "quantity": 1,
+          "unitPrice": 285,
+          "totalPrice": 285,
+          "fillSource": "bill",
+          "needsVerify": false,
+          "ambiguousQtyPrice": false,
+          "numberTokens": [
+            {
+              "value": 1,
+              "guessedRole": "quantity",
+              "hasCurrencyMarker": false,
+              "hasMultiplyMarker": false,
+              "confidence": "high"
+            },
+            {
+              "value": 285,
+              "guessedRole": "price",
+              "hasCurrencyMarker": false,
+              "hasMultiplyMarker": false,
+              "confidence": "high"
+            },
+            {
+              "value": 285,
+              "guessedRole": "total",
+              "hasCurrencyMarker": false,
+              "hasMultiplyMarker": false,
+              "confidence": "high"
+            }
+          ]
+        },
+        {
+          "productNameRaw": "PARLE-G BISCUITS",
+          "normalizedName": "biscuits",
+          "sizeToken": null,
+          "matchState": "unmatched",
+          "candidates": [],
+          "quantity": 2,
+          "unitPrice": 25,
+          "totalPrice": 50,
+          "fillSource": "bill",
+          "needsVerify": false,
+          "ambiguousQtyPrice": false,
+          "numberTokens": [
+            {
+              "value": 2,
+              "guessedRole": "quantity",
+              "hasCurrencyMarker": false,
+              "hasMultiplyMarker": false,
+              "confidence": "high"
+            },
+            {
+              "value": 25,
+              "guessedRole": "price",
+              "hasCurrencyMarker": false,
+              "hasMultiplyMarker": false,
+              "confidence": "high"
+            },
+            {
+              "value": 50,
+              "guessedRole": "total",
+              "hasCurrencyMarker": false,
+              "hasMultiplyMarker": false,
+              "confidence": "high"
+            }
+          ]
+        },
+        {
+          "productNameRaw": "SURF EXCEL 1KG",
+          "normalizedName": "detergent",
+          "sizeToken": "1kg",
+          "matchState": "variant_choice",
+          "candidates": [
+            {
+              "productId": "p-063",
+              "name": "Everest Garam Masala 50g",
+              "unitPrice": 35,
+              "sizeToken": "50g"
+            }
+          ],
+          "quantity": 1,
+          "unitPrice": 235,
+          "totalPrice": 235,
+          "fillSource": "inferred",
+          "needsVerify": true,
+          "ambiguousQtyPrice": false,
+          "numberTokens": [
+            {
+              "value": 235,
+              "guessedRole": "price",
+              "hasCurrencyMarker": false,
+              "hasMultiplyMarker": false,
+              "confidence": "high"
+            },
+            {
+              "value": 235,
+              "guessedRole": "total",
+              "hasCurrencyMarker": false,
+              "hasMultiplyMarker": false,
+              "confidence": "high"
+            }
+          ]
+        },
+        {
+          "productNameRaw": "THUMS UP 500ML",
+          "normalizedName": "soft drink",
+          "sizeToken": "500ml",
+          "matchState": "suggest",
+          "candidates": [
+            {
+              "productId": "p-043",
+              "name": "Pepsodent 150g",
+              "unitPrice": 55,
+              "sizeToken": "150g"
+            },
+            {
+              "productId": "p-001",
+              "name": "Basmati Rice 1kg",
+              "unitPrice": 80,
+              "sizeToken": "1kg"
+            },
+            {
+              "productId": "p-041",
+              "name": "Dettol Original 250ml",
+              "unitPrice": 58,
+              "sizeToken": "250ml"
+            }
+          ],
+          "quantity": 2,
+          "unitPrice": 45,
+          "totalPrice": 90,
+          "fillSource": "bill",
+          "needsVerify": false,
+          "ambiguousQtyPrice": false,
+          "numberTokens": [
+            {
+              "value": 2,
+              "guessedRole": "quantity",
+              "hasCurrencyMarker": false,
+              "hasMultiplyMarker": false,
+              "confidence": "high"
+            },
+            {
+              "value": 45,
+              "guessedRole": "price",
+              "hasCurrencyMarker": false,
+              "hasMultiplyMarker": false,
+              "confidence": "high"
+            },
+            {
+              "value": 90,
+              "guessedRole": "total",
+              "hasCurrencyMarker": false,
+              "hasMultiplyMarker": false,
+              "confidence": "high"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "generatedAt": "2026-10-14T18:49:45.376Z"
+}

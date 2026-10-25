@@ -1,0 +1,7 @@
+[
+  { "field_name": "product_name", "original_value": "TATA SALT 1KG", "corrected_value": "Salt 1kg" },
+  { "field_name": "product_name", "original_value": "AASHIRVAAD ATTA 5KG", "corrected_value": "Wheat Flour (Atta) 5kg" },
+  { "field_name": "product_name", "original_value": "PARLE-G BISCUITS", "corrected_value": "Parle-G 200g" },
+  { "field_name": "product_name", "original_value": "Sooji", "corrected_value": "Sooji (Rava) 500g" },
+  { "field_name": "product_name", "original_value": "Tea - Tata", "corrected_value": "Tata Tea Gold 500g" }
+]
